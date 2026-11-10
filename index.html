@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b3d63">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Vistoria OAE</title>
+<style>
+:root{
+  --bg:#f3f5f8;--card:#fff;--ink:#16202b;--muted:#5c6b7a;--line:#d9e0e7;
+  --pri:#0b3d63;--pri2:#155e94;--acc:#e8a317;--ok:#1f8a4c;--warn:#c77700;--bad:#c62828;
+  --n1:#b71c1c;--n2:#e65100;--n3:#f9a825;--n4:#43a047;--n5:#1b5e20;
+  --r:12px;--sh:0 1px 3px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:20;background:var(--pri);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+header.top h1{font-size:17px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header.top .sub{font-size:12px;opacity:.8;display:block;font-weight:400}
+.iconbtn{background:transparent;border:0;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.iconbtn:active{background:rgba(255,255,255,.15)}
+main{padding:12px 12px calc(90px + env(safe-area-inset-bottom));max-width:980px;margin:0 auto}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:12px}
+.card h2{font-size:15px;margin:0 0 10px;color:var(--pri)}
+.card h3{font-size:14px;margin:14px 0 8px;color:var(--pri2)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1 1 140px;min-width:0}
+label.f{display:block;margin-bottom:10px}
+label.f>span{display:block;font-size:12px;color:var(--muted);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+input[type=text],input[type=number],input[type=date],input[type=search],select,textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;min-height:42px}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri2);outline-offset:-1px;border-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;min-height:42px;text-decoration:none;color:var(--ink)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.acc{background:var(--acc);border-color:var(--acc);color:#222}
+.btn.bad{color:var(--bad);border-color:#efc4c4}
+.btn.sm{padding:6px 10px;min-height:34px;font-size:13px}
+.btn.block{width:100%}
+.btn:active{transform:translateY(1px)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700;background:#e8eef4;color:var(--pri)}
+.nota{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:7px;font-weight:800;color:#fff;font-size:14px;padding:0 6px}
+.nota.n1{background:var(--n1)}.nota.n2{background:var(--n2)}.nota.n3{background:var(--n3);color:#222}.nota.n4{background:var(--n4)}.nota.n5{background:var(--n5)}.nota.n0{background:#b0bac4}
+.list .item{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--line);cursor:pointer}
+.list .item:last-child{border-bottom:0}
+.list .item:active{background:#f0f4f8}
+.list .item .grow{flex:1;min-width:0}
+.list .item .t{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .item .s{font-size:12.5px;color:var(--muted)}
+.fab{position:fixed;right:16px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:15;background:var(--acc);color:#222;border:0;border-radius:16px;padding:14px 18px;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{flex:1;border:0;background:none;padding:8px 2px 9px;font-size:11.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav.tabs button b{font-size:19px;line-height:1}
+nav.tabs button.on{color:var(--pri)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font-weight:700;cursor:pointer;min-width:44px;text-align:center}
+.chip.on{color:#fff;border-color:transparent}
+.chip.on.c1{background:var(--n1)}.chip.on.c2{background:var(--n2)}.chip.on.c3{background:var(--n3);color:#222}.chip.on.c4{background:var(--n4)}.chip.on.c5{background:var(--n5)}
+.chip.on.cx{background:var(--pri)}
+.tramo{margin-bottom:14px}
+.tramo>.th{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--pri);padding:6px 2px}
+.el{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:6px;cursor:pointer}
+.el .grow{flex:1;min-width:0}
+.el .t{font-weight:650;font-size:14px}
+.el .s{font-size:12px;color:var(--muted)}
+.el .code{font-weight:800;background:#eef3f8;color:var(--pri);border-radius:6px;padding:3px 6px;font-size:12.5px;min-width:42px;text-align:center}
+.dano{border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:10px;margin-bottom:8px;background:#fffdf7}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ph{background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column}
+.ph img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#ccd}
+.ph .cap{padding:6px 8px;font-size:12px}
+.ph .cap b{color:var(--pri)}
+.modal{position:fixed;inset:0;background:rgba(10,20,30,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:760px;max-height:94vh;border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.sheet .sh{display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fff;border-bottom:1px solid var(--line)}
+.sheet .sh h3{margin:0;flex:1;font-size:16px}
+.sheet .sb{overflow:auto;padding:12px;flex:1}
+.sheet .sf{padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);display:flex;gap:8px}
+@media(min-width:760px){.modal{align-items:center}.sheet{border-radius:16px}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:#1d2833;color:#fff;padding:10px 16px;border-radius:10px;z-index:99;font-weight:600;max-width:90vw;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.stat{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}
+.stat div{background:#f4f7fa;border-radius:9px;padding:8px 2px}
+.stat b{display:block;font-size:20px}
+.warnbox{background:#fff4e0;border:1px solid #f3cf8a;color:#7a4b00;border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:10px}
+.infobox{background:#e9f2fb;border:1px solid #bcd6ef;color:#123d63;border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:10px}
+.hidden{display:none!important}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.tbl th{font-size:11.5px;text-transform:uppercase;color:var(--muted)}
+.check{display:flex;align-items:center;gap:8px;padding:6px 0}
+.check input{width:20px;height:20px}
+#print{display:none}
+
+/* ======== RELATÓRIO (impressão) ======== */
+@page{size:A4;margin:12mm 11mm 14mm;@bottom-right{content:counter(page);font:10px Arial}}
+@media print{
+  body{background:#fff}
+  body>*:not(#print){display:none!important}
+  #print{display:block!important}
+}
+.rp{font:10.5px/1.35 Arial,Helvetica,sans-serif;color:#000;background:#fff}
+.rp table.wrap{width:100%;border-collapse:collapse}
+.rp table.wrap>thead td,.rp table.wrap>tfoot td{padding:0}
+.rp .hdr{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0b3d63;padding-bottom:4px;margin-bottom:8px;min-height:44px}
+.rp .hdr img{max-height:40px;max-width:170px}
+.rp .hdr .ht{text-align:center;flex:1;font-size:9px;line-height:1.25;font-weight:700;color:#0b3d63}
+.rp .ftr{border-top:1px solid #999;margin-top:6px;padding-top:3px;font-size:8.5px;color:#444;text-align:center}
+.rp h1{font-size:15px;text-align:center;margin:6px 0 10px}
+.rp h2{font-size:12.5px;margin:12px 0 6px;background:#0b3d63;color:#fff;padding:4px 6px}
+.rp h3{font-size:11.5px;margin:10px 0 4px;color:#0b3d63}
+.rp table.t{width:100%;border-collapse:collapse;margin-bottom:6px;page-break-inside:auto}
+.rp table.t tr{page-break-inside:avoid}
+.rp table.t th,.rp table.t td{border:1px solid #777;padding:2.5px 4px;vertical-align:top;text-align:left}
+.rp table.t th{background:#dfe7ef;font-weight:700;font-size:9.5px}
+.rp table.t td.c,.rp table.t th.c{text-align:center}
+.rp .k{font-weight:700;background:#f1f4f7;width:1%;white-space:nowrap}
+.rp .pb{page-break-before:always}
+.rp .avoid{page-break-inside:avoid}
+.rp .just{text-align:justify}
+.rp .photogrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rp .pcell{border:1px solid #777;page-break-inside:avoid;break-inside:avoid}
+.rp .pcell img{width:100%;height:62mm;object-fit:cover;display:block}
+.rp .pcell .pc{font-size:8.6px;display:grid;grid-template-columns:auto 1fr auto;gap:0 6px;padding:2px 4px;border-bottom:1px solid #aaa;background:#f4f6f8}
+.rp .pcell .pl{font-size:9px;font-weight:700;padding:3px 4px}
+.rp .cover{min-height:225mm;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
+.rp .cover .big{font-size:20px;font-weight:800;color:#0b3d63;margin:40px 0 8px}
+.rp .sign{margin-top:40px;text-align:center}
+.rp .sign .ln{width:70%;margin:0 auto;border-top:1px solid #000;padding-top:3px}
+.rp .nt1{background:#f8d0d0}.rp .nt2{background:#fbe0c8}.rp .nt3{background:#fff3c4}.rp .nt4{background:#d9f0da}.rp .nt5{background:#c5e6c7}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="iconbtn" id="btnBack" aria-label="Voltar">&#8592;</button>
+  <h1 id="ttl">Vistoria OAE<span class="sub" id="subttl">Inspeção visual de pontes – DNIT 010/2024-PRO</span></h1>
+  <button class="iconbtn" id="btnMenu" aria-label="Menu">&#8942;</button>
+</header>
+<main id="view"></main>
+<nav class="tabs hidden" id="tabs"></nav>
+<div id="print"></div>
+<input type="file" id="filePhoto" accept="image/*" capture="environment" class="hidden">
+<input type="file" id="filePhotoGal" accept="image/*" multiple class="hidden">
+<input type="file" id="fileAny" class="hidden">
+
+<script>
+"use strict";
+/* ================= BASE DE DADOS (IndexedDB) ================= */
+const DB_NAME='vistoria-oae',DB_VER=1;let _db;
+function idb(){return _db?Promise.resolve(_db):new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=()=>{const d=r.result;['oaes','insps','fotos','cfg'].forEach(s=>{if(!d.objectStoreNames.contains(s)){const os=d.createObjectStore(s,{keyPath:'id'});if(s==='fotos')os.createIndex('insp','inspId');if(s==='insps')os.createIndex('oae','oaeId');}});};r.onsuccess=()=>{_db=r.result;res(_db)};r.onerror=()=>rej(r.error)})}
+async function tx(store,mode,fn){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(store,mode);const s=t.objectStore(store);let out;Promise.resolve(fn(s)).then(v=>out=v);t.oncomplete=()=>res(out);t.onerror=()=>rej(t.error)})}
+const reqP=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const DB={
+  all:(s)=>tx(s,'readonly',st=>reqP(st.getAll())),
+  get:(s,id)=>tx(s,'readonly',st=>reqP(st.get(id))),
+  put:(s,o)=>tx(s,'readwrite',st=>{st.put(o)}),
+  del:(s,id)=>tx(s,'readwrite',st=>{st.delete(id)}),
+  byIdx:(s,idx,v)=>tx(s,'readonly',st=>reqP(st.index(idx).getAll(v))),
+  clear:(s)=>tx(s,'readwrite',st=>{st.clear()})
+};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ================= CATÁLOGOS (DNIT 010/2024-PRO, IPR 709/2026) ================= */
+const NOTAS={5:'Excelente',4:'Boa',3:'Regular',2:'Ruim',1:'Crítica'};
+const NOTA_ACAO={5:'Nada a fazer.',4:'Nada a fazer, apenas serviços de manutenção.',3:'A recuperação pode ser postergada, colocando-se o problema em observação sistemática.',2:'A recuperação (geralmente com reforço estrutural) deve ser feita a curto prazo.',1:'A recuperação (ou substituição) deve ser feita sem tardar; avaliar restrição de carga, interdição e escoramento.'};
+const EC={4:'Bom',3:'Razoável',2:'Ruim',1:'Severo'};
+const EC_DESC={4:'Dano irrisório ou dano não encontrado.',3:'O dano não afeta o desempenho do elemento e/ou já foram aplicadas medidas para impedir seu avanço.',2:'O dano não afeta o desempenho do elemento, mas afeta a vida útil, sem necessidade de avaliação estrutural.',1:'Requer avaliação estrutural para avaliar o efeito na resistência ou funcionalidade do elemento ou da estrutura.'};
+const EXT=['≤20%','20% a 50%','50% a 80%','>80%'];
+const TIPOS=['Rotineira','Cadastral','Cadastral + Rotineira','Extraordinária','Intermediária','Especial'];
+const REGIOES=['Superestrutura','Mesoestrutura','Infraestrutura','Transição','Entorno'];
+// família: r=região, c=categoria de danos, e=função estrutural, p=prefixo
+const FAM=[
+ {f:'LAJE DE CONCRETO ARMADO',r:'Superestrutura',c:'concreto',e:1,p:'L'},
+ {f:'VIGA LONGARINA DE CONCRETO ARMADO',r:'Superestrutura',c:'concreto',e:1,p:'V'},
+ {f:'VIGA LONGARINA DE CONCRETO PROTENDIDO',r:'Superestrutura',c:'concreto',e:1,p:'V'},
+ {f:'VIGA CAIXÃO DE CONCRETO',r:'Superestrutura',c:'concreto',e:1,p:'VCX'},
+ {f:'TRANSVERSINA DE CONCRETO ARMADO',r:'Superestrutura',c:'concreto',e:1,p:'T'},
+ {f:'VIGA METÁLICA',r:'Superestrutura',c:'metal',e:1,p:'V'},
+ {f:'TRANSVERSINA / CONTRAVENTAMENTO METÁLICO',r:'Superestrutura',c:'metal',e:1,p:'T'},
+ {f:'VIGA DE MADEIRA',r:'Superestrutura',c:'madeira',e:1,p:'V'},
+ {f:'TABULEIRO DE MADEIRA',r:'Superestrutura',c:'madeira',e:1,p:'TB'},
+ {f:'PAVIMENTO ASFÁLTICO',r:'Superestrutura',c:'pavimento',e:0,p:'PV'},
+ {f:'PAVIMENTO DE CONCRETO',r:'Superestrutura',c:'pavimento',e:0,p:'PV'},
+ {f:'JUNTA DE DILATAÇÃO',r:'Superestrutura',c:'junta',e:0,p:'J'},
+ {f:'BARREIRA NEW JERSEY',r:'Superestrutura',c:'protecao',e:0,p:'G'},
+ {f:'GUARDA-RODAS',r:'Superestrutura',c:'protecao',e:0,p:'G'},
+ {f:'GUARDA-CORPO DE CONCRETO',r:'Superestrutura',c:'protecao',e:0,p:'GC'},
+ {f:'GUARDA-CORPO METÁLICO',r:'Superestrutura',c:'protecao',e:0,p:'GC'},
+ {f:'PASSEIO / CALÇADA',r:'Superestrutura',c:'protecao',e:0,p:'PS'},
+ {f:'DRENAGEM DO TABULEIRO (BUZINOTES)',r:'Superestrutura',c:'drenagem',e:0,p:'D'},
+ {f:'PILAR DE CONCRETO ARMADO',r:'Mesoestrutura',c:'concreto',e:1,p:'P'},
+ {f:'PILAR METÁLICO',r:'Mesoestrutura',c:'metal',e:1,p:'P'},
+ {f:'PILAR DE MADEIRA',r:'Mesoestrutura',c:'madeira',e:1,p:'P'},
+ {f:'VIGA TRAVESSA',r:'Mesoestrutura',c:'concreto',e:1,p:'VT'},
+ {f:'VIGA DE CONTRAVENTAMENTO',r:'Mesoestrutura',c:'concreto',e:1,p:'VC'},
+ {f:'APARELHO DE APOIO (NEOPRENE)',r:'Mesoestrutura',c:'apoio',e:1,p:'N'},
+ {f:'APARELHO DE APOIO METÁLICO',r:'Mesoestrutura',c:'apoio',e:1,p:'AP'},
+ {f:'CORTINA',r:'Infraestrutura',c:'concreto',e:1,p:'C'},
+ {f:'ENCONTRO',r:'Infraestrutura',c:'concreto',e:1,p:'E'},
+ {f:'MURO DE ALA',r:'Infraestrutura',c:'concreto',e:1,p:'MA'},
+ {f:'BLOCO DE FUNDAÇÃO / SAPATA',r:'Infraestrutura',c:'fundacao',e:1,p:'B'},
+ {f:'ESTACAS / TUBULÕES',r:'Infraestrutura',c:'fundacao',e:1,p:'ET'},
+ {f:'LAJE DE TRANSIÇÃO',r:'Transição',c:'concreto',e:0,p:'LT'},
+ {f:'ATERRO / ACESSO',r:'Transição',c:'aterro',e:0,p:'A'},
+ {f:'DEFENSA METÁLICA',r:'Transição',c:'protecao',e:0,p:'DF'},
+ {f:'CURSO D\'ÁGUA / MARGENS',r:'Entorno',c:'curso',e:0,p:'CA'},
+ {f:'SINALIZAÇÃO',r:'Entorno',c:'sinal',e:0,p:'S'},
+ {f:'INSTALAÇÕES DE UTILIDADE PÚBLICA',r:'Entorno',c:'utilidade',e:0,p:'U'}
+];
+const famOf=f=>FAM.find(x=>x.f===f)||{f,r:'Superestrutura',c:'concreto',e:0,p:'X'};
+// danos: [nome, intervenção sugerida, causa provável, risco]
+const D_CONC=[
+ ['Fissuras','Mapeamento, monitoramento e selagem/injeção das fissuras conforme abertura','Retração, variação térmica, sobrecarga ou movimentação da estrutura','Penetração de agentes agressivos e início de corrosão das armaduras'],
+ ['Trincas','Avaliação estrutural, injeção das trincas e monitoramento da abertura','Sobrecarga, recalque, deficiência de armadura ou movimentação da estrutura','Perda de rigidez e de capacidade resistente do elemento'],
+ ['Desagregação do concreto','Remoção do concreto deteriorado e recomposição com argamassa/graute estrutural','Ataque químico, lixiviação, má qualidade do concreto ou ação de umidade','Perda de seção e exposição das armaduras'],
+ ['Desplacamento do concreto','Remoção do concreto solto, tratamento das armaduras e recomposição do cobrimento','Corrosão de armaduras com expansão, impacto ou cobrimento deficiente','Queda de fragmentos e redução da seção resistente'],
+ ['Falta de cobrimento com armadura exposta','Limpeza e tratamento das armaduras, recomposição do cobrimento e proteção superficial','Cobrimento deficiente na execução, carbonatação e infiltração de água','Corrosão progressiva e redução da durabilidade'],
+ ['Armadura exposta com corrosão / perda de seção','Recuperação estrutural com tratamento ou complementação das armaduras e recomposição do cobrimento','Carbonatação, cloretos, infiltração e ausência de manutenção','Redução da capacidade resistente do elemento'],
+ ['Eflorescência / lixiviação','Correção da fonte de infiltração, limpeza e tratamento superficial','Percolação de água através do concreto, fissuras ou juntas','Aumento da porosidade e aceleração da deterioração'],
+ ['Manchas de umidade / infiltração','Correção da drenagem e da impermeabilização do tabuleiro','Drenagem deficiente, ausência de pingadeiras ou juntas sem vedação','Lixiviação, eflorescência e corrosão das armaduras'],
+ ['Carbonatação (indícios)','Ensaio de profundidade de carbonatação e proteção superficial','Exposição ambiental prolongada com cobrimento reduzido','Despassivação e corrosão das armaduras'],
+ ['Segregação / ninhos de concretagem (bicheira)','Remoção do material segregado e recomposição com graute','Falha de adensamento ou vazamento de nata na execução','Exposição da armadura e redução de durabilidade'],
+ ['Falha de concretagem / juntas frias','Tratamento das falhas e recomposição localizada','Interrupção ou deficiência no lançamento do concreto','Infiltração e redução da durabilidade'],
+ ['Dano por impacto / colisão','Avaliação estrutural e recuperação localizada do elemento','Colisão de veículos ou embarcações','Perda de seção e comprometimento local do elemento'],
+ ['Ausência ou dano em pingadeira','Execução/recomposição de pingadeiras','Falha de projeto/execução ou deterioração','Escorrimento de água para faces inferiores'],
+ ['Vegetação / fungos / sujeira','Limpeza e remoção de vegetação e detritos','Ausência de conservação rotineira','Retenção de umidade e aceleração da deterioração'],
+ ['Deformação / flecha excessiva','Avaliação estrutural com levantamento geométrico','Sobrecarga, fluência ou perda de rigidez','Comprometimento da estabilidade e da funcionalidade'],
+ ['Desaprumo / deslocamento','Levantamento topográfico e avaliação estrutural/geotécnica','Recalque de fundação ou empuxo do aterro','Instabilidade do elemento']
+];
+const D_CAT={
+ concreto:D_CONC,
+ fundacao:[...D_CONC.filter(d=>/Desagreg|Desplac|armadura|Trincas|Fissuras/.test(d[0])),
+  ['Erosão / solapamento junto à fundação','Recomposição e proteção do terreno (enrocamento/gabião) e avaliação geotécnica','Ação da correnteza e variação do nível d\'água','Perda de confinamento e instabilidade da fundação'],
+  ['Desconfinamento com exposição de estacas/tubulões','Recomposição do confinamento, proteção das bases e avaliação complementar em águas baixas','Erosão do leito e carreamento de material','Redução da capacidade de carga da fundação'],
+  ['Recalque','Monitoramento topográfico e avaliação geotécnica/estrutural','Deficiência do solo de apoio ou erosão','Fissuração e instabilidade da estrutura'],
+  ['Acúmulo de detritos / balseiros nos apoios','Remoção dos detritos e desobstrução da seção de vazão','Material flutuante nas cheias','Aumento do empuxo hidrodinâmico e da erosão local']],
+ metal:[
+  ['Corrosão superficial','Limpeza mecânica e repintura do sistema de proteção','Falha da pintura e exposição à umidade','Evolução para perda de seção'],
+  ['Corrosão com perda de seção','Avaliação estrutural e reforço ou substituição das peças','Ausência de manutenção do sistema de proteção','Redução da capacidade resistente'],
+  ['Parafusos / rebites soltos ou ausentes','Reaperto ou substituição dos elementos de ligação','Vibração, fadiga ou corrosão','Perda de rigidez das ligações'],
+  ['Trinca em solda / fadiga','Ensaio não destrutivo (LP/PM/US) e reparo da ligação','Fadiga por carregamento cíclico','Ruptura da ligação'],
+  ['Deformação / empenamento de peça','Avaliação estrutural e correção ou substituição','Impacto ou sobrecarga','Instabilidade local'],
+  ['Pintura deteriorada','Repintura','Envelhecimento do sistema de pintura','Início de corrosão']],
+ madeira:[
+  ['Apodrecimento','Substituição das peças deterioradas e tratamento preservativo','Umidade e ataque de fungos','Perda de seção e de resistência'],
+  ['Ataque biológico (cupins/brocas)','Tratamento preservativo e substituição de peças afetadas','Ausência de tratamento da madeira','Perda de seção'],
+  ['Peça quebrada ou fendilhada','Substituição da peça','Sobrecarga, impacto ou secagem','Perda de capacidade resistente'],
+  ['Fixações soltas / corroídas','Reaperto ou substituição das fixações','Vibração e corrosão','Desagregação do conjunto'],
+  ['Desgaste do tabuleiro / pranchas soltas','Substituição das pranchas e fixação adequada','Abrasão do tráfego','Risco à segurança dos usuários']],
+ pavimento:[
+  ['Trincas e fissuras no revestimento','Selagem de trincas ou fresagem e recomposição do revestimento','Envelhecimento do revestimento e ação do tráfego','Infiltração de água no tabuleiro'],
+  ['Panelas / buracos','Remendo profundo e recomposição do revestimento','Desagregação do revestimento e infiltração','Impacto dinâmico e risco à segurança'],
+  ['Desgaste do revestimento','Recapeamento/restauração do revestimento','Ação do tráfego e envelhecimento','Perda de aderência e infiltração'],
+  ['Remendos','Restauração do revestimento','Intervenções anteriores localizadas','Irregularidade de rolamento'],
+  ['Afundamento / ondulação','Fresagem e recomposição','Deformação plástica do revestimento','Irregularidade e impacto dinâmico'],
+  ['Degrau na transição ponte/aterro','Regularização da transição e avaliação da laje de transição','Recalque do aterro de acesso','Impacto dinâmico na estrutura e desconforto'],
+  ['Acúmulo de água na pista','Correção das declividades e desobstrução da drenagem','Drenagem deficiente','Aquaplanagem e infiltração']],
+ junta:[
+  ['Junta encoberta pelo pavimento','Abertura, regularização e vedação da junta','Recapeamento executado sobre a junta','Restrição de movimentação e infiltração'],
+  ['Junta obstruída por detritos','Limpeza e desobstrução da junta','Ausência de conservação','Restrição de movimentação da estrutura'],
+  ['Selante deteriorado ou ausente','Substituição do sistema de vedação','Envelhecimento do selante','Percolação de água para os apoios'],
+  ['Lábios da junta danificados','Recomposição dos lábios com argamassa polimérica','Impacto do tráfego','Desagregação progressiva e impacto dinâmico'],
+  ['Desnível na junta','Regularização da junta e do pavimento adjacente','Movimentação diferencial ou recalque','Impacto dinâmico'],
+  ['Junta ausente / não funcional','Avaliação e implantação de dispositivo adequado','Falha de projeto ou execução','Fissuração por restrição de movimentos']],
+ apoio:[
+  ['Aparelho achatado / abaulamento excessivo','Substituição do aparelho de apoio com macaqueamento','Sobrecarga ou envelhecimento do elastômero','Perda de funcionalidade e transmissão de esforços indevidos'],
+  ['Distorção excessiva','Avaliação e reposicionamento ou substituição','Movimentação excessiva ou travamento','Transmissão de esforços horizontais à mesoestrutura'],
+  ['Deslocamento / desalinhamento','Reposicionamento ou substituição do aparelho','Falha de instalação ou movimentação da estrutura','Instabilidade do apoio'],
+  ['Fissuras / ressecamento do elastômero','Substituição do aparelho de apoio','Envelhecimento e exposição','Perda de desempenho'],
+  ['Aparelho ausente / contato direto concreto-concreto','Implantação de aparelho de apoio','Falha de execução','Concentração de tensões e esmagamento'],
+  ['Berço / base de assentamento danificada','Recuperação do berço de apoio','Concentração de tensões ou infiltração','Instabilidade do apoio'],
+  ['Corrosão (aparelho metálico)','Limpeza, lubrificação e proteção anticorrosiva','Umidade e ausência de manutenção','Travamento do aparelho'],
+  ['Obstrução por detritos / travamento','Limpeza da região dos apoios','Ausência de conservação','Vínculo imprevisto na estrutura']],
+ protecao:[
+  ['Trecho rompido / faltante','Recuperação ou reconstrução do trecho','Colisão de veículo','Risco de queda de veículos ou pedestres'],
+  ['Armadura exposta','Tratamento das armaduras e recomposição do cobrimento','Cobrimento deficiente ou impacto','Corrosão e perda de seção'],
+  ['Desagregação / desplacamento','Recuperação localizada do concreto','Impacto ou intemperismo','Redução da capacidade de contenção'],
+  ['Desalinhamento','Realinhamento ou reconstrução','Colisão ou deficiência de fixação','Redução da contenção'],
+  ['Ausência de defensas metálicas nos acessos','Implantação de defensas metálicas com transição adequada','Ausência de implantação ou remoção','Risco de acidentes nas aproximações'],
+  ['Defensa danificada / ancoragem insuficiente','Recuperação da defensa e da ancoragem','Colisão ou falta de manutenção','Redução da contenção lateral'],
+  ['Transição barreira-defensa inadequada','Adequação da transição conforme norma','Falha de projeto/implantação','Risco de impacto frontal na extremidade'],
+  ['Pintura / sinalização deteriorada','Repintura e sinalização','Intemperismo','Baixa visibilidade noturna']],
+ drenagem:[
+  ['Buzinotes obstruídos','Desobstrução dos buzinotes','Acúmulo de sedimentos e detritos','Acúmulo de água e infiltração no tabuleiro'],
+  ['Buzinotes danificados','Recuperação ou substituição dos buzinotes','Deterioração ou impacto','Escorrimento de água sobre a estrutura'],
+  ['Buzinotes curtos / descarga sobre a estrutura','Prolongamento dos buzinotes','Deficiência de projeto','Manchas, lixiviação e corrosão em vigas e pilares'],
+  ['Ausência de dispositivos de drenagem','Implantação de dispositivos de drenagem','Falha de projeto','Acúmulo de água e infiltração']],
+ aterro:[
+  ['Erosão no aterro / saia de aterro','Recomposição do aterro, proteção vegetal e correção da drenagem','Drenagem superficial deficiente','Descalçamento do encontro e instabilidade do acesso'],
+  ['Recalque do aterro de acesso','Recomposição do aterro e regularização do pavimento','Compactação deficiente ou erosão interna','Degrau na transição e impacto dinâmico'],
+  ['Ausência de laje de transição','Avaliação técnica quanto à necessidade de laje de transição','Falha de projeto','Recalques diferenciais na transição'],
+  ['Drenagem dos acessos deficiente','Implantação/recuperação de sarjetas, descidas d\'água e dissipadores','Falta de dispositivos ou manutenção','Erosão dos taludes'],
+  ['Vegetação excessiva','Roçada e limpeza','Ausência de conservação','Dificuldade de inspeção e retenção de umidade'],
+  ['Ausência de defensas metálicas','Implantação de defensas metálicas','Ausência de implantação','Risco de acidentes nas aproximações']],
+ curso:[
+  ['Erosão das margens','Proteção das margens (enrocamento, gabiões) e avaliação hidráulica','Velocidade excessiva da água','Instabilidade dos encontros e fundações'],
+  ['Assoreamento / obstrução da seção de vazão','Desassoreamento e desobstrução','Carreamento de sedimentos','Redução da seção de vazão e transbordamento'],
+  ['Balseiros / material flutuante retido','Remoção do material retido','Cheias','Empuxo e erosão localizada'],
+  ['Proteção de margens/apoios danificada','Recuperação do enrocamento/proteção','Ação da correnteza','Erosão e descalçamento'],
+  ['Indício de erosão no leito (suspeita)','Levantamento topobatimétrico e inspeção subaquática','Ação hidráulica','Desconfinamento de fundações']],
+ sinal:[
+  ['Ausência de placa de identificação da OAE','Implantação de sinalização vertical','Ausência de implantação','Deficiência de informação ao usuário'],
+  ['Ausência de sinalização de estreitamento / restrição','Implantação de sinalização conforme CONTRAN','Ausência de implantação','Risco de acidentes'],
+  ['Sinalização horizontal deteriorada','Repintura da sinalização horizontal','Desgaste','Baixa visibilidade'],
+  ['Ausência de delineadores / tachas','Implantação de dispositivos auxiliares','Ausência de implantação','Baixa visibilidade noturna']],
+ utilidade:[
+  ['Duto mal fixado','Fixação adequada do duto','Fixação deficiente','Queda do duto e danos'],
+  ['Vazamento de água ou gás','Comunicação à concessionária e reparo','Deterioração da tubulação','Infiltração ou risco à segurança'],
+  ['Cabos elétricos sem isolamento adequado','Comunicação à concessionária e adequação','Instalação inadequada','Risco elétrico']]
+};
+const OUTRO='Outro (descrever)';
+const danosDe=fam=>(D_CAT[famOf(fam).c]||D_CONC);
+const danoInfo=(fam,nome)=>{for(const k in D_CAT){const d=D_CAT[k].find(x=>x[0]===nome);if(d)return d}return null};
+const LOCAIS=['Face inferior','Face lateral LD','Face lateral LE','Face superior','Topo','Base','Meio do vão','Região dos apoios','Toda extensão','Encontro 1','Encontro 2','LD','LE','LD e LE','Pontual'];
+
+/* ================= ESTADO ================= */
+let CFG={empresa:'Consórcio Operação TO',contrato:'TT-255/2026-00',fiscalizacao:'Superintendência Regional do DNIT no Tocantins',ul:'',resp:'',crea:'',cargo:'Engenheiro Civil',cidade:'Palmas/TO',logoE:'',logoD:'',endereco:''};
+let S={view:'home',oaeId:null,inspId:null,tab:'dados',q:''};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtD=d=>{if(!d)return'';const[a,m,dd]=d.split('-');return dd?`${dd}/${m}/${a}`:d};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function toast(m,ms=2200){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),ms)}
+function notaBadge(n){return `<span class="nota n${n||0}">${n||'–'}</span>`}
+const debounce=(fn,ms=400)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+
+async function loadCfg(){const c=await DB.get('cfg','cfg');if(c)CFG={...CFG,...c.v}}
+async function saveCfg(){await DB.put('cfg',{id:'cfg',v:CFG})}
+
+/* ================= GPS ================= */
+function gps(){return new Promise((res,rej)=>{if(!navigator.geolocation)return rej(new Error('GPS indisponível'));navigator.geolocation.getCurrentPosition(p=>res(p.coords),e=>rej(e),{enableHighAccuracy:true,timeout:20000,maximumAge:15000})})}
+const dms=(v,pos,neg)=>{if(v==null||v==='')return'';v=+v;const s=v<0?neg:pos;v=Math.abs(v);const d=Math.floor(v),mf=(v-d)*60,m=Math.floor(mf),sec=((mf-m)*60).toFixed(2).replace('.',',');return `${d}°${String(m).padStart(2,'0')}'${sec}" ${s}`};
+const latS=v=>dms(v,'N','S'),lonS=v=>dms(v,'E','W');
+
+/* ================= ROTEAMENTO ================= */
+function go(view,extra={}){Object.assign(S,{view},extra);history.pushState({...S},'');render()}
+window.onpopstate=e=>{if(e.state){S=e.state;render()}else{S.view='home';render()}};
+$('#btnBack').onclick=()=>{if(S.view==='home')return;history.back()};
+$('#btnMenu').onclick=()=>menu();
+
+async function render(){
+  const v=$('#view');$('#tabs').classList.add('hidden');document.querySelectorAll('.fab').forEach(f=>f.remove());
+  $('#btnBack').style.visibility=S.view==='home'?'hidden':'visible';
+  try{
+    if(S.view==='home')await vHome(v);
+    else if(S.view==='oae')await vOAE(v);
+    else if(S.view==='insp')await vInsp(v);
+    else if(S.view==='cfg')await vCfg(v);
+    else if(S.view==='resumo')await vResumo(v);
+  }catch(e){console.error(e);v.innerHTML=`<div class="card warnbox">Erro: ${esc(e.message)}</div>`}
+  window.scrollTo(0,S._scroll||0);S._scroll=0;
+}
+function setTitle(t,s){$('#ttl').innerHTML=esc(t)+`<span class="sub">${esc(s||'')}</span>`}
+
+/* ================= HOME ================= */
+async function vHome(v){
+  setTitle('Vistoria OAE','Inspeção visual de pontes – DNIT 010/2024-PRO');
+  const [oaes,insps]=await Promise.all([DB.all('oaes'),DB.all('insps')]);
+  const last={};insps.forEach(i=>{if(!last[i.oaeId]||last[i.oaeId].data<i.data)last[i.oaeId]=i});
+  const q=(S.q||'').toLowerCase();
+  const rods=[...new Set(oaes.map(o=>o.rodovia).filter(Boolean))].sort();
+  let list=oaes.filter(o=>!q||[o.nome,o.codigoSGE,o.rodovia,o.km,o.snv].join(' ').toLowerCase().includes(q));
+  if(S.rod)list=list.filter(o=>o.rodovia===S.rod);
+  list.sort((a,b)=>(a.rodovia||'').localeCompare(b.rodovia||'')||parseKm(a.km)-parseKm(b.km));
+  const cont={1:0,2:0,3:0,4:0,5:0};Object.values(last).forEach(i=>{const n=notaFinal(i);if(n)cont[n]++});
+  v.innerHTML=`
+  ${!oaes.length?`<div class="card"><h2>Comece por aqui</h2><p class="muted">Cadastre as OAEs que serão vistoriadas. Você pode cadastrar uma a uma, importar uma planilha CSV ou carregar a base de 46 OAEs da UL Palmas (BR-010, BR-153 e BR-235), extraída do relatório trimestral de julho/2026.</p>
+   <div class="btns"><button class="btn pri" id="bNova">+ Nova OAE</button><button class="btn" id="bBase">Carregar base UL Palmas</button><button class="btn" id="bCsv">Importar CSV</button></div></div>`:''}
+  ${oaes.length?`<div class="card"><div class="stat">${[1,2,3,4,5].map(n=>`<div><b style="color:var(--n${n})">${cont[n]}</b><span class="small">Nota ${n}</span></div>`).join('')}</div>
+   <p class="small muted" style="margin:8px 0 0">${oaes.length} OAEs cadastradas · ${insps.length} inspeções registradas neste aparelho</p></div>`:''}
+  ${oaes.length?`<div class="card" style="padding:10px"><div class="row"><input type="search" id="q" placeholder="Buscar por nome, código SGE, km, SNV…" value="${esc(S.q||'')}" style="flex:3 1 200px">
+   <select id="rod" style="flex:1 1 110px"><option value="">Todas</option>${rods.map(r=>`<option ${S.rod===r?'selected':''}>${r}</option>`).join('')}</select></div></div>
+  <div class="card list" style="padding:0">${list.map(o=>{const li=last[o.id];const n=li?notaFinal(li):(o.notaSugerida||'');return `<div class="item" data-id="${o.id}">${notaBadge(n)}<div class="grow"><div class="t">${esc(o.nome||'(sem nome)')}</div><div class="s">${esc(o.rodovia||'')} km ${esc(o.km||'')} · SGE ${esc(o.codigoSGE||'S/N')} · ${esc(o.comprimento||'?')} m${li?` · última: ${fmtD(li.data)} (${esc(li.tipo)})`:o.dataUlt?` · ref.: ${esc(o.dataUlt)}`:''}</div></div><span class="muted">›</span></div>`}).join('')||'<p class="muted" style="padding:12px">Nenhuma OAE encontrada.</p>'}</div>`:''}`;
+  if(oaes.length){const f=document.createElement('button');f.className='fab';f.textContent='+ Nova OAE';f.onclick=novaOAE;document.body.appendChild(f)}
+  const qi=$('#q');if(qi)qi.oninput=debounce(()=>{S.q=qi.value;const pos=qi.selectionStart;vHome(v).then(()=>{const n=$('#q');n.focus();n.setSelectionRange(pos,pos)})},300);
+  const rs=$('#rod');if(rs)rs.onchange=()=>{S.rod=rs.value;vHome(v)};
+  v.querySelectorAll('.item[data-id]').forEach(el=>el.onclick=()=>go('oae',{oaeId:el.dataset.id}));
+  const b1=$('#bNova');if(b1)b1.onclick=novaOAE;
+  const b2=$('#bBase');if(b2)b2.onclick=carregarBase;
+  const b3=$('#bCsv');if(b3)b3.onclick=importCSV;
+}
+const parseKm=k=>parseFloat(String(k||'0').replace(/\./g,'').replace(',','.'))||0;
+async function novaOAE(){const o={id:uid(),nome:'',rodovia:'BR-',uf:'TO',criado:Date.now(),tramos:[]};await DB.put('oaes',o);go('oae',{oaeId:o.id,editOAE:true})}
+
+const BASE_ULPALMAS=[{"item":1,"nome":"Ponte sobre o Córrego Itaboca","rodovia":"BR-010","km":"376,00","snv":"010BTO0264","comprimento":"50,00","largura":"9,10","material":"Concreto","notaSugerida":"3","dataUlt":"21/07/2026","tipoUlt":"Cadastral","lat":-10.935069,"lon":-48.317992},{"item":2,"nome":"Ponte sobre o Rio Areias","rodovia":"BR-010","km":"384,33","snv":"010BTO0268","comprimento":"80,00","largura":"9,10","material":"Concreto","notaSugerida":"2","dataUlt":"21/07/2026","tipoUlt":"Cadastral","lat":-10.880228,"lon":-48.355161},{"item":3,"nome":"Ponte sobre o Córrego Manduca","rodovia":"BR-010","km":"394,00","snv":"010BTO0268","comprimento":"56,00","largura":"9,10","material":"Concreto","notaSugerida":"3","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.794431,"lon":-48.366278},{"item":4,"nome":"Ponte sobre o Ribeirão São João LD","rodovia":"BR-010","km":"406,30","snv":"010BTO0272","comprimento":"50,00","largura":"10,92","material":"Concreto","notaSugerida":"3","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.702414,"lon":-48.397058},{"item":5,"nome":"Ponte sobre o Ribeirão São João LE","rodovia":"BR-010","km":"406,30","snv":"010BTO0272","comprimento":"50,00","largura":"10,92","material":"Concreto","notaSugerida":"2","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.702322,"lon":-48.397236},{"item":6,"codigoSGE":"230090","nome":"Ponte sobre o Rio Água Suja","rodovia":"BR-010","km":"426,12","snv":"010BTO0276","comprimento":"80,20","largura":"12,40","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.53687,"lon":-48.379128},{"item":7,"codigoSGE":"230062","nome":"Ponte sobre o Ribeirão Xupê","rodovia":"BR-010","km":"431,60","snv":"010BTO0276","comprimento":"50,00","largura":"12,20","material":"Concreto","notaSGE":"5","notaSugerida":"4","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.496358,"lon":-48.351739},{"item":8,"codigoSGE":"230091","nome":"Ponte sobre o Córrego São João","rodovia":"BR-010","km":"442,77","snv":"010BTO0276","comprimento":"80,00","largura":"12,20","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"22/07/2026","tipoUlt":"Cadastral","lat":-10.411403,"lon":-48.310747},{"item":9,"codigoSGE":"230047","nome":"Viaduto km 453,42","rodovia":"BR-010","km":"453,42","snv":"010BTO0280","comprimento":"11,90","largura":"25,90","material":"Concreto","notaSGE":"4","notaSugerida":"4","dataUlt":"23/07/2026","tipoUlt":"Rotineira"},{"item":10,"codigoSGE":"230092","nome":"Ponte sobre o Ribeirão Taquaruçu Grande (LD)","rodovia":"BR-010","km":"456,57","snv":"010BTO0280","comprimento":"79,80","largura":"12,20","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"23/07/2026","tipoUlt":"Rotineira"},{"item":11,"codigoSGE":"230093","nome":"Ponte sobre o Ribeirão Taquaruçu Grande (LE)","rodovia":"BR-010","km":"456,57","snv":"010BTO0280","comprimento":"79,30","largura":"12,30","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"23/07/2026","tipoUlt":"Rotineira"},{"item":12,"codigoSGE":"230063","nome":"Viaduto km 460,80 (LD)","rodovia":"BR-010","km":"460,80","snv":"010BTO0280","comprimento":"46,00","largura":"12,00","material":"Concreto","notaSGE":"4","notaSugerida":"4","dataUlt":"23/07/2026","tipoUlt":"Rotineira"},{"item":13,"codigoSGE":"230064","nome":"Viaduto km 460,80 (LE)","rodovia":"BR-010","km":"460,80","snv":"010BTO0280","comprimento":"46,00","largura":"12,00","material":"Concreto","notaSGE":"4","notaSugerida":"4","dataUlt":"23/07/2026","tipoUlt":"Rotineira"},{"item":14,"codigoSGE":"230057","nome":"Ponte sobre o Córrego Barreiras","rodovia":"BR-010","km":"532,74","snv":"010BTO0295","comprimento":"35,00","largura":"12,80","material":"Concreto","notaSGE":"4","notaSugerida":"4","dataUlt":"17/06/2026","tipoUlt":"Rotineira"},{"item":15,"codigoSGE":"230094","nome":"Ponte sobre o Rio Sono III","rodovia":"BR-010","km":"552,47","snv":"010BTO0295","comprimento":"130,00","largura":"12,80","material":"Concreto","notaSGE":"2","notaSugerida":"2","dataUlt":"17/06/2026","tipoUlt":"Rotineira"},{"item":16,"codigoSGE":"230125","nome":"Ponte sobre o Córrego Brejo D'ela","rodovia":"BR-010","km":"573,56","snv":"010BTO0305","comprimento":"20,00","largura":"4,60","material":"Concreto","notaSGE":"2","notaSugerida":"2","dataUlt":"28/07/2026","tipoUlt":"Rotineira"},{"item":17,"nome":"Ponte sobre o Córrego Areia","rodovia":"BR-010","km":"589,23","snv":"010BTO0305","comprimento":"34,55","largura":"4,10","material":"Madeira","notaSugerida":"2","dataUlt":"17/07/2026","tipoUlt":"Rotineira"},{"item":18,"codigoSGE":"230096","nome":"Ponte sobre o Rio Manuel Alves Pequeno","rodovia":"BR-010","km":"747,57","snv":"010BTO0335","comprimento":"89,30","largura":"5,00","material":"Concreto","notaSGE":"2","notaSugerida":"2","dataUlt":"28/07/2026","tipoUlt":"Rotineira"},{"item":19,"codigoSGE":"230097","nome":"Ponte sobre o Córrego Aroeira","rodovia":"BR-010","km":"776,07","snv":"010BTO0335","comprimento":"14,00","largura":"4,60","material":"Concreto","notaSGE":"2","notaSugerida":"3","dataUlt":"28/07/2026","tipoUlt":"Rotineira"},{"item":20,"nome":"Ponte sobre o Ribeirão Água Branca","rodovia":"BR-010","km":"779,27","snv":"010BTO0335","comprimento":"8,20","largura":"4,30","material":"Madeira","notaSugerida":"3","dataUlt":"17/07/2026","tipoUlt":"Rotineira"},{"item":21,"nome":"Ponte sobre o Rio Cartucho","rodovia":"BR-010","km":"785,49","snv":"010BTO0335","comprimento":"30,30","largura":"4,40","material":"Madeira","notaSugerida":"2","dataUlt":"17/07/2026","tipoUlt":"Rotineira"},{"item":22,"codigoSGE":"230053","nome":"Ponte sobre o Rio Tauá","rodovia":"BR-010","km":"802,97","snv":"010BTO0335","comprimento":"14,00","largura":"3,70","material":"Concreto","notaSGE":"2","notaSugerida":"2","dataUlt":"28/07/2026","tipoUlt":"Rotineira"},{"item":23,"codigoSGE":"230045","nome":"Ponte sobre o Ribeirão Aldeia Grande","rodovia":"BR-010","km":"829,71","snv":"010BTO0335","comprimento":"14,50","largura":"4,00","material":"Concreto","notaSGE":"3","notaSugerida":"2","dataUlt":"29/07/2026","tipoUlt":"Rotineira"},{"item":24,"codigoSGE":"230021","nome":"Ponte sobre o Ribeirão Água Fria","rodovia":"BR-153","km":"307,78","snv":"153BTO0165","comprimento":"39,70","largura":"8,20","material":"Concreto","notaSGE":"2","notaSugerida":"2","dataUlt":"27/07/2026","tipoUlt":"Rotineira"},{"item":25,"codigoSGE":"230022","nome":"Ponte sobre o Rio São João","rodovia":"BR-153","km":"328,82","snv":"153BTO0165","comprimento":"29,70","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"27/07/2026","tipoUlt":"Rotineira"},{"item":26,"codigoSGE":"230023","nome":"Ponte sobre o Rio Tabocão","rodovia":"BR-153","km":"359,75","snv":"153BTO0190","comprimento":"60,50","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"4","dataUlt":"27/07/2026","tipoUlt":"Rotineira"},{"item":27,"codigoSGE":"230024","nome":"Ponte sobre o Rio dos Bois","rodovia":"BR-153","km":"392,66","snv":"153BTO0195","comprimento":"60,00","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"2","dataUlt":"27/07/2026","tipoUlt":"Rotineira"},{"item":28,"codigoSGE":"230080","nome":"Ponte sobre o Rio Providência (BR LD)","rodovia":"BR-153","km":"412,97","snv":"153BTO0200","comprimento":"90,00","largura":"12,70","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"25/07/2026","tipoUlt":"Rotineira"},{"item":29,"codigoSGE":"230078","nome":"Ponte sobre o Rio Providência (Marginal LD)","rodovia":"BR-153","km":"412,98","snv":"153BTO0200","comprimento":"90,00","largura":"12,90","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"25/07/2026","tipoUlt":"Rotineira"},{"item":30,"codigoSGE":"230079","nome":"Ponte sobre o Rio Providência (Marginal LE)","rodovia":"BR-153","km":"412,95","snv":"153BTO0200","comprimento":"90,00","largura":"12,90","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"25/07/2026","tipoUlt":"Rotineira"},{"item":31,"codigoSGE":"230077","nome":"Ponte sobre o Rio Providência (BR LE)","rodovia":"BR-153","km":"412,97","snv":"153BTO0200","comprimento":"80,70","largura":"12,30","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"25/07/2026","tipoUlt":"Rotineira"},{"item":32,"codigoSGE":"230025","nome":"Ponte sobre o Ribeirão São José","rodovia":"BR-153","km":"462,85","snv":"153BTO0220","comprimento":"156,00","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"24/07/2026","tipoUlt":"Rotineira","lat":-9.938548,"lon":-48.739733},{"item":33,"codigoSGE":"230026","nome":"Ponte sobre o Córrego Grotão","rodovia":"BR-153","km":"473,90","snv":"153BTO0220","comprimento":"48,60","largura":"10,00","material":"Concreto","notaSGE":"2","notaSugerida":"3","dataUlt":"24/07/2026","tipoUlt":"Rotineira"},{"item":34,"codigoSGE":"230027","nome":"Ponte sobre o Rio do Ouro","rodovia":"BR-153","km":"479,79","snv":"153BTO0220","comprimento":"49,50","largura":"10,00","material":"Concreto","notaSGE":"4","notaSugerida":"2","dataUlt":"24/07/2026","tipoUlt":"Rotineira","lat":-10.056645,"lon":-48.824127},{"item":35,"codigoSGE":"230129","nome":"Viaduto Km 497,19","rodovia":"BR-153","km":"497,19","snv":"153BTO0230","comprimento":"10,40","largura":"17,85","material":"Aço/Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"24/07/2026","tipoUlt":"Rotineira"},{"item":36,"codigoSGE":"230032","nome":"Ponte sobre o Ribeirão São José II","rodovia":"BR-153","km":"513,16","snv":"153BTO0240","comprimento":"50,00","largura":"10,00","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":37,"codigoSGE":"230036","nome":"Ponte sobre o Ribeirão dos Mangues","rodovia":"BR-153","km":"537,35","snv":"153BTO0242","comprimento":"118,00","largura":"10,00","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":38,"codigoSGE":"230033","nome":"Ponte sobre o Córrego Perdizes","rodovia":"BR-153","km":"542,63","snv":"153BTO0250","comprimento":"80,90","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":39,"codigoSGE":"230038","nome":"Ponte sobre o Córrego Feliciano","rodovia":"BR-153","km":"571,95","snv":"153BTO0260","comprimento":"34,90","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":40,"codigoSGE":"230034","nome":"Ponte sobre o Ribeirão Faisqueiro","rodovia":"BR-153","km":"582,15","snv":"153BTO0260","comprimento":"35,00","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":41,"codigoSGE":"230039","nome":"Ponte sobre o Rio Crixás","rodovia":"BR-153","km":"600,40","snv":"153BTO0260","comprimento":"80,30","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"3","dataUlt":"16/06/2026","tipoUlt":"Rotineira"},{"item":42,"codigoSGE":"230040","nome":"Ponte sobre o Ribeirão Santa Tereza","rodovia":"BR-153","km":"603,12","snv":"153BTO0260","comprimento":"30,00","largura":"10,00","material":"Concreto","notaSGE":"3","notaSugerida":"2","dataUlt":"16/06/2026","tipoUlt":"Rotineira","lat":-11.120915,"lon":-48.92242},{"item":43,"nome":"Ponte km 91,63","rodovia":"BR-235","km":"91,63","snv":"235BTO0467","comprimento":"50,00","largura":"10,80","material":"Concreto","notaSugerida":"4","dataUlt":"15/07/2026","tipoUlt":"Rotineira"},{"item":44,"codigoSGE":"230126","nome":"Ponte sobre o Ribeirão Gameleirinha","rodovia":"BR-235","km":"141,66","snv":"235BTO0470","comprimento":"40,00","largura":"10,80","material":"Concreto","notaSGE":"4","notaSugerida":"4","dataUlt":"15/07/2026","tipoUlt":"Rotineira"},{"item":45,"codigoSGE":"230120","nome":"Ponte sobre o Rio Tocantins","rodovia":"BR-235","km":"163,60","snv":"235BTO0495","comprimento":"1.059,00","largura":"14,00","material":"Concreto","notaSGE":"3","notaSugerida":"2","dataUlt":"15/07/2026","tipoUlt":"Rotineira"},{"item":46,"codigoSGE":"230119","nome":"Viaduto sobre Ferrovia km 187,92","rodovia":"BR-235","km":"187,92","snv":"235BTO0510","comprimento":"10,90","largura":"12,85","material":"Concreto","notaSGE":"4","notaSugerida":"3","dataUlt":"27/07/2026","tipoUlt":"Rotineira"}];
+async function carregarBase(){
+  const ex=await DB.all('oaes');const keys=new Set(ex.map(o=>o.rodovia+'|'+o.km+'|'+o.nome));let n=0;
+  for(const b of BASE_ULPALMAS){const k=b.rodovia+'|'+b.km+'|'+b.nome;if(keys.has(k))continue;
+    await DB.put('oaes',{id:uid(),uf:'TO',...b,material:b.material,fonte:'Relatório trimestral UL Palmas – jul/2026 (Consórcio Houer Consane)',criado:Date.now()});n++}
+  toast(n+' OAEs importadas');render();
+}
+
+/* ================= CSV ================= */
+const CSV_COLS=['codigoSGE','nome','rodovia','km','snv','versaoSNV','uf','cidade','lat','lon','altitude','comprimento','largura','material','sistema','nTramos','anoConstrucao','tremTipo','superintendencia'];
+function csvParse(txt){const sep=(txt.split('\n')[0].match(/;/g)||[]).length>=(txt.split('\n')[0].match(/,/g)||[]).length?';':',';const rows=[];let r=[],c='',q=false;for(let i=0;i<txt.length;i++){const ch=txt[i];if(q){if(ch==='"'){if(txt[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else{if(ch==='"')q=true;else if(ch===sep){r.push(c);c=''}else if(ch==='\n'){r.push(c);rows.push(r);r=[];c=''}else if(ch!=='\r')c+=ch}}if(c||r.length){r.push(c);rows.push(r)}return rows.filter(x=>x.some(y=>y.trim()))}
+function csvOut(rows){return '﻿'+rows.map(r=>r.map(c=>{c=String(c??'');return /[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(';')).join('\r\n')}
+function pickFile(accept){return new Promise(res=>{const f=$('#fileAny');f.accept=accept;f.value='';f.onchange=()=>res(f.files[0]);f.click()})}
+async function importCSV(){
+  const f=await pickFile('.csv,text/csv');if(!f)return;const txt=await f.text();const rows=csvParse(txt);if(rows.length<2)return toast('CSV vazio');
+  const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const head=rows[0].map(norm);const map=CSV_COLS.map(c=>head.indexOf(norm(c)));
+  let n=0;for(const r of rows.slice(1)){const o={id:uid(),criado:Date.now()};CSV_COLS.forEach((c,i)=>{if(map[i]>=0&&r[map[i]]!=null&&r[map[i]]!=='')o[c]=r[map[i]].trim()});if(o.lat)o.lat=parseFloat(String(o.lat).replace(',','.'));if(o.lon)o.lon=parseFloat(String(o.lon).replace(',','.'));if(!o.nome&&!o.km)continue;await DB.put('oaes',o);n++}
+  toast(n+' OAEs importadas');render();
+}
+function download(name,data,type){const b=data instanceof Blob?data:new Blob([data],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)}
+
+/* ================= MENU ================= */
+function menu(){
+  sheet('Menu',`<div class="list card" style="padding:0">
+   ${[['resumo','📊 Resumo e relatório consolidado'],['cfg','⚙️ Configurações (empresa, contrato, logos, responsável)'],['csvmodelo','⬇️ Baixar modelo CSV de cadastro'],['csvimp','⬆️ Importar OAEs por CSV'],['base','🗂️ Carregar base UL Palmas (46 OAEs)'],['bkp','💾 Exportar backup completo (JSON)'],['rest','♻️ Restaurar backup (JSON)'],['sobre','ℹ️ Sobre os critérios']].map(([k,t])=>`<div class="item" data-k="${k}"><div class="grow t">${t}</div></div>`).join('')}</div>`,null,(el,close)=>{
+   el.querySelectorAll('.item').forEach(it=>it.onclick=async()=>{close();const k=it.dataset.k;
+    if(k==='resumo')go('resumo');else if(k==='cfg')go('cfg');
+    else if(k==='csvmodelo')download('modelo_cadastro_OAE.csv',csvOut([CSV_COLS,['230090','Ponte sobre o Rio Exemplo','BR-010','426,12','010BTO0276','202610A','TO','Porto Nacional','-10.53687','-48.379128','250','80,20','12,40','Concreto armado','Moldado in loco','4','1985','TB-45','UL Palmas']]),'text/csv');
+    else if(k==='csvimp')importCSV();else if(k==='base')carregarBase();
+    else if(k==='bkp')backup();else if(k==='rest')restore();else if(k==='sobre')sobre()})});
+}
+function sobre(){sheet('Critérios adotados',`<div class="card small">
+ <h3>Nota técnica por elemento (Anexo C – DNIT 010/2024-PRO)</h3><table class="tbl">${[5,4,3,2,1].map(n=>`<tr><td>${notaBadge(n)}</td><td><b>${NOTAS[n]}</b><br>${NOTA_ACAO[n]}</td></tr>`).join('')}</table>
+ <p>Nota final da OAE: proposta automaticamente como a <b>menor nota entre os elementos com função estrutural</b> (observação do Anexo C), podendo ser ajustada pelo inspetor com justificativa.</p>
+ <h3>Estado de condição do dano (Anexo D)</h3><table class="tbl">${[4,3,2,1].map(n=>`<tr><td><b>EC ${n} – ${EC[n]}</b></td><td>${EC_DESC[n]}</td></tr>`).join('')}</table>
+ <h3>Laudo especializado</h3><p>Obrigatório quando a estrutura apresentar nota técnica ≤ 2 (IPR 709/2026, item 2.2.2).</p>
+ <h3>Registro fotográfico</h3><p>Mínimo de seis fotos: vista superior, vista inferior, vistas laterais e detalhes de apoios, articulações e juntas (item 5.1). As fotos recebem carimbo de data, hora, coordenadas, rodovia/km e OAE.</p>
+ <h3>Periodicidade (Quadro 1)</h3><p>Rotineira: 2 anos · Especial: 5 anos · Cadastral, extraordinária e intermediária: sob demanda.</p></div>`)}
+
+/* ================= SHEET (modal) ================= */
+function sheet(title,html,footer,onMount){
+  const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="sheet"><div class="sh"><h3>${esc(title)}</h3><button class="btn sm" data-x>Fechar</button></div><div class="sb">${html}</div>${footer?`<div class="sf">${footer}</div>`:''}</div>`;
+  document.body.appendChild(m);const close=()=>m.remove();m.querySelector('[data-x]').onclick=close;m.onclick=e=>{if(e.target===m)m.querySelector('[data-x]').click()};
+  if(onMount)onMount(m,close);return {el:m,close};
+}
+
+/* ================= OAE ================= */
+const OAE_FIELDS=[
+ ['Identificação',[['nome','Nome da OAE','text',2],['codigoSGE','Código SGE'],['comprimento','Comprimento (m)'],['largura','Largura (m)'],['tremTipo','Trem-tipo'],['anoConstrucao','Ano de construção'],['material','Tipo de estrutura','sel',0,['Concreto armado','Concreto protendido','Aço','Mista aço/concreto','Madeira','Outro']],['sistema','Sistema construtivo','sel',0,['Moldado in loco','Pré-moldado','Misto','Outro']]]],
+ ['Localização',[['rodovia','Rodovia'],['km','Local na via (km)'],['uf','UF'],['cidade','Cidade próxima'],['snv','Código SNV'],['versaoSNV','Versão SNV'],['lat','Latitude (decimal)'],['lon','Longitude (decimal)'],['altitude','Altitude (m)'],['superintendencia','Superintendência / UL'],['adminDNIT','Administração DNIT?','sel',0,['Sim','Não']],['projetista','Projetista'],['construtor','Construtor']]],
+ ['Características funcionais',[['atendSNV','Atendimento ao SNV','sel',0,['Em serviço','Demolida','Inconclusa','Inservível']],['regiao','Tipo de região','sel',0,['Plana','Ondulada','Montanhosa']],['tracado','Tipo de traçado','sel',0,['Tangente','Curva']],['rampa','Rampa máxima (°)'],['raio','Raio da curva (m)'],['nFaixas','Nº de faixas'],['largFaixa','Largura da faixa (m)'],['acostD','Acostamento direito (m)'],['acostE','Acostamento esquerdo (m)'],['calcD','Calçada direita (m)'],['calcE','Calçada esquerda (m)'],['gabH','Gabarito horizontal (m)'],['gabV','Gabarito vertical (m)'],['pistaAntes','Largura pista antes (m)'],['pistaDepois','Largura pista depois (m)'],['nTramos','Nº de tramos']]],
+ ['Aspectos especiais, deficiências e rotas',[['aspectos','Aspectos especiais','ta',2],['deficiencias','Deficiências funcionais','ta',2],['rotaExiste','Rota alternativa','sel',0,['Existe','Não existe']],['rotaAcresc','Acréscimo de distância (km)'],['rotaDesc','Descrição da rota alternativa','ta',2],['projSubst','Projeto de substituição','sel',0,['Não existe projeto','Existe projeto']],['custoSubst','Custo estimado (R$)'],['seiSubst','Processo SEI'],['periodo','Período de inspeção (anos)'],['equip','Equipamento necessário','ta',2],['epocaIni','Melhor época inicial'],['epocaFim','Melhor época final']]]
+];
+async function vOAE(v){
+  const o=await DB.get('oaes',S.oaeId);if(!o){go('home');return}
+  setTitle(o.nome||'Nova OAE',`${o.rodovia||''} km ${o.km||''}`);
+  const insps=(await DB.byIdx('insps','oae',o.id)).sort((a,b)=>b.data.localeCompare(a.data));
+  const edit=S.editOAE;
+  v.innerHTML=`
+   <div class="card"><div class="row" style="align-items:center"><div style="flex:3 1 200px"><b style="font-size:16px">${esc(o.nome||'(sem nome)')}</b><div class="small muted">${esc(o.rodovia||'')} · km ${esc(o.km||'')} · SNV ${esc(o.snv||'–')} · SGE ${esc(o.codigoSGE||'S/N')}<br>${esc(o.comprimento||'?')} m × ${esc(o.largura||'?')} m · ${esc(o.material||'')}${o.lat?` · ${latS(o.lat)} ${lonS(o.lon)}`:''}</div>
+   ${o.fonte?`<div class="small muted">Fonte do cadastro: ${esc(o.fonte)}${o.notaSugerida?` · nota sugerida anterior: ${o.notaSugerida}`:''}</div>`:''}</div>
+   <div class="btns" style="flex:1 1 160px;justify-content:flex-end"><button class="btn acc" id="bInsp">+ Nova inspeção</button></div></div></div>
+   <div class="card"><h2>Inspeções</h2>${insps.length?`<div class="list">${insps.map(i=>`<div class="item" data-i="${i.id}">${notaBadge(notaFinal(i))}<div class="grow"><div class="t">${esc(i.tipo)} – ${fmtD(i.data)}</div><div class="s">${(i.elementos||[]).length} elementos · ${(i.elementos||[]).reduce((s,e)=>s+(e.danos||[]).length,0)} danos · ${esc(i.inspetor||'')}</div></div><span class="muted">›</span></div>`).join('')}</div>`:'<p class="muted small">Nenhuma inspeção registrada para esta OAE.</p>'}</div>
+   <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">Cadastro (Anexo A)</h2><div style="flex:0 0 auto" class="btns"><button class="btn sm" id="bEdit">${edit?'Concluir edição':'Editar'}</button></div></div>
+   <div id="oform" style="margin-top:10px"></div></div>
+   <div class="btns"><button class="btn bad" id="bDel">Excluir OAE</button></div>`;
+  const of=$('#oform');
+  of.innerHTML=OAE_FIELDS.map(([sec,fs])=>`<h3>${sec}</h3><div class="row">${fs.map(([k,l,t,w,opts])=>{const val=o[k]??'';
+    if(!edit)return `<div style="flex:${w?'1 1 100%':'1 1 140px'}"><div class="small muted">${l}</div><div>${esc(val)||'<span class=muted>–</span>'}</div></div>`;
+    const inp=t==='sel'?`<select data-k="${k}"><option value=""></option>${opts.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')}</select>`:t==='ta'?`<textarea data-k="${k}" style="min-height:60px">${esc(val)}</textarea>`:`<input type="text" data-k="${k}" value="${esc(val)}">`;
+    return `<label class="f" style="flex:${w?'1 1 100%':'1 1 140px'}"><span>${l}</span>${inp}</label>`}).join('')}</div>`).join('')+
+    (edit?`<button class="btn" id="bGps">📍 Capturar coordenadas pelo GPS</button>`:'');
+  const save=debounce(async()=>{of.querySelectorAll('[data-k]').forEach(i=>{let val=i.value;if((i.dataset.k==='lat'||i.dataset.k==='lon')&&val)val=parseFloat(val.replace(',','.'));o[i.dataset.k]=val});await DB.put('oaes',o);setTitle(o.nome||'Nova OAE',`${o.rodovia||''} km ${o.km||''}`)},0);
+  of.querySelectorAll('[data-k]').forEach(i=>i.oninput=save);
+  const bg=$('#bGps');if(bg)bg.onclick=async()=>{try{toast('Obtendo posição…');const c=await gps();o.lat=+c.latitude.toFixed(7);o.lon=+c.longitude.toFixed(7);if(c.altitude)o.altitude=c.altitude.toFixed(1);await DB.put('oaes',o);toast(`Precisão ±${Math.round(c.accuracy)} m`);render()}catch(e){toast('GPS: '+e.message)}};
+  $('#bEdit').onclick=()=>{S.editOAE=!edit;render()};
+  $('#bInsp').onclick=()=>novaInsp(o);
+  v.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>go('insp',{inspId:el.dataset.i,tab:'dados'}));
+  $('#bDel').onclick=async()=>{if(!confirm('Excluir esta OAE e todas as suas inspeções e fotos deste aparelho?'))return;for(const i of insps){await delInsp(i.id)}await DB.del('oaes',o.id);go('home')};
+}
+async function novaInsp(o){
+  const prev=(await DB.byIdx('insps','oae',o.id)).sort((a,b)=>b.data.localeCompare(a.data))[0];
+  const i={id:uid(),oaeId:o.id,tipo:prev?'Rotineira':'Cadastral + Rotineira',data:today(),inspetor:CFG.resp||'',crea:CFG.crea||'',equipe:'',clima:'',nivelAgua:'',temperatura:'',equipamentos:'Trena, trena a laser, binóculo, câmera/celular com GPS',obs:'',elementos:[],laudo:{},criado:Date.now()};
+  if(prev&&confirm('Copiar a lista de elementos da inspeção anterior ('+fmtD(prev.data)+')? As notas e danos anteriores ficam como referência para comparação.')){
+    i.elementos=(prev.elementos||[]).map(e=>({...e,id:uid(),notaAnt:e.nota,danosAnt:(e.danos||[]).map(d=>d.dano).join('; '),nota:'',danos:[],insuf:'',causa:''}));
+    i.prevId=prev.id;
+  }
+  await DB.put('insps',i);go('insp',{inspId:i.id,tab:prev?'elementos':'dados'});
+}
+async function delInsp(id){const fs=await DB.byIdx('fotos','insp',id);for(const f of fs)await DB.del('fotos',f.id);await DB.del('insps',id)}
+
+/* ================= INSPEÇÃO ================= */
+function notaFinal(i){if(i.laudo&&i.laudo.notaFinal)return +i.laudo.notaFinal;return notaAuto(i)}
+function notaAuto(i){const ns=(i.elementos||[]).filter(e=>famOf(e.familia).e&&e.nota).map(e=>+e.nota);return ns.length?Math.min(...ns):''}
+async function vInsp(v){
+  const i=await DB.get('insps',S.inspId);if(!i){go('home');return}
+  const o=await DB.get('oaes',i.oaeId);
+  setTitle(o.nome||'OAE',`${i.tipo} · ${fmtD(i.data)} · ${o.rodovia||''} km ${o.km||''}`);
+  const tabs=[['dados','📋','Dados'],['elementos','🧱','Elementos'],['fotos','📷','Fotos'],['laudo','📝','Laudo'],['rel','📄','Relatório']];
+  const tb=$('#tabs');tb.classList.remove('hidden');tb.innerHTML=tabs.map(([k,ic,t])=>`<button data-t="${k}" class="${S.tab===k?'on':''}"><b>${ic}</b>${t}</button>`).join('');
+  tb.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;history.replaceState({...S},'');render()});
+  const save=async()=>{i.alterado=Date.now();await DB.put('insps',i)};
+  if(S.tab==='dados')tabDados(v,i,o,save);
+  else if(S.tab==='elementos')tabElementos(v,i,o,save);
+  else if(S.tab==='fotos')await tabFotos(v,i,o,save);
+  else if(S.tab==='laudo')tabLaudo(v,i,o,save);
+  else if(S.tab==='rel')await tabRel(v,i,o,save);
+}
+function tabDados(v,i,o,save){
+  v.innerHTML=`<div class="card"><h2>1. Dados básicos</h2>
+   <div class="row"><label class="f"><span>Tipo de inspeção</span><select data-k="tipo">${TIPOS.map(t=>`<option ${t===i.tipo?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Data da inspeção</span><input type="date" data-k="data" value="${esc(i.data)}"></label></div>
+   <div class="row"><label class="f"><span>Inspetor (engenheiro responsável)</span><input type="text" data-k="inspetor" value="${esc(i.inspetor)}"></label><label class="f"><span>CREA</span><input type="text" data-k="crea" value="${esc(i.crea)}"></label></div>
+   <label class="f"><span>Equipe</span><input type="text" data-k="equipe" value="${esc(i.equipe)}" placeholder="Nomes e funções"></label>
+   <div class="row"><label class="f"><span>Condição do tempo</span><select data-k="clima">${['','Ensolarado','Nublado','Chuvoso','Após chuva'].map(t=>`<option ${t===i.clima?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Nível d'água</span><select data-k="nivelAgua">${['','Águas baixas (estiagem)','Normal','Águas altas (cheia)','Sem curso d\'água'].map(t=>`<option ${t===i.nivelAgua?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Temperatura ambiente (°C)</span><input type="text" inputmode="decimal" data-k="temperatura" value="${esc(i.temperatura)}" placeholder="Para leitura de juntas"></label></div>
+   <label class="f"><span>Equipamentos utilizados</span><input type="text" data-k="equipamentos" value="${esc(i.equipamentos)}"></label>
+   <label class="f"><span>Limitações de acesso / elementos não inspecionados</span><textarea data-k="limitacoes" style="min-height:60px" placeholder="Ex.: fundações submersas não avaliadas; interior de caixão sem acesso">${esc(i.limitacoes||'')}</textarea></label>
+   <label class="f"><span>Observação geral (Anexo B – item 1)</span><textarea data-k="obs" placeholder="Descrição da condição geral observada">${esc(i.obs)}</textarea></label>
+   <button class="btn sm" id="bObs">Gerar texto sugerido a partir dos danos</button>
+  </div>
+  ${i.prevId?`<div class="infobox">Inspeção criada a partir da anterior. Em cada elemento aparece a nota e os danos registrados antes, para avaliar a evolução (item 5.3.1 da norma).</div>`:''}
+  <div class="btns"><button class="btn bad" id="bDelI">Excluir inspeção</button></div>`;
+  v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{i[el.dataset.k]=el.value;save()});
+  $('#bObs').onclick=()=>{const t=textoObs(i,o);const ta=v.querySelector('[data-k=obs]');if(ta.value&&!confirm('Substituir o texto atual pelo texto sugerido?'))return;ta.value=t;i.obs=t;save()};
+  $('#bDelI').onclick=async()=>{if(!confirm('Excluir esta inspeção e suas fotos?'))return;await delInsp(i.id);history.back()};
+}
+
+/* ---------- Elementos ---------- */
+function tabElementos(v,i,o,save){
+  const els=i.elementos||(i.elementos=[]);
+  const tramos=[...new Set(els.map(e=>+e.tramo||1))].sort((a,b)=>a-b);
+  const semNota=els.filter(e=>!e.nota).length;
+  v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">2–4. Elementos, notas e danos</h2><div class="small muted">${els.length} elementos · ${semNota} sem nota · nota automática da OAE: ${notaBadge(notaAuto(i))}</div></div>
+   <div class="btns" style="flex:1 1 200px;justify-content:flex-end"><button class="btn sm" id="bModelo">Gerar pelo modelo</button><button class="btn sm pri" id="bAdd">+ Elemento</button></div></div>
+   ${semNota&&els.length?`<button class="btn sm" id="bFill4" style="margin-top:8px">Atribuir 4 – Boa aos elementos sem nota e sem danos</button>`:''}</div>
+   ${!els.length?`<div class="infobox">Use <b>Gerar pelo modelo</b> para criar automaticamente a lista de elementos por tramo (cortinas, lajes, longarinas, transversinas, pilares, aparelhos de apoio, juntas, guarda-rodas, pavimento e acessos), seguindo a organização das fichas do Anexo A/B. Depois ajuste o que for diferente em campo.</div>`:''}
+   ${tramos.map(t=>`<div class="tramo"><div class="th">Tramo ${t}<span class="pill">${els.filter(e=>(+e.tramo||1)===t).length}</span></div>
+     ${els.filter(e=>(+e.tramo||1)===t).map(e=>{const nd=(e.danos||[]).length;return `<div class="el" data-e="${e.id}"><span class="code">${esc(e.codigo||'?')}</span><div class="grow"><div class="t">${esc(e.familia)}</div><div class="s">${esc(e.regiao)}${nd?` · <b style="color:var(--warn)">${nd} dano(s)</b>: ${esc(e.danos.map(d=>d.dano==='Outro (descrever)'?d.outro:d.dano).join('; '))}`:' · sem danos'}${e.notaAnt?` · ant.: ${e.notaAnt}`:''}</div></div>${notaBadge(e.nota)}</div>`}).join('')}</div>`).join('')}`;
+  v.querySelectorAll('[data-e]').forEach(el=>el.onclick=()=>{S._scroll=window.scrollY;editElemento(i,o,els.find(e=>e.id===el.dataset.e),save)});
+  $('#bAdd').onclick=()=>{const e={id:uid(),tramo:tramos.length?tramos[tramos.length-1]:1,familia:FAM[0].f,regiao:FAM[0].r,codigo:'',nota:'',danos:[]};editElemento(i,o,e,save,true)};
+  $('#bModelo').onclick=()=>modelo(i,o,save);
+  const bf=$('#bFill4');if(bf)bf.onclick=async()=>{let n=0;els.forEach(e=>{if(!e.nota&&!(e.danos||[]).length){e.nota='4';n++}});await save();toast(n+' elementos com nota 4');render()};
+}
+function modelo(i,o,save){
+  const nt=+o.nTramos||3;
+  sheet('Gerar elementos pelo modelo',`<div class="card">
+   <div class="row"><label class="f"><span>Nº de tramos</span><input type="number" id="m_t" value="${nt}" min="1"></label><label class="f"><span>Longarinas por tramo</span><input type="number" id="m_v" value="2" min="0"></label></div>
+   <div class="row"><label class="f"><span>Transversinas por tramo</span><input type="number" id="m_tr" value="2" min="0"></label><label class="f"><span>Pilares por apoio</span><input type="number" id="m_p" value="2" min="0"></label></div>
+   <label class="f"><span>Material da superestrutura</span><select id="m_mat"><option value="c">Concreto armado</option><option value="cp">Concreto protendido</option><option value="m">Metálica</option><option value="w">Madeira</option></select></label>
+   <label class="f"><span>Proteção lateral</span><select id="m_g"><option value="nj">Barreira New Jersey</option><option value="gr">Guarda-rodas + guarda-corpo</option><option value="g">Somente guarda-rodas</option></select></label>
+   <div class="check"><input type="checkbox" id="m_n" checked><label for="m_n">Aparelhos de apoio (neoprene)</label></div>
+   <div class="check"><input type="checkbox" id="m_vc" checked><label for="m_vc">Viga de contraventamento / travessa nos apoios</label></div>
+   <div class="check"><input type="checkbox" id="m_b"><label for="m_b">Blocos de fundação aparentes</label></div>
+   <div class="check"><input type="checkbox" id="m_d" checked><label for="m_d">Drenagem (buzinotes)</label></div>
+   <div class="check"><input type="checkbox" id="m_ca" checked><label for="m_ca">Curso d'água / margens e sinalização</label></div>
+   ${(i.elementos||[]).length?'<div class="warnbox">Os elementos gerados serão acrescentados aos já existentes.</div>':''}
+  </div>`,`<button class="btn pri block" id="m_ok">Gerar elementos</button>`,(el,close)=>{
+   el.querySelector('#m_ok').onclick=async()=>{
+    const g=id=>el.querySelector(id);const T=Math.max(1,+g('#m_t').value),NV=+g('#m_v').value,NTR=+g('#m_tr').value,NP=+g('#m_p').value,mat=g('#m_mat').value,prot=g('#m_g').value;
+    const laje=mat==='w'?'TABULEIRO DE MADEIRA':'LAJE DE CONCRETO ARMADO',viga={c:'VIGA LONGARINA DE CONCRETO ARMADO',cp:'VIGA LONGARINA DE CONCRETO PROTENDIDO',m:'VIGA METÁLICA',w:'VIGA DE MADEIRA'}[mat],trans=mat==='m'?'TRANSVERSINA / CONTRAVENTAMENTO METÁLICO':'TRANSVERSINA DE CONCRETO ARMADO',pil=mat==='w'?'PILAR DE MADEIRA':'PILAR DE CONCRETO ARMADO';
+    const out=[];let tc=0,pc=0,vc=0,bc=0,nc=0;const add=(t,f,c)=>out.push({id:uid(),tramo:t,familia:f,regiao:famOf(f).r,codigo:c,nota:'',danos:[]});
+    for(let t=1;t<=T;t++){
+      if(t===1){add(t,'ATERRO / ACESSO','A1');add(t,'CORTINA','C1');add(t,'JUNTA DE DILATAÇÃO','J1')}
+      add(t,laje,mat==='w'?'TB1':'L1');for(let k=1;k<=NV;k++)add(t,viga,'V'+k);for(let k=0;k<NTR;k++)add(t,trans,'T'+(++tc));
+      if(t<T){if(g('#m_n').checked)add(t,'APARELHO DE APOIO (NEOPRENE)','N'+(++nc));const p0=pc;for(let k=0;k<NP;k++)add(t,pil,'P'+(++pc));if(g('#m_vc').checked&&NP>1)add(t,'VIGA DE CONTRAVENTAMENTO','VC'+(++vc));if(g('#m_b').checked)for(let k=p0+1;k<=pc;k++)add(t,'BLOCO DE FUNDAÇÃO / SAPATA','B'+(++bc))}
+      if(prot==='nj'){add(t,'BARREIRA NEW JERSEY','G1 (LD)');add(t,'BARREIRA NEW JERSEY','G2 (LE)')}else{add(t,'GUARDA-RODAS','G1 (LD)');add(t,'GUARDA-RODAS','G2 (LE)');if(prot==='gr'){add(t,'GUARDA-CORPO DE CONCRETO','GC1 (LD)');add(t,'GUARDA-CORPO DE CONCRETO','GC2 (LE)')}}
+      add(t,'PAVIMENTO ASFÁLTICO','PV1');if(g('#m_d').checked)add(t,'DRENAGEM DO TABULEIRO (BUZINOTES)','D1');
+      if(t===T){if(g('#m_n').checked&&T>1)add(t,'APARELHO DE APOIO (NEOPRENE)','NE2');add(t,'CORTINA','C2');add(t,'JUNTA DE DILATAÇÃO','J2');add(t,'ATERRO / ACESSO','A2')}
+      if(t===1&&g('#m_n').checked)out.splice(out.findIndex(x=>x.codigo==='J1')+1,0,{id:uid(),tramo:1,familia:'APARELHO DE APOIO (NEOPRENE)',regiao:'Mesoestrutura',codigo:'NE1',nota:'',danos:[]});
+    }
+    if(g('#m_ca').checked){add(1,'CURSO D\'ÁGUA / MARGENS','CA1');add(1,'SINALIZAÇÃO','S1')}
+    i.elementos=(i.elementos||[]).concat(out);if(!o.nTramos){o.nTramos=String(T);await DB.put('oaes',o)}
+    await save();close();toast(out.length+' elementos gerados');render()}})
+}
+function editElemento(i,o,e,save,isNew){
+  const prevMat=JSON.stringify(e);
+  const draw=()=>{const fm=famOf(e.familia);const dl=danosDe(e.familia).map(d=>d[0]);
+   return `<div class="card">
+    <div class="row"><label class="f" style="flex:3 1 220px"><span>Família de elementos</span><select id="x_f">${REGIOES.map(r=>`<optgroup label="${r}">${FAM.filter(f=>f.r===r).map(f=>`<option ${f.f===e.familia?'selected':''}>${f.f}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    <label class="f" style="flex:1 1 90px"><span>Código</span><input type="text" id="x_c" value="${esc(e.codigo)}" placeholder="${fm.p}1"></label><label class="f" style="flex:1 1 70px"><span>Tramo</span><input type="number" id="x_t" value="${esc(e.tramo)}" min="1"></label></div>
+    <div class="small muted" style="margin:-4px 0 8px">Região: <b>${esc(fm.r)}</b> · ${fm.e?'elemento com função estrutural (entra no cálculo da nota final)':'elemento sem função estrutural (não entra no cálculo automático da nota final)'}</div>
+    ${e.notaAnt||e.danosAnt?`<div class="infobox small">Inspeção anterior: nota <b>${esc(e.notaAnt||'–')}</b>${e.danosAnt?` · danos: ${esc(e.danosAnt)}`:''}</div>`:''}
+    <span class="small muted" style="font-weight:600">NOTA TÉCNICA (Anexo C)</span><div class="chips" id="x_n" style="margin:4px 0 4px">${[1,2,3,4,5].map(n=>`<button class="chip c${n} ${+e.nota===n?'on':''}" data-n="${n}">${n}</button>`).join('')}</div>
+    <div class="small muted" id="x_nd" style="min-height:34px">${e.nota?`<b>${NOTAS[e.nota]}</b> – ${NOTA_ACAO[e.nota]}`:'Toque para atribuir a nota.'}</div>
+   </div>
+   <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">Danos (Anexo B – item 3)</h2><div style="flex:0 0 auto"><button class="btn sm pri" id="x_ad">+ Dano</button></div></div><div id="x_ds" style="margin-top:10px">
+    ${(e.danos||[]).map((d,k)=>`<div class="dano" data-k="${k}">
+     <label class="f"><span>Dano</span><select data-f="dano">${dl.concat([OUTRO]).map(x=>`<option ${x===d.dano?'selected':''}>${x}</option>`).join('')}</select></label>
+     ${d.dano===OUTRO?`<label class="f"><span>Descrição do dano</span><input type="text" data-f="outro" value="${esc(d.outro)}"></label>`:''}
+     <div class="row"><label class="f" style="flex:1 1 70px"><span>Quant.</span><input type="text" inputmode="numeric" data-f="quant" value="${esc(d.quant)}"></label>
+     <label class="f" style="flex:3 1 160px"><span>Localização</span><input type="text" list="locs" data-f="loc" value="${esc(d.loc)}"></label></div>
+     <div class="row"><label class="f"><span>Extensão relativa</span><select data-f="ext">${['',...EXT].map(x=>`<option ${x===d.ext?'selected':''}>${x}</option>`).join('')}</select></label>
+     <label class="f"><span>Dimensões (opcional)</span><input type="text" data-f="dim" value="${esc(d.dim)}" placeholder="ex.: 0,40×0,20 m; abertura 0,3 mm"></label></div>
+     <span class="small muted" style="font-weight:600">ESTADO DE CONDIÇÃO (Anexo D)</span><div class="chips" style="margin:4px 0 6px">${[4,3,2,1].map(n=>`<button class="chip ${'c'+(n===4?5:n===3?3:n===2?2:1)} ${+d.ec===n?'on':''}" data-ec="${n}">EC ${n}</button>`).join('')}</div>
+     <div class="small muted">${d.ec?`<b>${EC[d.ec]}:</b> ${EC_DESC[d.ec]}`:''}</div>
+     <div class="check"><input type="checkbox" data-f="nc" ${d.nc?'checked':''} id="nc${k}"><label for="nc${k}">Gerar não conformidade para este dano</label></div>
+     <div class="btns" style="justify-content:flex-end"><button class="btn sm" data-foto="${k}">📷 Foto do dano</button><button class="btn sm bad" data-del="${k}">Remover</button></div>
+    </div>`).join('')||'<p class="muted small">Nenhum dano registrado. Se não houver danos, basta atribuir a nota.</p>'}
+   </div></div>
+   <div class="card"><h2>Insuficiência estrutural (Anexo B – item 4)</h2>
+    <label class="f"><span>Insuficiência estrutural / descrição técnica</span><textarea id="x_i" style="min-height:70px">${esc(e.insuf||'')}</textarea></label>
+    <label class="f"><span>Causa provável</span><textarea id="x_ca" style="min-height:60px">${esc(e.causa||'')}</textarea></label>
+    <button class="btn sm" id="x_sug">Sugerir texto a partir dos danos</button>
+    <label class="f" style="margin-top:10px"><span>Observação do elemento</span><input type="text" id="x_o" value="${esc(e.obs||'')}"></label>
+   </div><datalist id="locs">${LOCAIS.map(l=>`<option value="${l}">`).join('')}</datalist>`};
+  const sh=sheet(isNew?'Novo elemento':`${e.codigo||''} · ${e.familia}`,draw(),`<button class="btn bad" id="x_rm">${isNew?'Cancelar':'Excluir'}</button><button class="btn" id="x_ft">📷 Foto</button><button class="btn pri" style="flex:1" id="x_ok">Salvar</button>`,()=>{});
+  const el=sh.el,body=el.querySelector('.sb');
+  const bind=()=>{
+   const q=s=>body.querySelector(s);
+   q('#x_f').onchange=ev=>{e.familia=ev.target.value;e.regiao=famOf(e.familia).r;if(!e.codigo)e.codigo=famOf(e.familia).p+'1';redraw()};
+   q('#x_c').oninput=ev=>e.codigo=ev.target.value;q('#x_t').oninput=ev=>e.tramo=+ev.target.value||1;
+   q('#x_i').oninput=ev=>e.insuf=ev.target.value;q('#x_ca').oninput=ev=>e.causa=ev.target.value;q('#x_o').oninput=ev=>e.obs=ev.target.value;
+   body.querySelectorAll('#x_n .chip').forEach(c=>c.onclick=()=>{e.nota=c.dataset.n;redraw()});
+   q('#x_ad').onclick=()=>{(e.danos=e.danos||[]).push({dano:danosDe(e.familia)[0][0],quant:'1',loc:'',ext:'≤20%',ec:'3'});redraw();body.scrollTop=body.scrollHeight};
+   body.querySelectorAll('.dano').forEach(dv=>{const d=e.danos[+dv.dataset.k];
+    dv.querySelectorAll('[data-f]').forEach(inp=>{const f=inp.dataset.f;const h=()=>{d[f]=inp.type==='checkbox'?inp.checked:inp.value;if(f==='dano')redraw()};inp.oninput=h;inp.onchange=h});
+    dv.querySelectorAll('[data-ec]').forEach(c=>c.onclick=()=>{d.ec=c.dataset.ec;if(c.dataset.ec==='1')d.nc=true;redraw()});
+    dv.querySelector('[data-del]').onclick=()=>{e.danos.splice(+dv.dataset.k,1);redraw()};
+    dv.querySelector('[data-foto]').onclick=()=>fotoElemento(i,o,e,save,d)});
+   q('#x_sug').onclick=()=>{const ds=(e.danos||[]);if(!ds.length)return toast('Registre ao menos um dano');
+     e.insuf=ds.map(d=>{const nm=d.dano===OUTRO?d.outro:d.dano;return `${nm}${d.loc?' na '+d.loc.toLowerCase():''}${d.ext?' (extensão '+d.ext+')':''}`}).join('; ')+'.';
+     e.causa=[...new Set(ds.map(d=>(danoInfo(e.familia,d.dano)||[])[2]).filter(Boolean))].join('; ')+'.';redraw()};
+  };
+  const redraw=()=>{const st=body.scrollTop;body.innerHTML=draw();bind();body.scrollTop=st};
+  bind();
+  el.querySelector('#x_ok').onclick=async()=>{if(!e.codigo)e.codigo=famOf(e.familia).p+'1';if(!i.elementos.find(x=>x.id===e.id))i.elementos.push(e);await save();sh.close();render()};
+  el.querySelector('#x_ft').onclick=()=>fotoElemento(i,o,e,save);
+  el.querySelector('#x_rm').onclick=async()=>{if(isNew){sh.close();return}if(!confirm('Excluir o elemento '+e.codigo+'?'))return;i.elementos=i.elementos.filter(x=>x.id!==e.id);await save();sh.close();render()};
+  el.querySelector('[data-x]').onclick=async()=>{if(!isNew&&JSON.stringify(e)!==prevMat){await save()}sh.close();render()};
+}
+async function fotoElemento(i,o,e,save,d){
+  if(!i.elementos.find(x=>x.id===e.id))i.elementos.push(e);await save();
+  const nm=d?(d.dano===OUTRO?d.outro:d.dano):'';
+  capturarFoto(i,o,{elementoId:e.id,legenda:`${e.familia} ${e.codigo}${e.tramo?' – tramo '+e.tramo:''}${nm?' – '+nm:''}`.toUpperCase()},true);
+}
+
+/* ---------- Fotos ---------- */
+let _gpsCache=null;
+async function capturarFoto(i,o,meta,camera=true){
+  const inp=camera?$('#filePhoto'):$('#filePhotoGal');inp.value='';
+  const p=gps().then(c=>_gpsCache={lat:c.latitude,lon:c.longitude,acc:c.accuracy,t:Date.now()}).catch(()=>null);
+  inp.onchange=async()=>{const files=[...inp.files];if(!files.length)return;toast('Processando foto…');await p;
+    const exist=await DB.byIdx('fotos','insp',i.id);let n=exist.reduce((m,f)=>Math.max(m,f.n||0),0);
+    for(const f of files){const g=(_gpsCache&&Date.now()-_gpsCache.t<120000)?_gpsCache:null;const ts=f.lastModified&&!camera?new Date(f.lastModified):new Date();
+      const lat=g?g.lat:o.lat,lon=g?g.lon:o.lon;
+      const data=await processaFoto(f,{ts,lat,lon,linhas:[`${o.rodovia||''} km ${o.km||''}`,o.nome||'',meta.legenda||'']});
+      await DB.put('fotos',{id:uid(),inspId:i.id,n:++n,data,legenda:meta.legenda||'',elementoId:meta.elementoId||'',lat,lon,gpsFoto:!!g,ts:ts.getTime()})}
+    toast(files.length>1?files.length+' fotos adicionadas':'Foto adicionada');if(S.tab==='fotos')render()};
+  inp.click();
+}
+function processaFoto(file,{ts,lat,lon,linhas}){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{
+  const MAX=1600;let w=img.naturalWidth,h=img.naturalHeight;const k=Math.min(1,MAX/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);
+  const fs=Math.max(14,Math.round(w/48));x.font=`600 ${fs}px Arial`;x.textAlign='right';x.textBaseline='bottom';
+  const dt=ts.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' '+ts.toLocaleTimeString('pt-BR');
+  const L=[dt,lat!=null&&lat!==''?`${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}`:'sem coordenadas',...linhas.filter(Boolean).map(s=>s.length>48?s.slice(0,46)+'…':s)];
+  const lh=fs*1.25;const bw=Math.max(...L.map(s=>x.measureText(s).width))+fs;x.fillStyle='rgba(0,0,0,.45)';x.fillRect(w-bw-fs*.4,h-lh*L.length-fs*.8,bw+fs*.4,lh*L.length+fs*.8);
+  x.fillStyle='#fff';x.shadowColor='#000';x.shadowBlur=3;L.forEach((s,j)=>x.fillText(s,w-fs*.6,h-fs*.4-lh*(L.length-1-j)));
+  URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',.72))};img.onerror=()=>rej(new Error('Imagem inválida'));img.src=url})}
+async function tabFotos(v,i,o,save){
+  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
+  const elById=Object.fromEntries((i.elementos||[]).map(e=>[e.id,e]));
+  v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">Registro fotográfico</h2><div class="small muted">${fs.length} foto(s). Mínimo recomendado: 6 (vista superior, inferior, laterais, apoios, juntas).</div></div>
+   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bCam">📷 Câmera</button><button class="btn" id="bGal">🖼️ Galeria</button></div></div>
+   ${fs.length<6?`<div class="warnbox" style="margin:10px 0 0">Faltam ${6-fs.length} foto(s) para o mínimo do item 5.1 da norma.</div>`:''}
+   <div class="chips" style="margin-top:10px">${['VISTA GERAL','VISTA SUPERIOR / PISTA','VISTA INFERIOR','VISTA LATERAL LD','VISTA LATERAL LE','ENCONTRO 1','ENCONTRO 2','APARELHOS DE APOIO','JUNTA DE DILATAÇÃO','ACESSO / ATERRO'].map(t=>`<button class="chip" data-q="${t}" style="font-weight:600;font-size:12.5px">${t}</button>`).join('')}</div>
+   <div class="small muted" style="margin-top:4px">Atalhos: toque para fotografar já com a legenda.</div></div>
+   <div class="photos">${fs.map(f=>{const e=elById[f.elementoId];return `<div class="ph" data-f="${f.id}"><img src="${f.data}" loading="lazy" alt=""><div class="cap"><b>FOTO ${f.n}</b> ${esc(f.legenda||'(sem legenda)')}${e?`<br><span class="muted">${esc(e.codigo)} · T${e.tramo}</span>`:''}${f.gpsFoto?'':' <span class="muted">· coord. da OAE</span>'}</div></div>`}).join('')}</div>`;
+  $('#bCam').onclick=()=>capturarFoto(i,o,{legenda:''},true);$('#bGal').onclick=()=>capturarFoto(i,o,{legenda:''},false);
+  v.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>capturarFoto(i,o,{legenda:b.dataset.q},true));
+  v.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>editFoto(i,fs.find(f=>f.id===c.dataset.f),fs));
+}
+function editFoto(i,f,fs){
+  const els=i.elementos||[];
+  sheet('Foto '+f.n,`<div class="card"><img src="${f.data}" style="width:100%;border-radius:8px">
+   <label class="f" style="margin-top:10px"><span>Legenda</span><textarea id="fl" style="min-height:60px">${esc(f.legenda)}</textarea></label>
+   <div class="row"><label class="f" style="flex:3 1 200px"><span>Elemento vinculado</span><select id="fe"><option value="">(nenhum)</option>${els.map(e=>`<option value="${e.id}" ${e.id===f.elementoId?'selected':''}>T${e.tramo} · ${esc(e.codigo)} · ${esc(e.familia)}</option>`).join('')}</select></label>
+   <label class="f" style="flex:1 1 80px"><span>Nº</span><input type="number" id="fn" value="${f.n}"></label></div>
+   <div class="small muted">${new Date(f.ts).toLocaleString('pt-BR')} · ${f.lat!=null&&f.lat!==''?latS(f.lat)+' '+lonS(f.lon):'sem coordenadas'} ${f.gpsFoto?'(GPS no momento da foto)':'(coordenadas da OAE)'}</div></div>`,
+   `<button class="btn bad" id="fd">Excluir</button><button class="btn pri" style="flex:1" id="fs">Salvar</button>`,(el,close)=>{
+   el.querySelector('#fs').onclick=async()=>{f.legenda=el.querySelector('#fl').value.toUpperCase();f.elementoId=el.querySelector('#fe').value;const nn=+el.querySelector('#fn').value;
+     if(nn&&nn!==f.n){const other=fs.find(x=>x.n===nn);if(other){other.n=f.n;await DB.put('fotos',other)}f.n=nn}await DB.put('fotos',f);close();render()};
+   el.querySelector('#fd').onclick=async()=>{if(!confirm('Excluir a foto '+f.n+'?'))return;await DB.del('fotos',f.id);const rest=fs.filter(x=>x.id!==f.id).sort((a,b)=>a.n-b.n);for(let k=0;k<rest.length;k++){if(rest[k].n!==k+1){rest[k].n=k+1;await DB.put('fotos',rest[k])}}close();render()}});
+}
+
+/* ---------- Textos sugeridos ---------- */
+const nomeD=d=>d.dano===OUTRO?(d.outro||'dano não descrito'):d.dano;
+function danosLista(i){const out=[];(i.elementos||[]).forEach(e=>(e.danos||[]).forEach(d=>out.push({e,d})));return out}
+function agrupaDanos(i){const m=new Map();danosLista(i).forEach(({e,d})=>{const k=nomeD(d)+'|'+e.familia;if(!m.has(k))m.set(k,{dano:nomeD(d),fam:e.familia,els:[],locs:new Set(),ecMin:9,info:danoInfo(e.familia,d.dano)});const g=m.get(k);g.els.push(`${e.codigo} (T${e.tramo})`);if(d.loc)g.locs.add(d.loc.toLowerCase());g.ecMin=Math.min(g.ecMin,+d.ec||9)});return [...m.values()].sort((a,b)=>a.ecMin-b.ecMin)}
+const lc=s=>String(s||'').toLowerCase();
+function textoObs(i,o){
+  const gs=agrupaDanos(i),n=notaFinal(i);
+  if(!gs.length)return `Na inspeção ${lc(i.tipo)} realizada em ${fmtD(i.data)}, não foram constatados danos relevantes nos elementos aparentes e acessíveis da OAE.`;
+  const sev=gs.filter(g=>g.ecMin<=2),out=gs.filter(g=>g.ecMin>2);
+  let t=`A OAE apresenta ${n?'condição geral '+lc(NOTAS[n])+' (nota '+n+')':'condição a classificar'}, considerando os elementos aparentes e acessíveis no momento da inspeção. `;
+  if(sev.length)t+=`Destacam-se: ${sev.map(g=>`${lc(g.dano)} em ${lc(g.fam)} (${g.els.join(', ')})`).join('; ')}. `;
+  if(out.length)t+=`Foram também registrados: ${out.map(g=>`${lc(g.dano)} em ${lc(g.fam)} (${g.els.join(', ')})`).join('; ')}. `;
+  if(i.limitacoes)t+=`Limitações da inspeção: ${i.limitacoes.replace(/\.$/,'')}. `;
+  return t.trim();
+}
+function textoLaudo(i,o){
+  const gs=agrupaDanos(i),n=notaFinal(i)||notaAuto(i);
+  const prob=gs.length?`A OAE apresenta ${gs.map(g=>`${lc(g.dano)} em ${lc(g.fam)} (${g.els.join(', ')}${g.locs.size?'; '+[...g.locs].join(', '):''})`).join('; ')}.`:'Não foram constatados danos relevantes nos elementos aparentes e acessíveis.';
+  const riscos=[...new Set(gs.map(g=>g.info&&g.info[3]).filter(Boolean))];
+  const risco=riscos.length?`A ausência de intervenção poderá ocasionar: ${riscos.map(lc).join('; ')}.`:'';
+  const recs=[...new Set(gs.map(g=>g.info&&g.info[1]).filter(Boolean))];
+  let rec=recs.length?`Recomenda-se: ${recs.map(lc).join('; ')}.`:'';
+  if(n&&n<=2)rec+=' Recomenda-se a realização de inspeção intermediária para monitoramento da evolução dos danos e avaliação da necessidade de inspeção especial.';
+  if(n===1)rec+=' Avaliar de imediato a necessidade de restrição de carga, interdição parcial ou total do tráfego e escoramento provisório, com comunicação imediata ao DNIT.';
+  rec+=' Manter o acompanhamento sistemático da evolução das manifestações patológicas nas próximas inspeções.';
+  const estr=(i.elementos||[]).filter(e=>famOf(e.familia).e&&e.nota);const piores=estr.filter(e=>+e.nota===notaAuto(i)).map(e=>`${e.codigo} (T${e.tramo})`);
+  const nf=n?`Propõe-se nota final ${n} – ${NOTAS[n]} para a OAE, correspondente à menor nota atribuída aos elementos com função estrutural${piores.length?' ('+piores.slice(0,8).join(', ')+(piores.length>8?'…':'')+')':''}, conforme observação do Anexo C da norma DNIT 010/2024-PRO.`:'';
+  return {problemas:prob,riscos:risco,recomendacoes:rec.trim(),justificativa:nf};
+}
+function textoNC(i,o){
+  const out=[];const emerg=n=>n<=1;
+  danosLista(i).filter(x=>x.d.nc).forEach(({e,d})=>{const info=danoInfo(e.familia,d.dano);const interv=info?lc(info[1]):'a correção do dano constatado';
+    const em=(+d.ec===1)||(+e.nota&&+e.nota<=1);
+    out.push(`A construtora deverá executar ${interv} no(a) ${lc(e.familia)} ${e.codigo}, tramo ${e.tramo}, da ${o.nome||'OAE'}, ${o.rodovia||''} km ${o.km||''}${em?', em caráter EMERGENCIAL':''}, tendo em vista a constatação de ${lc(nomeD(d))}${d.loc?' na '+lc(d.loc):''}${d.ext?' (extensão relativa '+d.ext+')':''}, classificado com estado de condição EC ${d.ec||'–'} – ${EC[d.ec]||''}${info?', situação que pode resultar em '+lc(info[3]):''}.`)});
+  return out;
+}
+
+/* ---------- Laudo ---------- */
+function tabLaudo(v,i,o,save){
+  const L=i.laudo||(i.laudo={});const na=notaAuto(i),nf=notaFinal(i);
+  const ncs=textoNC(i,o);
+  v.innerHTML=`<div class="card"><h2>Nota final da OAE</h2>
+   <div class="row" style="align-items:center"><div>Automática (menor nota dos elementos estruturais): ${notaBadge(na)}</div></div>
+   <span class="small muted" style="font-weight:600;display:block;margin-top:10px">NOTA FINAL ADOTADA</span><div class="chips" id="nfc" style="margin:4px 0">${['',1,2,3,4,5].map(n=>`<button class="chip ${n?'c'+n:'cx'} ${String(L.notaFinal||'')===String(n)?'on':''}" data-n="${n}">${n||'Auto'}</button>`).join('')}</div>
+   ${L.notaFinal&&+L.notaFinal!==+na?'<div class="warnbox">A nota adotada difere da automática. Justifique no campo abaixo.</div>':''}
+   ${nf&&nf<=2?'<div class="warnbox"><b>Laudo especializado obrigatório</b> (nota ≤ 2 – IPR 709/2026, item 2.2.2).</div>':''}</div>
+  <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">5. Laudo especializado</h2><div style="flex:0 0 auto"><button class="btn sm" id="bSug">Gerar texto sugerido</button></div></div>
+   <p class="small muted">O texto sugerido é montado a partir dos danos e notas lançados. Revise e complemente antes de emitir o relatório.</p>
+   <label class="f"><span>Data do laudo</span><input type="date" data-k="data" value="${esc(L.data||i.data)}"></label>
+   <label class="f"><span>Problemas principais observados</span><textarea data-k="problemas">${esc(L.problemas||'')}</textarea></label>
+   <label class="f"><span>Riscos da não intervenção</span><textarea data-k="riscos">${esc(L.riscos||'')}</textarea></label>
+   <label class="f"><span>Recomendações</span><textarea data-k="recomendacoes">${esc(L.recomendacoes||'')}</textarea></label>
+   <label class="f"><span>Nota final – justificativa</span><textarea data-k="justificativa">${esc(L.justificativa||'')}</textarea></label>
+   <label class="f"><span>Necessidade de inspeção especial / complementar</span><textarea data-k="complementar" style="min-height:60px" placeholder="Ex.: batimetria, inspeção subaquática, ensaios de carbonatação…">${esc(L.complementar||'')}</textarea></label></div>
+  <div class="card"><h2>Não conformidades</h2>${ncs.length?ncs.map((t,k)=>`<p class="small" style="background:#f6f8fa;padding:8px;border-radius:8px">${k+1}. ${esc(t)}</p>`).join('')+`<button class="btn sm" id="bCopyNC">Copiar textos</button>`:'<p class="muted small">Nenhum dano marcado para gerar não conformidade. Marque a opção no dano, dentro do elemento.</p>'}
+   <div class="check"><input type="checkbox" id="incNC" ${L.incluirNC!==false?'checked':''}><label for="incNC">Incluir não conformidades no relatório</label></div></div>`;
+  v.querySelectorAll('#nfc .chip').forEach(c=>c.onclick=async()=>{L.notaFinal=c.dataset.n;await save();render()});
+  v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{L[el.dataset.k]=el.value;save()});
+  $('#incNC').onchange=ev=>{L.incluirNC=ev.target.checked;save()};
+  $('#bSug').onclick=async()=>{const t=textoLaudo(i,o);if((L.problemas||L.recomendacoes)&&!confirm('Substituir os textos atuais pelos sugeridos?'))return;Object.assign(L,t);if(!L.data)L.data=i.data;await save();render()};
+  const bc=$('#bCopyNC');if(bc)bc.onclick=()=>{navigator.clipboard.writeText(ncs.join('\n\n')).then(()=>toast('Copiado'))};
+}
+
+/* ---------- Relatório individual ---------- */
+async function tabRel(v,i,o,save){
+  const fs=await DB.byIdx('fotos','insp',i.id);const els=i.elementos||[];
+  const pend=[];if(!els.length)pend.push('Nenhum elemento cadastrado.');const sn=els.filter(e=>!e.nota).length;if(sn)pend.push(sn+' elemento(s) sem nota técnica.');
+  if(fs.length<6)pend.push('Menos de 6 fotos (item 5.1).');const nf=notaFinal(i);if(nf&&nf<=2&&!(i.laudo&&i.laudo.problemas))pend.push('Laudo especializado obrigatório não preenchido (nota ≤ 2).');
+  if(!i.obs)pend.push('Observação geral (item 1) em branco.');if(!o.lat)pend.push('OAE sem coordenadas geográficas.');if(!CFG.resp)pend.push('Responsável técnico não definido em Configurações.');
+  v.innerHTML=`<div class="card"><h2>Relatório da inspeção</h2>
+   ${pend.length?`<div class="warnbox"><b>Pendências:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Ficha completa. Pronta para emissão.</div>'}
+   <div class="check"><input type="checkbox" id="rA" ${i.tipo.includes('Cadastral')?'checked':''}><label for="rA">Incluir ficha cadastral (Anexo A)</label></div>
+   <div class="check"><input type="checkbox" id="rF" checked><label for="rF">Incluir relatório fotográfico</label></div>
+   <div class="btns" style="margin-top:8px"><button class="btn pri" id="bPrint">🖨️ Gerar PDF (imprimir)</button><button class="btn" id="bHtml">⬇️ Baixar relatório (HTML)</button><button class="btn" id="bCsvI">⬇️ Planilha de danos (CSV)</button></div>
+   <p class="small muted">No celular: “Gerar PDF” abre a impressão; escolha <b>Salvar como PDF</b>. O arquivo HTML abre em qualquer navegador e pode ser impresso no computador.</p></div>`;
+  const opts=()=>({cad:$('#rA').checked,fotos:$('#rF').checked});
+  $('#bPrint').onclick=async()=>{await imprimir(await relInsp(i,o,opts(),true))};
+  $('#bHtml').onclick=async()=>{download(nomeArq(o,i)+'.html',docHTML(await relInsp(i,o,opts(),true)),'text/html')};
+  $('#bCsvI').onclick=()=>download(nomeArq(o,i)+'_danos.csv',csvOut(linhasDanos([{i,o}])),'text/csv');
+}
+const nomeArq=(o,i)=>`OAE_${(o.rodovia||'').replace(/\W/g,'')}_km${String(o.km||'').replace(/\W/g,'_')}_${i.data}`;
+function linhasDanos(arr){const rows=[['Rodovia','km','Código SGE','OAE','Data','Tipo','Tramo','Região','Família','Elemento','Nota técnica','Dano','Quant.','Localização','Extensão','EC','Dimensões','Intervenção sugerida','Insuficiência estrutural','Causa provável']];
+  arr.forEach(({i,o})=>(i.elementos||[]).forEach(e=>{const ds=(e.danos||[]).length?e.danos:[null];ds.forEach(d=>{const info=d?danoInfo(e.familia,d.dano):null;rows.push([o.rodovia,o.km,o.codigoSGE,o.nome,fmtD(i.data),i.tipo,e.tramo,e.regiao,e.familia,e.codigo,e.nota,d?nomeD(d):'',d?d.quant:'',d?d.loc:'',d?d.ext:'',d&&d.ec?d.ec+' - '+EC[d.ec]:'',d?d.dim:'',info?info[1]:'',e.insuf||'',e.causa||''])})}));return rows}
+
+const H_LOGOS=()=>`<div class="hdr">${CFG.logoE?`<img src="${CFG.logoE}">`:'<span></span>'}<div class="ht">MINISTÉRIO DOS TRANSPORTES<br>DEPARTAMENTO NACIONAL DE INFRAESTRUTURA DE TRANSPORTES – DNIT<br>${esc((CFG.fiscalizacao||'').toUpperCase())}</div>${CFG.logoD?`<img src="${CFG.logoD}">`:`<b style="font-size:10px;color:#0b3d63">${esc(CFG.empresa)}</b>`}</div>`;
+const F_TXT=()=>`<div class="ftr">${esc(CFG.empresa)}${CFG.contrato?' · Contrato '+esc(CFG.contrato):''}${CFG.endereco?' · '+esc(CFG.endereco):''}</div>`;
+const wrap=body=>`<div class="rp"><table class="wrap"><thead><tr><td>${H_LOGOS()}</td></tr></thead><tfoot><tr><td>${F_TXT()}</td></tr></tfoot><tbody><tr><td>${body}</td></tr></tbody></table></div>`;
+const ntCls=n=>n?`nt${n}`:'';
+async function relInsp(i,o,opts,standalone,secNum){
+  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);const els=i.elementos||[];const L=i.laudo||{};const nf=notaFinal(i);
+  const tramos=[...new Set(els.map(e=>+e.tramo||1))].sort((a,b)=>a-b);const sp=secNum?secNum+'.':'';
+  const kv=(pairs,cols=3)=>{let h='<table class="t">';for(let k=0;k<pairs.length;k+=cols){h+='<tr>'+pairs.slice(k,k+cols).map(([a,b])=>`<td class="k">${a}</td><td>${esc(b??'')}</td>`).join('')+'</tr>'}return h+'</table>'};
+  let h='';
+  if(standalone)h+=`<h1>FICHA DE INSPEÇÃO ${esc(i.tipo.toUpperCase())} DE OAE<br><span style="font-size:12px;font-weight:400">${esc(o.nome||'')} – ${esc(o.rodovia||'')}/TO km ${esc(o.km||'')}</span></h1>`;
+  else h+=`<h2 class="pb">${sp} ${esc(o.nome||'')} – ${esc(o.rodovia||'')} km ${esc(o.km||'')}</h2>`;
+  h+=`<h3>Identificação e localização</h3>`+kv([['Código da estrutura (SGE)',o.codigoSGE||'S/N'],['Nome',o.nome],['Data da inspeção',fmtD(i.data)],['Rodovia',o.rodovia],['Local na via (km)',o.km],['UF',o.uf||'TO'],['Código SNV',o.snv],['Versão SNV',o.versaoSNV],['Cidade próxima',o.cidade],['Latitude',o.lat?latS(o.lat):''],['Longitude',o.lon?lonS(o.lon):''],['Altitude (m)',o.altitude],['Comprimento (m)',o.comprimento],['Largura (m)',o.largura],['Tipo de estrutura',o.material],['Tipo de inspeção',i.tipo],['Inspetor',i.inspetor],['CREA',i.crea],['Tempo',i.clima],['Nível d\'água',i.nivelAgua],['Temperatura (°C)',i.temperatura]]);
+  if(opts.cad){
+    h+=`<h3 class="avoid">Anexo A – Ficha de inspeção cadastral (dados complementares)</h3>`+kv([['Trem-tipo',o.tremTipo],['Ano de construção',o.anoConstrucao],['Sistema construtivo',o.sistema],['Superintendência/UL',o.superintendencia],['Administração DNIT?',o.adminDNIT],['Projetista',o.projetista],['Construtor',o.construtor],['Atendimento ao SNV',o.atendSNV],['Tipo de região',o.regiao],['Tipo de traçado',o.tracado],['Rampa máxima (°)',o.rampa],['Raio da curva (m)',o.raio],['Nº de faixas',o.nFaixas],['Largura da faixa (m)',o.largFaixa],['Acostamento D/E (m)',[o.acostD,o.acostE].filter(Boolean).join(' / ')],['Calçada D/E (m)',[o.calcD,o.calcE].filter(Boolean).join(' / ')],['Gabarito H/V (m)',[o.gabH,o.gabV].filter(Boolean).join(' / ')],['Pista antes/depois (m)',[o.pistaAntes,o.pistaDepois].filter(Boolean).join(' / ')],['Nº de tramos',o.nTramos||tramos.length],['Período de inspeção (anos)',o.periodo],['Melhor época',[o.epocaIni,o.epocaFim].filter(Boolean).join(' a ')],['Equipamento necessário',o.equip||i.equipamentos]]);
+    h+=kv([['Aspectos especiais',o.aspectos],['Deficiências funcionais',o.deficiencias],['Rota alternativa',[o.rotaExiste,o.rotaDesc,o.rotaAcresc?('acréscimo de '+o.rotaAcresc+' km'):''].filter(Boolean).join(' – ')],['Projeto de substituição',[o.projSubst,o.custoSubst?'R$ '+o.custoSubst:'',o.seiSubst?'SEI '+o.seiSubst:''].filter(Boolean).join(' – ')]],1);
+    h+=`<h3>Elementos componentes por tramo</h3><table class="t"><tr><th>Tramo</th><th>Família de elementos</th><th>Elemento individual</th><th>Região</th></tr>${els.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(e.regiao)}</td></tr>`).join('')}</table>`;
+  }
+  h+=`<h3 class="avoid">Anexo B – 1. Dados básicos</h3><table class="t"><tr><td class="k">Data da inspeção</td><td>${fmtD(i.data)}</td><td class="k">Equipe</td><td>${esc(i.equipe)}</td></tr><tr><td class="k">Equipamentos</td><td colspan="3">${esc(i.equipamentos)}</td></tr>${i.limitacoes?`<tr><td class="k">Limitações</td><td colspan="3">${esc(i.limitacoes)}</td></tr>`:''}<tr><td class="k">Observação</td><td colspan="3" class="just">${esc(i.obs||'')}</td></tr></table>`;
+  h+=`<h3>2. Nota técnica</h3><table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família de elementos</th><th class="c">Elemento</th><th class="c">Nota técnica</th>${i.prevId?'<th class="c">Anterior</th>':''}</tr>${els.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td class="c ${ntCls(e.nota)}"><b>${e.nota?e.nota+' – '+NOTAS[e.nota]:''}</b></td>${i.prevId?`<td class="c">${esc(e.notaAnt||'')}</td>`:''}</tr>`).join('')}</table>`;
+  const dls=danosLista(i);
+  h+=`<h3>3. Danos aos elementos</h3>${dls.length?`<table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família</th><th class="c">Elem.</th><th>Dano</th><th class="c">Quant.</th><th>Localização</th><th class="c">Extensão relativa</th><th class="c">Estado de condição</th></tr>${dls.map(({e,d})=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(nomeD(d))}${d.dim?`<br><i>${esc(d.dim)}</i>`:''}</td><td class="c">${esc(d.quant)}</td><td>${esc(d.loc)}</td><td class="c">${esc(d.ext)}</td><td class="c">${d.ec?d.ec+' – '+EC[d.ec]:''}</td></tr>`).join('')}</table>`:'<p>Não foram registrados danos nos elementos inspecionados.</p>'}`;
+  const ins=els.filter(e=>e.insuf||e.causa);
+  h+=`<h3>4. Insuficiências estruturais</h3>${ins.length?`<table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família</th><th class="c">Elem.</th><th>Insuficiência estrutural</th><th>Causa provável</th></tr>${ins.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(e.insuf)}</td><td>${esc(e.causa)}</td></tr>`).join('')}</table>`:'<p>Não foram identificadas insuficiências estruturais.</p>'}`;
+  h+=`<h3 class="avoid">5. Laudo especializado</h3><table class="t"><tr><td class="k">Data do laudo</td><td>${fmtD(L.data||i.data)}</td><td class="k">Nota final da OAE</td><td class="c ${ntCls(nf)}"><b>${nf?nf+' – '+NOTAS[nf]:'–'}</b></td></tr>
+   ${L.problemas?`<tr><td class="k">Problemas principais</td><td colspan="3" class="just">${esc(L.problemas)}</td></tr>`:''}${L.riscos?`<tr><td class="k">Riscos da não intervenção</td><td colspan="3" class="just">${esc(L.riscos)}</td></tr>`:''}${L.recomendacoes?`<tr><td class="k">Recomendações</td><td colspan="3" class="just">${esc(L.recomendacoes)}</td></tr>`:''}${L.complementar?`<tr><td class="k">Inspeções/ensaios complementares</td><td colspan="3" class="just">${esc(L.complementar)}</td></tr>`:''}${L.justificativa?`<tr><td class="k">Nota final</td><td colspan="3" class="just">${esc(L.justificativa)}</td></tr>`:''}</table>`;
+  const ncs=L.incluirNC!==false?textoNC(i,o):[];
+  if(ncs.length)h+=`<h3>6. Não conformidades</h3><table class="t">${ncs.map((t,k)=>`<tr><td class="c" style="width:22px">${k+1}</td><td class="just">${esc(t)}</td></tr>`).join('')}</table>`;
+  if(standalone)h+=assinatura(i);
+  if(opts.fotos&&fs.length){
+    const elById=Object.fromEntries(els.map(e=>[e.id,e]));
+    h+=`<h3 class="pb">Relatório fotográfico – ${esc(o.nome||'')}</h3><table class="t"><tr><td class="k">Empresa</td><td>${esc(CFG.empresa)}</td><td class="k">Segmento</td><td>${esc((o.nome||'').toUpperCase())}</td></tr><tr><td class="k">Contrato</td><td>${esc(CFG.contrato)}</td><td class="k">Rodovia</td><td>${esc(o.rodovia||'')} km ${esc(o.km||'')}</td></tr></table>
+    <div class="photogrid">${fs.map(f=>`<div class="pcell"><div class="pc"><b>Lat.:</b><span>${f.lat!=null&&f.lat!==''?latS(f.lat):'–'}</span><span>${esc(o.rodovia||'')} km ${esc(o.km||'')}</span><b>Long.:</b><span>${f.lon!=null&&f.lon!==''?lonS(f.lon):'–'}</span><span>${new Date(f.ts).toLocaleDateString('pt-BR')}</span></div><img src="${f.data}"><div class="pl">FOTO ${f.n} – ${esc(f.legenda||'')}${elById[f.elementoId]?` [${esc(elById[f.elementoId].codigo)} / T${elById[f.elementoId].tramo}]`:''}</div></div>`).join('')}</div>`;
+  }
+  return standalone?wrap(h):h;
+}
+function assinatura(i){const nome=(i&&i.inspetor)||CFG.resp;const crea=(i&&i.crea)||CFG.crea;return `<div class="sign avoid"><p>${esc(CFG.cidade||'')}, ${new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'})}.</p><br><br><div class="ln"><b>${esc(nome||'Responsável técnico')}</b><br>${esc(CFG.cargo||'')}${crea?' – CREA '+esc(crea):''}<br>${esc(CFG.empresa)}</div></div>`}
+function docHTML(body){const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de inspeção de OAE</title><style>${css}\nbody{background:#fff}#print{display:block}@media screen{.rp{max-width:200mm;margin:10px auto;padding:10px;box-shadow:0 0 6px #aaa}}</style></head><body><div id="print">${body}</div></body></html>`}
+async function imprimir(html){const p=$('#print');p.innerHTML=html;const imgs=[...p.querySelectorAll('img')];await Promise.all(imgs.map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r})));setTimeout(()=>{window.print();},150)}
+window.addEventListener('afterprint',()=>{$('#print').innerHTML=''});
+
+/* ================= RESUMO / CONSOLIDADO ================= */
+async function vResumo(v){
+  setTitle('Resumo e relatório consolidado','Todas as OAEs com inspeção');
+  const [oaes,insps]=await Promise.all([DB.all('oaes'),DB.all('insps')]);const om=Object.fromEntries(oaes.map(o=>[o.id,o]));
+  insps.sort((a,b)=>(om[a.oaeId]?.rodovia||'').localeCompare(om[b.oaeId]?.rodovia||'')||parseKm(om[a.oaeId]?.km)-parseKm(om[b.oaeId]?.km)||a.data.localeCompare(b.data));
+  const R=CFG.rel||{};
+  v.innerHTML=`<div class="card"><h2>Inspeções a incluir</h2>
+   <div class="row" style="margin-bottom:6px"><label class="f"><span>De</span><input type="date" id="dIni" value="${esc(R.ini||'')}"></label><label class="f"><span>Até</span><input type="date" id="dFim" value="${esc(R.fim||'')}"></label></div>
+   <div class="btns" style="margin-bottom:6px"><button class="btn sm" id="sAll">Marcar todas</button><button class="btn sm" id="sNone">Desmarcar</button></div>
+   <div class="list" id="lst">${insps.map(i=>{const o=om[i.oaeId]||{};return `<label class="item" style="cursor:pointer"><input type="checkbox" class="ck" value="${i.id}" data-d="${i.data}" checked style="width:20px;height:20px">${notaBadge(notaFinal(i))}<div class="grow"><div class="t">${esc(o.nome||'')}</div><div class="s">${esc(o.rodovia||'')} km ${esc(o.km||'')} · ${esc(i.tipo)} · ${fmtD(i.data)}</div></div></label>`}).join('')||'<p class="muted">Nenhuma inspeção registrada.</p>'}</div></div>
+  <div class="card"><h2>Dados do relatório consolidado</h2>
+   <label class="f"><span>Título</span><input type="text" id="rT" value="${esc(R.titulo||'RELATÓRIO DE INSPEÇÃO DE OBRAS DE ARTE ESPECIAIS')}"></label>
+   <label class="f"><span>Rodovias / trechos / subtrechos</span><textarea id="rTr" style="min-height:60px">${esc(R.trechos||'')}</textarea></label>
+   <div class="row"><label class="f"><span>Mês/ano de referência</span><input type="text" id="rM" value="${esc(R.mes||new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase())}"></label><label class="f"><span>Processo SEI / fiscalização</span><input type="text" id="rS" value="${esc(R.sei||'')}"></label></div>
+   <label class="f"><span>1. Identificação da demanda</span><textarea id="rId">${esc(R.ident||'')}</textarea></label>
+   <label class="f"><span>2. Histórico / dos fatos</span><textarea id="rFa">${esc(R.fatos||'')}</textarea></label>
+   <div class="check"><input type="checkbox" id="rFot" ${R.fotos!==false?'checked':''}><label for="rFot">Incluir relatórios fotográficos</label></div>
+   <div class="check"><input type="checkbox" id="rCad" ${R.cad?'checked':''}><label for="rCad">Incluir dados cadastrais completos (Anexo A)</label></div>
+   <div class="btns"><button class="btn pri" id="bC">🖨️ Gerar PDF consolidado</button><button class="btn" id="bCh">⬇️ Baixar HTML</button><button class="btn" id="bCs">⬇️ Planilha resumo (CSV)</button><button class="btn" id="bCd">⬇️ Todos os danos (CSV)</button></div>
+   <p class="small muted">Relatórios com muitas fotos ficam pesados; para dezenas de OAEs, prefira gerar no computador (restaure o backup lá ou baixe o HTML).</p></div>`;
+  const sel=()=>{const a=$('#dIni').value,b=$('#dFim').value;return [...v.querySelectorAll('.ck')].filter(c=>c.checked&&(!a||c.dataset.d>=a)&&(!b||c.dataset.d<=b)).map(c=>insps.find(i=>i.id===c.value))};
+  $('#sAll').onclick=()=>v.querySelectorAll('.ck').forEach(c=>c.checked=true);$('#sNone').onclick=()=>v.querySelectorAll('.ck').forEach(c=>c.checked=false);
+  const keep=async()=>{CFG.rel={ini:$('#dIni').value,fim:$('#dFim').value,titulo:$('#rT').value,trechos:$('#rTr').value,mes:$('#rM').value,sei:$('#rS').value,ident:$('#rId').value,fatos:$('#rFa').value,fotos:$('#rFot').checked,cad:$('#rCad').checked};await saveCfg()};
+  v.querySelectorAll('input,textarea').forEach(x=>x.addEventListener('change',keep));
+  const build=async()=>{await keep();const s=sel();if(!s.length){toast('Selecione ao menos uma inspeção');return null}toast('Montando relatório…');return relConsolidado(s.map(i=>({i,o:om[i.oaeId]||{}})),CFG.rel)};
+  $('#bC').onclick=async()=>{const h=await build();if(h)imprimir(h)};
+  $('#bCh').onclick=async()=>{const h=await build();if(h)download('Relatorio_consolidado_OAEs.html',docHTML(h),'text/html')};
+  $('#bCs').onclick=()=>{const s=sel();download('Resumo_patologias_intervencoes.csv',csvOut(linhasResumo(s.map(i=>({i,o:om[i.oaeId]||{}})))),'text/csv')};
+  $('#bCd').onclick=()=>{const s=sel();download('Danos_todas_OAEs.csv',csvOut(linhasDanos(s.map(i=>({i,o:om[i.oaeId]||{}})))),'text/csv')};
+}
+function linhasResumo(arr){const rows=[['Código SGE','Identificação da OAE','Rodovia','km','Data','Tipo','Nota anterior/SGE','Nota sugerida','Patologias','Intervenção necessária']];
+  arr.forEach(({i,o})=>{const gs=agrupaDanos(i);rows.push([o.codigoSGE||'S/N',o.nome,o.rodovia,o.km,fmtD(i.data),i.tipo,o.notaSGE||'',notaFinal(i),gs.map(g=>`${g.dano} – ${g.fam} (${g.els.join(', ')})`).join(' | '),[...new Set(gs.map(g=>g.info&&g.info[1]).filter(Boolean))].join(' | ')])});return rows}
+async function relConsolidado(arr,R){
+  const cont={1:0,2:0,3:0,4:0,5:0};let tipos={};arr.forEach(({i})=>{const n=notaFinal(i);if(n)cont[n]++;tipos[i.tipo]=(tipos[i.tipo]||0)+1});
+  const datas=arr.map(x=>x.i.data).sort();const rods=[...new Set(arr.map(x=>x.o.rodovia).filter(Boolean))].join(', ');
+  let h=`<div class="cover"><div><div class="big">${esc(R.titulo||'')}</div><div style="font-size:13px;font-weight:700">${esc(rods)}</div>${CFG.contrato?`<div style="font-size:12px;margin-top:6px">CONTRATO ${esc(CFG.contrato)}</div>`:''}</div>
+   <div style="text-align:left;font-size:11px;white-space:pre-wrap">${esc(R.trechos||'')}</div>
+   <div style="text-align:left;font-size:11px">FISCALIZAÇÃO: ${esc(CFG.fiscalizacao||'')}${CFG.ul?' – '+esc(CFG.ul):''}<br>ELABORAÇÃO: ${esc(CFG.empresa)}<br>${CFG.contrato?'CONTRATO: '+esc(CFG.contrato)+'<br>':''}${R.sei?'PROCESSO: '+esc(R.sei)+'<br>':''}PERÍODO DAS VISTORIAS: ${fmtD(datas[0])} a ${fmtD(datas[datas.length-1])}</div>
+   <div style="font-weight:700">${esc(R.mes||'')}</div></div>`;
+  h+=`<h2 class="pb">1. IDENTIFICAÇÃO DA DEMANDA</h2><p class="just">${esc(R.ident||`O presente relatório apresenta os resultados das inspeções realizadas nas Obras de Arte Especiais – OAEs das rodovias ${rods}, no âmbito do contrato ${CFG.contrato||''}, com o objetivo de avaliar as condições aparentes de conservação, funcionalidade, durabilidade e segurança das estruturas e subsidiar o DNIT quanto às ações de manutenção, recuperação e acompanhamento.`)}</p>`;
+  h+=`<h2>2. DOS FATOS</h2><p class="just">${esc(R.fatos||`No período de ${fmtD(datas[0])} a ${fmtD(datas[datas.length-1])} foram inspecionadas ${arr.length} OAEs (${Object.entries(tipos).map(([t,n])=>n+' '+lc(t)).join(', ')}). As avaliações ficaram restritas aos elementos aparentes e acessíveis no momento das vistorias, não tendo sido verificadas diretamente regiões submersas, enterradas ou encobertas.`)}</p>`;
+  h+=`<h2>3. RELAÇÃO DAS OAEs INSPECIONADAS</h2><table class="t"><tr><th class="c">Item</th><th>Código SGE</th><th>Nome</th><th>Rodovia</th><th class="c">km</th><th>SNV</th><th class="c">Extensão (m)</th><th class="c">Largura (m)</th><th class="c">Nota SGE</th><th class="c">Nota sugerida</th><th class="c">Data</th><th>Tipo</th></tr>
+   ${arr.map(({i,o},k)=>{const n=notaFinal(i);return `<tr><td class="c">${k+1}</td><td>${esc(o.codigoSGE||'S/N')}</td><td>${esc(o.nome)}</td><td>${esc(o.rodovia)}</td><td class="c">${esc(o.km)}</td><td>${esc(o.snv||'')}</td><td class="c">${esc(o.comprimento||'')}</td><td class="c">${esc(o.largura||'')}</td><td class="c">${esc(o.notaSGE||'S/N')}</td><td class="c ${ntCls(n)}"><b>${n||''}</b></td><td class="c">${fmtD(i.data)}</td><td>${esc(i.tipo)}</td></tr>`}).join('')}</table>`;
+  h+=`<h2>4. METODOLOGIA</h2><p class="just">As inspeções seguiram a norma DNIT 010/2024-PRO – Inspeções em pontes e viadutos – Procedimento e o Manual de Inspeção de Pontes (Publicação IPR 709, 3ª edição, 2026). Em campo, foi realizada avaliação visual e tátil sistemática dos elementos aparentes e acessíveis da superestrutura, mesoestrutura, infraestrutura, transições e entorno, com registro fotográfico georreferenciado e medições necessárias.</p>
+   <p class="just">A cada elemento foi atribuída nota técnica de 1 (crítica) a 5 (excelente), conforme o Anexo C da norma, e a cada dano registrado foi associado o estado de condição (EC 1 – severo a EC 4 – bom), considerando sua extensão relativa e severidade, conforme o Anexo D. A nota final proposta para cada OAE corresponde à menor nota dos elementos com função estrutural, salvo ajuste justificado pelo inspetor. Para as OAEs com nota técnica igual ou inferior a 2, foi elaborado laudo especializado.</p>
+   <p class="just">As avaliações têm caráter predominantemente visual e limitam-se aos elementos aparentes e acessíveis no momento da inspeção. Não foram realizados ensaios, avaliações do comportamento dinâmico nem verificações diretas de regiões submersas, enterradas ou encobertas, que, quando necessárias, são indicadas como investigações complementares.</p>`;
+  h+=`<h2>5. FICHAS DE INSPEÇÃO E RELATÓRIOS FOTOGRÁFICOS</h2>`;
+  for(let k=0;k<arr.length;k++){h+=await relInsp(arr[k].i,arr[k].o,{cad:R.cad||arr[k].i.tipo.includes('Cadastral'),fotos:R.fotos!==false},false,'5.'+(k+1))}
+  h+=`<h2 class="pb">6. RESUMO DAS PATOLOGIAS E INTERVENÇÕES</h2><table class="t"><tr><th>Código SGE</th><th>OAE</th><th>Rodovia / km</th><th class="c">Nota SGE</th><th class="c">Nota sugerida</th><th>Patologias</th><th>Intervenção necessária</th></tr>
+   ${arr.map(({i,o})=>{const gs=agrupaDanos(i);const n=notaFinal(i);return `<tr><td>${esc(o.codigoSGE||'S/N')}</td><td>${esc(o.nome)}</td><td>${esc(o.rodovia)} km ${esc(o.km)}</td><td class="c">${esc(o.notaSGE||'S/N')}</td><td class="c ${ntCls(n)}"><b>${n||''}</b></td><td>${gs.map(g=>esc(`${g.dano} – ${lc(g.fam)} (${g.els.join(', ')})`)).join('<br>')||'Sem danos relevantes'}</td><td>${[...new Set(gs.map(g=>g.info&&g.info[1]).filter(Boolean))].map(esc).join('<br>')}</td></tr>`}).join('')}</table>`;
+  const crit=arr.filter(({i})=>{const n=notaFinal(i);return n&&n<=2});
+  h+=`<h2>7. CONCLUSÃO</h2><p class="just">Das ${arr.length} OAEs inspecionadas, ${[1,2,3,4,5].filter(n=>cont[n]).map(n=>`${cont[n]} receberam nota ${n} (${lc(NOTAS[n])})`).join(', ')||'nenhuma recebeu nota'}.${crit.length?` Requerem atenção prioritária, por apresentarem nota igual ou inferior a 2: ${crit.map(({o})=>`${o.nome} (${o.rodovia} km ${o.km})`).join('; ')}.`:''}</p>
+   <p class="just">Recomenda-se programar as intervenções de acordo com a natureza, a intensidade e a influência dos danos sobre a segurança, a funcionalidade e a durabilidade das estruturas, priorizando elementos com perda de seção, armaduras expostas ou corroídas, trincas relevantes, processos erosivos e comprometimento de dispositivos de proteção. Nos casos em que a inspeção visual não permitiu diagnóstico conclusivo, recomenda-se avaliar a realização de inspeções complementares, conforme indicado nas respectivas fichas. Recomenda-se, ainda, a continuidade do acompanhamento periódico das OAEs, com comparação dos registros, para verificar a evolução dos danos e a efetividade das intervenções executadas.</p>`;
+  h+=`<h2>8. TERMO DE ENCERRAMENTO</h2><p class="just">O presente relatório, referente à inspeção de ${arr.length} Obras de Arte Especiais das rodovias ${esc(rods)}, elaborado por ${esc(CFG.empresa)}${CFG.contrato?' no âmbito do contrato '+esc(CFG.contrato):''}, encerra-se nesta página.</p>`+assinatura(null);
+  return wrap(h);
+}
+
+/* ================= CONFIGURAÇÕES ================= */
+async function vCfg(v){
+  setTitle('Configurações','Dados que aparecem nos relatórios');
+  const F=[['empresa','Empresa / consórcio'],['contrato','Contrato'],['fiscalizacao','Órgão / superintendência (cabeçalho)'],['ul','Unidade local / fiscalização'],['resp','Responsável técnico'],['crea','CREA'],['cargo','Cargo'],['cidade','Cidade (assinatura)'],['endereco','Endereço (rodapé)']];
+  v.innerHTML=`<div class="card"><h2>Identificação</h2>${F.map(([k,l])=>`<label class="f"><span>${l}</span><input type="text" data-k="${k}" value="${esc(CFG[k]||'')}"></label>`).join('')}</div>
+  <div class="card"><h2>Logos do cabeçalho</h2><div class="row">${[['logoE','Logo à esquerda (DNIT)'],['logoD','Logo à direita (empresa)']].map(([k,l])=>`<div><div class="small muted" style="font-weight:600">${l}</div><div style="height:60px;display:flex;align-items:center">${CFG[k]?`<img src="${CFG[k]}" style="max-height:56px;max-width:180px">`:'<span class="muted small">sem logo</span>'}</div><div class="btns"><button class="btn sm" data-l="${k}">Escolher imagem</button>${CFG[k]?`<button class="btn sm bad" data-r="${k}">Remover</button>`:''}</div></div>`).join('')}</div></div>
+  <div class="card"><h2>Dados deste aparelho</h2><p class="small muted">Os dados ficam salvos somente neste aparelho (funciona sem internet). Faça backup com frequência e restaure no computador para gerar relatórios grandes.</p><div class="btns"><button class="btn" id="bB">💾 Exportar backup</button><button class="btn" id="bR">♻️ Restaurar backup</button><button class="btn bad" id="bZ">Apagar tudo</button></div><p class="small muted" id="usage"></p></div>`;
+  v.querySelectorAll('[data-k]').forEach(i=>i.oninput=debounce(()=>{CFG[i.dataset.k]=i.value;saveCfg()},300));
+  v.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{const f=await pickFile('image/*');if(!f)return;CFG[b.dataset.l]=await imgToData(f,500);await saveCfg();render()});
+  v.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{CFG[b.dataset.r]='';await saveCfg();render()});
+  $('#bB').onclick=backup;$('#bR').onclick=restore;
+  $('#bZ').onclick=async()=>{if(!confirm('Apagar TODAS as OAEs, inspeções e fotos deste aparelho? Esta ação não pode ser desfeita.'))return;for(const s of ['oaes','insps','fotos'])await DB.clear(s);toast('Dados apagados');go('home')};
+  if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(e=>{$('#usage').textContent=`Espaço usado: ${(e.usage/1048576).toFixed(1)} MB de ${(e.quota/1048576).toFixed(0)} MB disponíveis.`});
+}
+function imgToData(f,max){return new Promise(res=>{const u=URL.createObjectURL(f);const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/png'))};im.src=u})}
+async function backup(){const d={app:'vistoria-oae',v:1,em:new Date().toISOString(),cfg:CFG,oaes:await DB.all('oaes'),insps:await DB.all('insps'),fotos:await DB.all('fotos')};download(`backup_vistoria_OAE_${today()}.json`,JSON.stringify(d),'application/json');toast('Backup gerado')}
+async function restore(){const f=await pickFile('.json,application/json');if(!f)return;try{const d=JSON.parse(await f.text());if(d.app!=='vistoria-oae')throw new Error('Arquivo não é backup deste app');
+  if(!confirm(`Restaurar ${d.oaes.length} OAEs, ${d.insps.length} inspeções e ${d.fotos.length} fotos? Registros com o mesmo identificador serão substituídos.`))return;
+  for(const o of d.oaes)await DB.put('oaes',o);for(const i of d.insps)await DB.put('insps',i);for(const x of d.fotos)await DB.put('fotos',x);if(d.cfg&&confirm('Restaurar também as configurações (empresa, logos, responsável)?')){CFG={...CFG,...d.cfg};await saveCfg()}toast('Backup restaurado');go('home')}catch(e){alert('Falha ao restaurar: '+e.message)}}
+
+/* ================= INÍCIO ================= */
+(async()=>{
+  await loadCfg();if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  history.replaceState({...S},'');render();
+  if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
