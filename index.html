@@ -164,6 +164,17 @@ details summary{cursor:pointer;padding:4px 0}
 .rp .small{font-size:8px}
 .rp .land .photogrid .pcell img{height:55mm}
 .stepm{padding:10px 0;border-bottom:1px dashed var(--line)}
+
+.hero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border-radius:16px;padding:18px 16px;margin-bottom:12px;box-shadow:var(--sh)}
+.hero .hl{font-size:20px;font-weight:800}.hero .hs{font-size:13px;opacity:.85;margin-top:2px}
+.hstat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;text-align:center}
+.hstat div{background:rgba(255,255,255,.14);border-radius:10px;padding:8px 2px;font-size:11.5px}.hstat b{display:block;font-size:20px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:700px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:#fff;border:0;border-radius:14px;box-shadow:var(--sh);padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;cursor:pointer;min-height:112px}
+.tile:active{transform:scale(.98)}.tile .ti{font-size:26px}.tile .tt{font-weight:800;font-size:15px;color:var(--pri)}.tile .ts{font-size:12px;color:var(--muted)}
+.tile.acc{background:var(--acc)}.tile.acc .tt{color:#222}.tile.acc .ts{color:#3d2e00}
+#ttl{cursor:pointer}
 </style>
 </head>
 <body>
@@ -373,12 +384,14 @@ function go(view,extra={}){Object.assign(S,{view},extra);history.pushState({...S
 window.onpopstate=e=>{if(e.state){S=e.state;render()}else{S.view='home';render()}};
 $('#btnBack').onclick=()=>{if(S.view==='home')return;history.back()};
 $('#btnMenu').onclick=()=>menu();
+$('#ttl').onclick=()=>{if(S.view!=='home')go('home')};
 
 async function render(){
   const v=$('#view');$('#tabs').classList.add('hidden');document.querySelectorAll('.fab').forEach(f=>f.remove());
   $('#btnBack').style.visibility=S.view==='home'?'hidden':'visible';
   try{
-    if(S.view==='home')await vHome(v);
+    if(S.view==='home')await vMenu(v);
+    else if(S.view==='oaes')await vOAEs(v);
     else if(S.view==='oae')await vOAE(v);
     else if(S.view==='insp')await vInsp(v);
     else if(S.view==='cfg')await vCfg(v);
@@ -389,8 +402,8 @@ async function render(){
 function setTitle(t,s){$('#ttl').innerHTML=esc(t)+`<span class="sub">${esc(s||'')}</span>`}
 
 /* ================= HOME ================= */
-async function vHome(v){
-  setTitle('Vistoria OAE','Inspeção visual de pontes – DNIT 010/2024-PRO');
+async function vOAEs(v){
+  setTitle('OAEs cadastradas','Toque numa OAE para ver as inspeções');
   const [oaes,insps]=await Promise.all([DB.all('oaes'),DB.all('insps')]);
   const last={};insps.forEach(i=>{if(!last[i.oaeId]||last[i.oaeId].data<i.data)last[i.oaeId]=i});
   const q=(S.q||'').toLowerCase();
@@ -408,8 +421,8 @@ async function vHome(v){
    <select id="rod" style="flex:1 1 110px"><option value="">Todas</option>${rods.map(r=>`<option ${S.rod===r?'selected':''}>${r}</option>`).join('')}</select></div></div>
   <div class="card list" style="padding:0">${list.map(o=>{const li=last[o.id];const n=li?notaFinal(li):(o.notaSugerida||'');return `<div class="item" data-id="${o.id}">${notaBadge(n)}<div class="grow"><div class="t">${esc(o.nome||'(sem nome)')}</div><div class="s">${esc(o.rodovia||'')} km ${esc(o.km||'')} · SGE ${esc(o.codigoSGE||'S/N')} · ${esc(o.comprimento||'?')} m${li?` · última: ${fmtD(li.data)} (${esc(li.tipo)})`:o.dataUlt?` · ref.: ${esc(o.dataUlt)}`:''}</div></div><span class="muted">›</span></div>`}).join('')||'<p class="muted" style="padding:12px">Nenhuma OAE encontrada.</p>'}</div>`:''}`;
   if(oaes.length){const f=document.createElement('button');f.className='fab';f.textContent='+ Nova OAE';f.onclick=novaOAE;document.body.appendChild(f)}
-  const qi=$('#q');if(qi)qi.oninput=debounce(()=>{S.q=qi.value;const pos=qi.selectionStart;vHome(v).then(()=>{const n=$('#q');n.focus();n.setSelectionRange(pos,pos)})},300);
-  const rs=$('#rod');if(rs)rs.onchange=()=>{S.rod=rs.value;vHome(v)};
+  const qi=$('#q');if(qi)qi.oninput=debounce(()=>{S.q=qi.value;const pos=qi.selectionStart;vOAEs(v).then(()=>{const n=$('#q');n.focus();n.setSelectionRange(pos,pos)})},300);
+  const rs=$('#rod');if(rs)rs.onchange=()=>{S.rod=rs.value;vOAEs(v)};
   v.querySelectorAll('.item[data-id]').forEach(el=>el.onclick=()=>go('oae',{oaeId:el.dataset.id}));
   const b1=$('#bNova');if(b1)b1.onclick=novaOAE;
   const b2=$('#bBase');if(b2)b2.onclick=carregarBase;
@@ -1292,6 +1305,52 @@ async function vCfg(v){
   $('#bB').onclick=backup;$('#bR').onclick=restore;
   $('#bZ').onclick=async()=>{if(!confirm('Apagar TODAS as OAEs, inspeções e fotos deste aparelho? Esta ação não pode ser desfeita.'))return;for(const s of ['oaes','insps','fotos'])await DB.clear(s);toast('Dados apagados');go('home')};
   if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(e=>{$('#usage').textContent=`Espaço usado: ${(e.usage/1048576).toFixed(1)} MB de ${(e.quota/1048576).toFixed(0)} MB disponíveis.`});
+}
+
+/* ================= MENU INICIAL ================= */
+function progInsp(i){try{const sts=STEPS.map(s=>stepStatus(i,s,i._nf||0));return Math.round(100*sts.filter(x=>x===2).length/(STEPS.length-1))}catch(e){return 0}}
+async function vMenu(v){
+  setTitle('Vistoria OAE','Inspeção de pontes · DNIT 010/2024-PRO');
+  const [oaes,insps,fotos]=await Promise.all([DB.all('oaes'),DB.all('insps'),DB.all('fotos')]);
+  const om=Object.fromEntries(oaes.map(o=>[o.id,o]));const nf={};fotos.forEach(f=>nf[f.inspId]=(nf[f.inspId]||0)+1);
+  insps.forEach(i=>i._nf=nf[i.id]||0);
+  const rec=insps.slice().sort((a,b)=>(b.alterado||b.criado||0)-(a.alterado||a.criado||0)).slice(0,3);
+  const last={};insps.forEach(i=>{if(!last[i.oaeId]||last[i.oaeId].data<i.data)last[i.oaeId]=i});
+  const cont={1:0,2:0,3:0,4:0,5:0};Object.values(last).forEach(i=>{const n=notaFinal(i);if(n)cont[n]++});
+  const h=new Date().getHours();const saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';const nome=(CFG.resp||'').split(' ')[0];
+  const tiles=[['nova','🔎','Nova vistoria','Escolher a OAE e iniciar o roteiro','acc'],['oaes','🌉','OAEs cadastradas',`${oaes.length} obra(s) de arte`,''],['resumo','📊','Relatório consolidado','Várias OAEs no modelo trimestral',''],['guia','🧭','Guia rápido','Como fazer a vistoria conforme a norma',''],['cad','➕','Cadastrar OAE','Nova obra de arte especial',''],['imp','📥','Importar OAEs','Planilha CSV ou base UL Palmas',''],['bkp','💾','Backup','Salvar ou restaurar os dados',''],['cfg','⚙️','Configurações','Empresa, logos, responsável e IA','']];
+  v.innerHTML=`<div class="hero"><div class="hl">${saud}${nome?', '+esc(nome):''}!</div><div class="hs">${esc(CFG.empresa||'')}${CFG.contrato?' · '+esc(CFG.contrato):''}</div>
+    <div class="hstat"><div><b>${oaes.length}</b>OAEs</div><div><b>${insps.length}</b>inspeções</div><div><b>${fotos.length}</b>fotos</div><div><b>${cont[1]+cont[2]}</b>nota ≤ 2</div></div></div>
+   ${rec.length?`<div class="card"><h2>Continuar vistoria</h2><div class="list">${rec.map(i=>{const o=om[i.oaeId]||{};const pc=progInsp(i);return `<div class="item" data-ci="${i.id}">${notaBadge(notaFinal(i))}<div class="grow"><div class="t">${esc(o.nome||'(OAE)')}</div><div class="s">${esc(o.rodovia||'')} km ${esc(o.km||'')} · ${esc(i.tipo)} · ${fmtD(i.data)}</div><div class="prog" style="margin:5px 0 0"><div style="width:${pc}%"></div></div></div><span class="small muted">${pc}%</span></div>`}).join('')}</div></div>`:''}
+   <div class="tiles">${tiles.map(([k,ic,t,s,cl])=>`<button class="tile ${cl}" data-m="${k}"><span class="ti">${ic}</span><span class="tt">${t}</span><span class="ts">${s}</span></button>`).join('')}</div>
+   ${oaes.length?`<div class="card"><h2>Situação das OAEs (última inspeção)</h2><div class="stat">${[1,2,3,4,5].map(n=>`<div><b style="color:var(--n${n})">${cont[n]}</b><span class="small">Nota ${n}</span></div>`).join('')}</div></div>`:''}
+   <p class="small muted" style="text-align:center">Assistente: ${IA.ativo()?'Claude via API ✓':'Claude pelo app (copiar e colar)'} · dados salvos neste aparelho</p>`;
+  v.querySelectorAll('[data-ci]').forEach(el=>el.onclick=()=>go('insp',{inspId:el.dataset.ci,tab:'roteiro'}));
+  v.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const k=b.dataset.m;
+    if(k==='nova')escolherOAE(oaes,last);else if(k==='oaes')go('oaes');else if(k==='resumo')go('resumo');else if(k==='guia')guia();
+    else if(k==='cad')novaOAE();else if(k==='cfg')go('cfg');
+    else if(k==='imp')sheet('Importar OAEs',`<div class="list card" style="padding:0">${[['csv','⬆️ Importar planilha CSV'],['mod','⬇️ Baixar modelo CSV'],['base','🗂️ Carregar base UL Palmas (46 OAEs)']].map(([a,t])=>`<div class="item" data-a="${a}"><div class="grow t">${t}</div></div>`).join('')}</div>`,null,(el,close)=>el.querySelectorAll('[data-a]').forEach(it=>it.onclick=()=>{close();const a=it.dataset.a;if(a==='csv')importCSV();else if(a==='base')carregarBase();else download('modelo_cadastro_OAE.csv',csvOut([CSV_COLS]),'text/csv')}));
+    else if(k==='bkp')sheet('Backup',`<div class="card"><p class="small">Os dados ficam somente neste aparelho. Exporte o backup ao fim de cada campanha e restaure no computador para gerar relatórios grandes.</p><div class="btns"><button class="btn pri" id="kB">💾 Exportar backup</button><button class="btn" id="kR">♻️ Restaurar backup</button></div></div>`,null,(el,close)=>{el.querySelector('#kB').onclick=()=>{close();backup()};el.querySelector('#kR').onclick=()=>{close();restore()}})});
+}
+function escolherOAE(oaes,last){
+  if(!oaes.length){if(confirm('Nenhuma OAE cadastrada. Cadastrar agora?'))novaOAE();return}
+  const lista=q=>oaes.filter(o=>!q||[o.nome,o.codigoSGE,o.rodovia,o.km,o.snv].join(' ').toLowerCase().includes(q.toLowerCase())).sort((a,b)=>(a.rodovia||'').localeCompare(b.rodovia||'')||parseKm(a.km)-parseKm(b.km));
+  const row=o=>{const li=last[o.id];return `<div class="item" data-o="${o.id}">${notaBadge(li?notaFinal(li):(o.notaSugerida||''))}<div class="grow"><div class="t">${esc(o.nome||'(sem nome)')}</div><div class="s">${esc(o.rodovia||'')} km ${esc(o.km||'')}${li?' · última '+fmtD(li.data):''}</div></div><span class="muted">›</span></div>`};
+  sheet('Nova vistoria – escolha a OAE',`<div class="card" style="padding:10px"><input type="search" id="eq" placeholder="Buscar por nome, km, código SGE…"><div class="btns" style="margin-top:8px"><button class="btn sm" id="eGps">📍 OAE mais próxima (GPS)</button><button class="btn sm" id="eNova">+ OAE não cadastrada</button></div></div><div class="card list" style="padding:0" id="el">${lista('').map(row).join('')}</div>`,null,(el,close)=>{
+    const bind=()=>el.querySelectorAll('[data-o]').forEach(it=>it.onclick=async()=>{close();const o=await DB.get('oaes',it.dataset.o);S.oaeId=o.id;await novaInsp(o)});
+    bind();el.querySelector('#eq').oninput=ev=>{el.querySelector('#el').innerHTML=lista(ev.target.value).map(row).join('')||'<p class="muted small" style="padding:12px">Nada encontrado.</p>';bind()};
+    el.querySelector('#eNova').onclick=()=>{close();novaOAE()};
+    el.querySelector('#eGps').onclick=async()=>{try{toast('Obtendo posição…');const c=await gps();const d=o=>o.lat?Math.hypot((o.lat-c.latitude)*111,(o.lon-c.longitude)*111*Math.cos(c.latitude*Math.PI/180)):1e9;
+      const ord=oaes.filter(o=>o.lat).sort((a,b)=>d(a)-d(b)).slice(0,5);if(!ord.length)return toast('Nenhuma OAE com coordenadas cadastradas');
+      el.querySelector('#el').innerHTML=ord.map(o=>row(o).replace('<span class="muted">›</span>',`<span class="small muted">${d(o).toFixed(1)} km</span>`)).join('');bind()}catch(e){toast('GPS: '+e.message)}};
+  });
+}
+function guia(){
+  sheet('Guia rápido da vistoria',`<div class="card small">
+   <h3>Antes de sair</h3><ol><li>Em <b>Configurações</b>, preencha responsável técnico, CREA, empresa e logos.</li><li>Cadastre ou importe as OAEs da campanha.</li><li>Abra o app uma vez com internet para ele funcionar offline em campo.</li></ol>
+   <h3>Em campo</h3><ol><li>Toque em <b>Nova vistoria</b> e escolha a OAE (o botão de GPS mostra as mais próximas).</li><li>Siga o <b>Roteiro</b>: são 18 etapas na ordem da DNIT 010/2024-PRO, do planejamento (4.1) aos itens 5.1.1 a 5.1.12.</li><li>Em cada etapa, marque <b>OK / Problema / N/A</b> e dê a nota de 1 a 5 aos elementos daquele grupo. Nota 3 ou menor pede o registro do dano.</li><li>Registre cada dano com localização, extensão e <b>estado de condição</b> (EC 1 a 4) e fotografe.</li><li>Faça no mínimo as 6 fotos gerais da etapa “Fotos gerais”.</li></ol>
+   <h3>Fechamento</h3><ol><li>Na etapa <b>Revisão e laudo</b>, resolva as pendências apontadas.</li><li>Gere os textos com o Claude (API ou app do Claude) e revise.</li><li>Na aba <b>Ficha</b>, gere o PDF nos modelos dos Anexos A e B.</li><li>Faça o <b>backup</b> ao fim do dia.</li></ol>
+   <h3>Critérios</h3><p>Nota técnica pelo Anexo C; estado de condição pelo Anexo D; nota final = menor nota dos elementos estruturais, salvo justificativa; laudo obrigatório com nota ≤ 2; condição crítica deve ser comunicada imediatamente ao DNIT.</p></div>`);
 }
 
 /* ================= INÍCIO ================= */
