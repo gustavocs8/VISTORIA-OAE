@@ -125,7 +125,7 @@ nav.tabs button.on{color:var(--pri)}
 .rp .just{text-align:justify}
 .rp .photogrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .rp .pcell{border:1px solid #777;page-break-inside:avoid;break-inside:avoid}
-.rp .pcell img{width:100%;height:62mm;object-fit:cover;display:block}
+.rp .pcell img{width:100%;height:56mm;object-fit:cover;display:block}
 .rp .pcell .pc{font-size:8.6px;display:grid;grid-template-columns:auto 1fr auto;gap:0 6px;padding:2px 4px;border-bottom:1px solid #aaa;background:#f4f6f8}
 .rp .pcell .pl{font-size:9px;font-weight:700;padding:3px 4px}
 .rp .cover{min-height:225mm;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
@@ -133,6 +133,36 @@ nav.tabs button.on{color:var(--pri)}
 .rp .sign{margin-top:40px;text-align:center}
 .rp .sign .ln{width:70%;margin:0 auto;border-top:1px solid #000;padding-top:3px}
 .rp .nt1{background:#f8d0d0}.rp .nt2{background:#fbe0c8}.rp .nt3{background:#fff3c4}.rp .nt4{background:#d9f0da}.rp .nt5{background:#c5e6c7}
+
+.ckrow{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.ckrow .ckt{flex:1 1 200px;font-size:14px}
+.chip.sm2{padding:6px 9px;min-width:36px;font-size:13px}
+.prog{height:6px;background:#e3e8ee;border-radius:9px;margin:8px 0;overflow:hidden}.prog>div{height:100%;background:var(--ok)}
+.steps{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}
+.stp{flex:0 0 auto;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:16px;cursor:pointer}
+.stp.st2{background:#e3f4e8;border-color:#9fd3ae;color:var(--ok);font-weight:800}.stp.st1{background:#fff4e0;border-color:#f3cf8a}
+.stp.on{outline:3px solid var(--pri2);outline-offset:1px}
+.navstep{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:5;padding:6px 0}.navstep .btn{flex:1;box-shadow:var(--sh)}
+.btn[disabled]{opacity:.45}
+.iabox{background:#f3f0ff;border:1px solid #d6ccff;margin-top:10px}
+.spin{width:36px;height:36px;border:4px solid #dde;border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite;margin:10px auto}@keyframes sp{to{transform:rotate(360deg)}}
+details summary{cursor:pointer;padding:4px 0}
+@page land{size:A4 landscape;margin:9mm 10mm 11mm;@bottom-right{content:counter(page);font:9px Arial}}
+.rp .land{page:land}
+.rp .pgx+.pgx{break-before:page}
+.rp .nh{display:flex;justify-content:space-between;font-size:9px;border-bottom:2.5px solid #000;padding-bottom:2px;margin-bottom:6px;border-left:2.5px solid #000;padding-left:4px}
+.rp .atit{text-align:center;font-weight:700;font-size:11px;margin:4px 0 8px}
+.rp .ssec{font-weight:700;font-size:10.5px;margin:8px 0 5px}
+.rp .sectit{font-weight:700;font-size:12px;background:#0b3d63;color:#fff;padding:3px 6px;margin-bottom:6px}
+.rp table.f{width:100%;border-collapse:collapse;font-size:9.3px}
+.rp table.f td{border:1px solid #000;padding:2px 4px;height:15px;vertical-align:middle}
+.rp table.f td.h{background:#e8e8e8}
+.rp table.f tr.th td{text-align:center;font-size:8.8px}
+.rp table.f td.c{text-align:center}
+.rp .cb{display:inline-block;width:9px;height:9px;border:1px solid #000;margin:0 2px 0 7px;vertical-align:-1px;text-align:center;line-height:8px;font-size:8px;font-weight:700}
+.rp .nf{margin-top:6px}.rp .ncont{text-align:center;font-size:9px}.rp .nota1{font-size:8.3px;margin-top:4px}
+.rp .small{font-size:8px}
+.rp .land .photogrid .pcell img{height:55mm}
 </style>
 </head>
 <body>
@@ -437,9 +467,9 @@ function sheet(title,html,footer,onMount){
 /* ================= OAE ================= */
 const OAE_FIELDS=[
  ['Identificação',[['nome','Nome da OAE','text',2],['codigoSGE','Código SGE'],['comprimento','Comprimento (m)'],['largura','Largura (m)'],['tremTipo','Trem-tipo'],['anoConstrucao','Ano de construção'],['material','Tipo de estrutura','sel',0,['Concreto armado','Concreto protendido','Aço','Mista aço/concreto','Madeira','Outro']],['sistema','Sistema construtivo','sel',0,['Moldado in loco','Pré-moldado','Misto','Outro']]]],
- ['Localização',[['rodovia','Rodovia'],['km','Local na via (km)'],['uf','UF'],['cidade','Cidade próxima'],['snv','Código SNV'],['versaoSNV','Versão SNV'],['lat','Latitude (decimal)'],['lon','Longitude (decimal)'],['altitude','Altitude (m)'],['superintendencia','Superintendência / UL'],['adminDNIT','Administração DNIT?','sel',0,['Sim','Não']],['projetista','Projetista'],['construtor','Construtor']]],
+ ['Localização',[['rodovia','Rodovia'],['km','Local na via (km)'],['uf','UF'],['cidade','Cidade próxima'],['snv','Código SNV'],['versaoSNV','Versão SNV'],['lat','Latitude (decimal)'],['lon','Longitude (decimal)'],['altitude','Altitude (m)'],['superintendencia','Superintendência / UL'],['adminDNIT','Administração DNIT?','sel',0,['Sim','Não']],['projetista','Projetista'],['construtor','Construtor'],['administrador','Administrador (se não DNIT)'],['docProjeto','Local. projeto'],['docConstrucao','Local. doc. construção'],['docDiversos','Local. doc. diversos']]],
  ['Características funcionais',[['atendSNV','Atendimento ao SNV','sel',0,['Em serviço','Demolida','Inconclusa','Inservível']],['regiao','Tipo de região','sel',0,['Plana','Ondulada','Montanhosa']],['tracado','Tipo de traçado','sel',0,['Tangente','Curva']],['rampa','Rampa máxima (°)'],['raio','Raio da curva (m)'],['nFaixas','Nº de faixas'],['largFaixa','Largura da faixa (m)'],['acostD','Acostamento direito (m)'],['acostE','Acostamento esquerdo (m)'],['calcD','Calçada direita (m)'],['calcE','Calçada esquerda (m)'],['gabH','Gabarito horizontal (m)'],['gabV','Gabarito vertical (m)'],['pistaAntes','Largura pista antes (m)'],['pistaDepois','Largura pista depois (m)'],['nTramos','Nº de tramos']]],
- ['Aspectos especiais, deficiências e rotas',[['aspectos','Aspectos especiais','ta',2],['deficiencias','Deficiências funcionais','ta',2],['rotaExiste','Rota alternativa','sel',0,['Existe','Não existe']],['rotaAcresc','Acréscimo de distância (km)'],['rotaDesc','Descrição da rota alternativa','ta',2],['projSubst','Projeto de substituição','sel',0,['Não existe projeto','Existe projeto']],['custoSubst','Custo estimado (R$)'],['seiSubst','Processo SEI'],['periodo','Período de inspeção (anos)'],['equip','Equipamento necessário','ta',2],['epocaIni','Melhor época inicial'],['epocaFim','Melhor época final']]]
+ ['Aspectos especiais, deficiências e rotas',[['aspectos','Aspectos especiais','ta',2],['deficiencias','Deficiências funcionais','ta',2],['rotaExiste','Rota alternativa','sel',0,['Existe','Não existe']],['rotaAcresc','Acréscimo de distância (km)'],['rotaDesc','Descrição da rota alternativa','ta',2],['projSubst','Projeto de substituição','sel',0,['Não existe projeto','Existe projeto']],['custoSubst','Custo estimado (R$)'],['seiSubst','Processo SEI'],['periodo','Período de inspeção (anos)'],['equip','Equipamento necessário','ta',2],['epocaIni','Melhor época inicial'],['epocaFim','Melhor época final'],['obsSubst','Observações sobre substituição','ta',2],['observacoes','Observações (Anexo A – item 9)','ta',2]]]
 ];
 async function vOAE(v){
   const o=await DB.get('oaes',S.oaeId);if(!o){go('home');return}
@@ -453,6 +483,7 @@ async function vOAE(v){
    <div class="card"><h2>Inspeções</h2>${insps.length?`<div class="list">${insps.map(i=>`<div class="item" data-i="${i.id}">${notaBadge(notaFinal(i))}<div class="grow"><div class="t">${esc(i.tipo)} – ${fmtD(i.data)}</div><div class="s">${(i.elementos||[]).length} elementos · ${(i.elementos||[]).reduce((s,e)=>s+(e.danos||[]).length,0)} danos · ${esc(i.inspetor||'')}</div></div><span class="muted">›</span></div>`).join('')}</div>`:'<p class="muted small">Nenhuma inspeção registrada para esta OAE.</p>'}</div>
    <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">Cadastro (Anexo A)</h2><div style="flex:0 0 auto" class="btns"><button class="btn sm" id="bEdit">${edit?'Concluir edição':'Editar'}</button></div></div>
    <div id="oform" style="margin-top:10px"></div></div>
+   <div class="card" id="oextra"></div>
    <div class="btns"><button class="btn bad" id="bDel">Excluir OAE</button></div>`;
   const of=$('#oform');
   of.innerHTML=OAE_FIELDS.map(([sec,fs])=>`<h3>${sec}</h3><div class="row">${fs.map(([k,l,t,w,opts])=>{const val=o[k]??'';
@@ -460,12 +491,14 @@ async function vOAE(v){
     const inp=t==='sel'?`<select data-k="${k}"><option value=""></option>${opts.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')}</select>`:t==='ta'?`<textarea data-k="${k}" style="min-height:60px">${esc(val)}</textarea>`:`<input type="text" data-k="${k}" value="${esc(val)}">`;
     return `<label class="f" style="flex:${w?'1 1 100%':'1 1 140px'}"><span>${l}</span>${inp}</label>`}).join('')}</div>`).join('')+
     (edit?`<button class="btn" id="bGps">📍 Capturar coordenadas pelo GPS</button>`:'');
+  extraOAE($('#oextra'),o,edit);
   const save=debounce(async()=>{of.querySelectorAll('[data-k]').forEach(i=>{let val=i.value;if((i.dataset.k==='lat'||i.dataset.k==='lon')&&val)val=parseFloat(val.replace(',','.'));o[i.dataset.k]=val});await DB.put('oaes',o);setTitle(o.nome||'Nova OAE',`${o.rodovia||''} km ${o.km||''}`)},0);
   of.querySelectorAll('[data-k]').forEach(i=>i.oninput=save);
+  const nt=of.querySelector('[data-k=nTramos]');if(nt)nt.addEventListener('input',()=>{o.nTramos=nt.value;extraOAE($('#oextra'),o,edit)});
   const bg=$('#bGps');if(bg)bg.onclick=async()=>{try{toast('Obtendo posição…');const c=await gps();o.lat=+c.latitude.toFixed(7);o.lon=+c.longitude.toFixed(7);if(c.altitude)o.altitude=c.altitude.toFixed(1);await DB.put('oaes',o);toast(`Precisão ±${Math.round(c.accuracy)} m`);render()}catch(e){toast('GPS: '+e.message)}};
   $('#bEdit').onclick=()=>{S.editOAE=!edit;render()};
   $('#bInsp').onclick=()=>novaInsp(o);
-  v.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>go('insp',{inspId:el.dataset.i,tab:'dados'}));
+  v.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>go('insp',{inspId:el.dataset.i,tab:'roteiro',step:'plan'}));
   $('#bDel').onclick=async()=>{if(!confirm('Excluir esta OAE e todas as suas inspeções e fotos deste aparelho?'))return;for(const i of insps){await delInsp(i.id)}await DB.del('oaes',o.id);go('home')};
 }
 async function novaInsp(o){
@@ -475,48 +508,13 @@ async function novaInsp(o){
     i.elementos=(prev.elementos||[]).map(e=>({...e,id:uid(),notaAnt:e.nota,danosAnt:(e.danos||[]).map(d=>d.dano).join('; '),nota:'',danos:[],insuf:'',causa:''}));
     i.prevId=prev.id;
   }
-  await DB.put('insps',i);go('insp',{inspId:i.id,tab:prev?'elementos':'dados'});
+  await DB.put('insps',i);go('insp',{inspId:i.id,tab:'roteiro',step:prev?'plan':'plan'});
 }
 async function delInsp(id){const fs=await DB.byIdx('fotos','insp',id);for(const f of fs)await DB.del('fotos',f.id);await DB.del('insps',id)}
 
 /* ================= INSPEÇÃO ================= */
 function notaFinal(i){if(i.laudo&&i.laudo.notaFinal)return +i.laudo.notaFinal;return notaAuto(i)}
 function notaAuto(i){const ns=(i.elementos||[]).filter(e=>famOf(e.familia).e&&e.nota).map(e=>+e.nota);return ns.length?Math.min(...ns):''}
-async function vInsp(v){
-  const i=await DB.get('insps',S.inspId);if(!i){go('home');return}
-  const o=await DB.get('oaes',i.oaeId);
-  setTitle(o.nome||'OAE',`${i.tipo} · ${fmtD(i.data)} · ${o.rodovia||''} km ${o.km||''}`);
-  const tabs=[['dados','📋','Dados'],['elementos','🧱','Elementos'],['fotos','📷','Fotos'],['laudo','📝','Laudo'],['rel','📄','Relatório']];
-  const tb=$('#tabs');tb.classList.remove('hidden');tb.innerHTML=tabs.map(([k,ic,t])=>`<button data-t="${k}" class="${S.tab===k?'on':''}"><b>${ic}</b>${t}</button>`).join('');
-  tb.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;history.replaceState({...S},'');render()});
-  const save=async()=>{i.alterado=Date.now();await DB.put('insps',i)};
-  if(S.tab==='dados')tabDados(v,i,o,save);
-  else if(S.tab==='elementos')tabElementos(v,i,o,save);
-  else if(S.tab==='fotos')await tabFotos(v,i,o,save);
-  else if(S.tab==='laudo')tabLaudo(v,i,o,save);
-  else if(S.tab==='rel')await tabRel(v,i,o,save);
-}
-function tabDados(v,i,o,save){
-  v.innerHTML=`<div class="card"><h2>1. Dados básicos</h2>
-   <div class="row"><label class="f"><span>Tipo de inspeção</span><select data-k="tipo">${TIPOS.map(t=>`<option ${t===i.tipo?'selected':''}>${t}</option>`).join('')}</select></label>
-   <label class="f"><span>Data da inspeção</span><input type="date" data-k="data" value="${esc(i.data)}"></label></div>
-   <div class="row"><label class="f"><span>Inspetor (engenheiro responsável)</span><input type="text" data-k="inspetor" value="${esc(i.inspetor)}"></label><label class="f"><span>CREA</span><input type="text" data-k="crea" value="${esc(i.crea)}"></label></div>
-   <label class="f"><span>Equipe</span><input type="text" data-k="equipe" value="${esc(i.equipe)}" placeholder="Nomes e funções"></label>
-   <div class="row"><label class="f"><span>Condição do tempo</span><select data-k="clima">${['','Ensolarado','Nublado','Chuvoso','Após chuva'].map(t=>`<option ${t===i.clima?'selected':''}>${t}</option>`).join('')}</select></label>
-   <label class="f"><span>Nível d'água</span><select data-k="nivelAgua">${['','Águas baixas (estiagem)','Normal','Águas altas (cheia)','Sem curso d\'água'].map(t=>`<option ${t===i.nivelAgua?'selected':''}>${t}</option>`).join('')}</select></label>
-   <label class="f"><span>Temperatura ambiente (°C)</span><input type="text" inputmode="decimal" data-k="temperatura" value="${esc(i.temperatura)}" placeholder="Para leitura de juntas"></label></div>
-   <label class="f"><span>Equipamentos utilizados</span><input type="text" data-k="equipamentos" value="${esc(i.equipamentos)}"></label>
-   <label class="f"><span>Limitações de acesso / elementos não inspecionados</span><textarea data-k="limitacoes" style="min-height:60px" placeholder="Ex.: fundações submersas não avaliadas; interior de caixão sem acesso">${esc(i.limitacoes||'')}</textarea></label>
-   <label class="f"><span>Observação geral (Anexo B – item 1)</span><textarea data-k="obs" placeholder="Descrição da condição geral observada">${esc(i.obs)}</textarea></label>
-   <button class="btn sm" id="bObs">Gerar texto sugerido a partir dos danos</button>
-  </div>
-  ${i.prevId?`<div class="infobox">Inspeção criada a partir da anterior. Em cada elemento aparece a nota e os danos registrados antes, para avaliar a evolução (item 5.3.1 da norma).</div>`:''}
-  <div class="btns"><button class="btn bad" id="bDelI">Excluir inspeção</button></div>`;
-  v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{i[el.dataset.k]=el.value;save()});
-  $('#bObs').onclick=()=>{const t=textoObs(i,o);const ta=v.querySelector('[data-k=obs]');if(ta.value&&!confirm('Substituir o texto atual pelo texto sugerido?'))return;ta.value=t;i.obs=t;save()};
-  $('#bDelI').onclick=async()=>{if(!confirm('Excluir esta inspeção e suas fotos?'))return;await delInsp(i.id);history.back()};
-}
-
 /* ---------- Elementos ---------- */
 function tabElementos(v,i,o,save){
   const els=i.elementos||(i.elementos=[]);
@@ -564,62 +562,6 @@ function modelo(i,o,save){
     i.elementos=(i.elementos||[]).concat(out);if(!o.nTramos){o.nTramos=String(T);await DB.put('oaes',o)}
     await save();close();toast(out.length+' elementos gerados');render()}})
 }
-function editElemento(i,o,e,save,isNew){
-  const prevMat=JSON.stringify(e);
-  const draw=()=>{const fm=famOf(e.familia);const dl=danosDe(e.familia).map(d=>d[0]);
-   return `<div class="card">
-    <div class="row"><label class="f" style="flex:3 1 220px"><span>Família de elementos</span><select id="x_f">${REGIOES.map(r=>`<optgroup label="${r}">${FAM.filter(f=>f.r===r).map(f=>`<option ${f.f===e.familia?'selected':''}>${f.f}</option>`).join('')}</optgroup>`).join('')}</select></label>
-    <label class="f" style="flex:1 1 90px"><span>Código</span><input type="text" id="x_c" value="${esc(e.codigo)}" placeholder="${fm.p}1"></label><label class="f" style="flex:1 1 70px"><span>Tramo</span><input type="number" id="x_t" value="${esc(e.tramo)}" min="1"></label></div>
-    <div class="small muted" style="margin:-4px 0 8px">Região: <b>${esc(fm.r)}</b> · ${fm.e?'elemento com função estrutural (entra no cálculo da nota final)':'elemento sem função estrutural (não entra no cálculo automático da nota final)'}</div>
-    ${e.notaAnt||e.danosAnt?`<div class="infobox small">Inspeção anterior: nota <b>${esc(e.notaAnt||'–')}</b>${e.danosAnt?` · danos: ${esc(e.danosAnt)}`:''}</div>`:''}
-    <span class="small muted" style="font-weight:600">NOTA TÉCNICA (Anexo C)</span><div class="chips" id="x_n" style="margin:4px 0 4px">${[1,2,3,4,5].map(n=>`<button class="chip c${n} ${+e.nota===n?'on':''}" data-n="${n}">${n}</button>`).join('')}</div>
-    <div class="small muted" id="x_nd" style="min-height:34px">${e.nota?`<b>${NOTAS[e.nota]}</b> – ${NOTA_ACAO[e.nota]}`:'Toque para atribuir a nota.'}</div>
-   </div>
-   <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">Danos (Anexo B – item 3)</h2><div style="flex:0 0 auto"><button class="btn sm pri" id="x_ad">+ Dano</button></div></div><div id="x_ds" style="margin-top:10px">
-    ${(e.danos||[]).map((d,k)=>`<div class="dano" data-k="${k}">
-     <label class="f"><span>Dano</span><select data-f="dano">${dl.concat([OUTRO]).map(x=>`<option ${x===d.dano?'selected':''}>${x}</option>`).join('')}</select></label>
-     ${d.dano===OUTRO?`<label class="f"><span>Descrição do dano</span><input type="text" data-f="outro" value="${esc(d.outro)}"></label>`:''}
-     <div class="row"><label class="f" style="flex:1 1 70px"><span>Quant.</span><input type="text" inputmode="numeric" data-f="quant" value="${esc(d.quant)}"></label>
-     <label class="f" style="flex:3 1 160px"><span>Localização</span><input type="text" list="locs" data-f="loc" value="${esc(d.loc)}"></label></div>
-     <div class="row"><label class="f"><span>Extensão relativa</span><select data-f="ext">${['',...EXT].map(x=>`<option ${x===d.ext?'selected':''}>${x}</option>`).join('')}</select></label>
-     <label class="f"><span>Dimensões (opcional)</span><input type="text" data-f="dim" value="${esc(d.dim)}" placeholder="ex.: 0,40×0,20 m; abertura 0,3 mm"></label></div>
-     <span class="small muted" style="font-weight:600">ESTADO DE CONDIÇÃO (Anexo D)</span><div class="chips" style="margin:4px 0 6px">${[4,3,2,1].map(n=>`<button class="chip ${'c'+(n===4?5:n===3?3:n===2?2:1)} ${+d.ec===n?'on':''}" data-ec="${n}">EC ${n}</button>`).join('')}</div>
-     <div class="small muted">${d.ec?`<b>${EC[d.ec]}:</b> ${EC_DESC[d.ec]}`:''}</div>
-     <div class="check"><input type="checkbox" data-f="nc" ${d.nc?'checked':''} id="nc${k}"><label for="nc${k}">Gerar não conformidade para este dano</label></div>
-     <div class="btns" style="justify-content:flex-end"><button class="btn sm" data-foto="${k}">📷 Foto do dano</button><button class="btn sm bad" data-del="${k}">Remover</button></div>
-    </div>`).join('')||'<p class="muted small">Nenhum dano registrado. Se não houver danos, basta atribuir a nota.</p>'}
-   </div></div>
-   <div class="card"><h2>Insuficiência estrutural (Anexo B – item 4)</h2>
-    <label class="f"><span>Insuficiência estrutural / descrição técnica</span><textarea id="x_i" style="min-height:70px">${esc(e.insuf||'')}</textarea></label>
-    <label class="f"><span>Causa provável</span><textarea id="x_ca" style="min-height:60px">${esc(e.causa||'')}</textarea></label>
-    <button class="btn sm" id="x_sug">Sugerir texto a partir dos danos</button>
-    <label class="f" style="margin-top:10px"><span>Observação do elemento</span><input type="text" id="x_o" value="${esc(e.obs||'')}"></label>
-   </div><datalist id="locs">${LOCAIS.map(l=>`<option value="${l}">`).join('')}</datalist>`};
-  const sh=sheet(isNew?'Novo elemento':`${e.codigo||''} · ${e.familia}`,draw(),`<button class="btn bad" id="x_rm">${isNew?'Cancelar':'Excluir'}</button><button class="btn" id="x_ft">📷 Foto</button><button class="btn pri" style="flex:1" id="x_ok">Salvar</button>`,()=>{});
-  const el=sh.el,body=el.querySelector('.sb');
-  const bind=()=>{
-   const q=s=>body.querySelector(s);
-   q('#x_f').onchange=ev=>{e.familia=ev.target.value;e.regiao=famOf(e.familia).r;if(!e.codigo)e.codigo=famOf(e.familia).p+'1';redraw()};
-   q('#x_c').oninput=ev=>e.codigo=ev.target.value;q('#x_t').oninput=ev=>e.tramo=+ev.target.value||1;
-   q('#x_i').oninput=ev=>e.insuf=ev.target.value;q('#x_ca').oninput=ev=>e.causa=ev.target.value;q('#x_o').oninput=ev=>e.obs=ev.target.value;
-   body.querySelectorAll('#x_n .chip').forEach(c=>c.onclick=()=>{e.nota=c.dataset.n;redraw()});
-   q('#x_ad').onclick=()=>{(e.danos=e.danos||[]).push({dano:danosDe(e.familia)[0][0],quant:'1',loc:'',ext:'≤20%',ec:'3'});redraw();body.scrollTop=body.scrollHeight};
-   body.querySelectorAll('.dano').forEach(dv=>{const d=e.danos[+dv.dataset.k];
-    dv.querySelectorAll('[data-f]').forEach(inp=>{const f=inp.dataset.f;const h=()=>{d[f]=inp.type==='checkbox'?inp.checked:inp.value;if(f==='dano')redraw()};inp.oninput=h;inp.onchange=h});
-    dv.querySelectorAll('[data-ec]').forEach(c=>c.onclick=()=>{d.ec=c.dataset.ec;if(c.dataset.ec==='1')d.nc=true;redraw()});
-    dv.querySelector('[data-del]').onclick=()=>{e.danos.splice(+dv.dataset.k,1);redraw()};
-    dv.querySelector('[data-foto]').onclick=()=>fotoElemento(i,o,e,save,d)});
-   q('#x_sug').onclick=()=>{const ds=(e.danos||[]);if(!ds.length)return toast('Registre ao menos um dano');
-     e.insuf=ds.map(d=>{const nm=d.dano===OUTRO?d.outro:d.dano;return `${nm}${d.loc?' na '+d.loc.toLowerCase():''}${d.ext?' (extensão '+d.ext+')':''}`}).join('; ')+'.';
-     e.causa=[...new Set(ds.map(d=>(danoInfo(e.familia,d.dano)||[])[2]).filter(Boolean))].join('; ')+'.';redraw()};
-  };
-  const redraw=()=>{const st=body.scrollTop;body.innerHTML=draw();bind();body.scrollTop=st};
-  bind();
-  el.querySelector('#x_ok').onclick=async()=>{if(!e.codigo)e.codigo=famOf(e.familia).p+'1';if(!i.elementos.find(x=>x.id===e.id))i.elementos.push(e);await save();sh.close();render()};
-  el.querySelector('#x_ft').onclick=()=>fotoElemento(i,o,e,save);
-  el.querySelector('#x_rm').onclick=async()=>{if(isNew){sh.close();return}if(!confirm('Excluir o elemento '+e.codigo+'?'))return;i.elementos=i.elementos.filter(x=>x.id!==e.id);await save();sh.close();render()};
-  el.querySelector('[data-x]').onclick=async()=>{if(!isNew&&JSON.stringify(e)!==prevMat){await save()}sh.close();render()};
-}
 async function fotoElemento(i,o,e,save,d){
   if(!i.elementos.find(x=>x.id===e.id))i.elementos.push(e);await save();
   const nm=d?(d.dano===OUTRO?d.outro:d.dano):'';
@@ -649,32 +591,6 @@ function processaFoto(file,{ts,lat,lon,linhas}){return new Promise((res,rej)=>{c
   const lh=fs*1.25;const bw=Math.max(...L.map(s=>x.measureText(s).width))+fs;x.fillStyle='rgba(0,0,0,.45)';x.fillRect(w-bw-fs*.4,h-lh*L.length-fs*.8,bw+fs*.4,lh*L.length+fs*.8);
   x.fillStyle='#fff';x.shadowColor='#000';x.shadowBlur=3;L.forEach((s,j)=>x.fillText(s,w-fs*.6,h-fs*.4-lh*(L.length-1-j)));
   URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',.72))};img.onerror=()=>rej(new Error('Imagem inválida'));img.src=url})}
-async function tabFotos(v,i,o,save){
-  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
-  const elById=Object.fromEntries((i.elementos||[]).map(e=>[e.id,e]));
-  v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">Registro fotográfico</h2><div class="small muted">${fs.length} foto(s). Mínimo recomendado: 6 (vista superior, inferior, laterais, apoios, juntas).</div></div>
-   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bCam">📷 Câmera</button><button class="btn" id="bGal">🖼️ Galeria</button></div></div>
-   ${fs.length<6?`<div class="warnbox" style="margin:10px 0 0">Faltam ${6-fs.length} foto(s) para o mínimo do item 5.1 da norma.</div>`:''}
-   <div class="chips" style="margin-top:10px">${['VISTA GERAL','VISTA SUPERIOR / PISTA','VISTA INFERIOR','VISTA LATERAL LD','VISTA LATERAL LE','ENCONTRO 1','ENCONTRO 2','APARELHOS DE APOIO','JUNTA DE DILATAÇÃO','ACESSO / ATERRO'].map(t=>`<button class="chip" data-q="${t}" style="font-weight:600;font-size:12.5px">${t}</button>`).join('')}</div>
-   <div class="small muted" style="margin-top:4px">Atalhos: toque para fotografar já com a legenda.</div></div>
-   <div class="photos">${fs.map(f=>{const e=elById[f.elementoId];return `<div class="ph" data-f="${f.id}"><img src="${f.data}" loading="lazy" alt=""><div class="cap"><b>FOTO ${f.n}</b> ${esc(f.legenda||'(sem legenda)')}${e?`<br><span class="muted">${esc(e.codigo)} · T${e.tramo}</span>`:''}${f.gpsFoto?'':' <span class="muted">· coord. da OAE</span>'}</div></div>`}).join('')}</div>`;
-  $('#bCam').onclick=()=>capturarFoto(i,o,{legenda:''},true);$('#bGal').onclick=()=>capturarFoto(i,o,{legenda:''},false);
-  v.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>capturarFoto(i,o,{legenda:b.dataset.q},true));
-  v.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>editFoto(i,fs.find(f=>f.id===c.dataset.f),fs));
-}
-function editFoto(i,f,fs){
-  const els=i.elementos||[];
-  sheet('Foto '+f.n,`<div class="card"><img src="${f.data}" style="width:100%;border-radius:8px">
-   <label class="f" style="margin-top:10px"><span>Legenda</span><textarea id="fl" style="min-height:60px">${esc(f.legenda)}</textarea></label>
-   <div class="row"><label class="f" style="flex:3 1 200px"><span>Elemento vinculado</span><select id="fe"><option value="">(nenhum)</option>${els.map(e=>`<option value="${e.id}" ${e.id===f.elementoId?'selected':''}>T${e.tramo} · ${esc(e.codigo)} · ${esc(e.familia)}</option>`).join('')}</select></label>
-   <label class="f" style="flex:1 1 80px"><span>Nº</span><input type="number" id="fn" value="${f.n}"></label></div>
-   <div class="small muted">${new Date(f.ts).toLocaleString('pt-BR')} · ${f.lat!=null&&f.lat!==''?latS(f.lat)+' '+lonS(f.lon):'sem coordenadas'} ${f.gpsFoto?'(GPS no momento da foto)':'(coordenadas da OAE)'}</div></div>`,
-   `<button class="btn bad" id="fd">Excluir</button><button class="btn pri" style="flex:1" id="fs">Salvar</button>`,(el,close)=>{
-   el.querySelector('#fs').onclick=async()=>{f.legenda=el.querySelector('#fl').value.toUpperCase();f.elementoId=el.querySelector('#fe').value;const nn=+el.querySelector('#fn').value;
-     if(nn&&nn!==f.n){const other=fs.find(x=>x.n===nn);if(other){other.n=f.n;await DB.put('fotos',other)}f.n=nn}await DB.put('fotos',f);close();render()};
-   el.querySelector('#fd').onclick=async()=>{if(!confirm('Excluir a foto '+f.n+'?'))return;await DB.del('fotos',f.id);const rest=fs.filter(x=>x.id!==f.id).sort((a,b)=>a.n-b.n);for(let k=0;k<rest.length;k++){if(rest[k].n!==k+1){rest[k].n=k+1;await DB.put('fotos',rest[k])}}close();render()}});
-}
-
 /* ---------- Textos sugeridos ---------- */
 const nomeD=d=>d.dano===OUTRO?(d.outro||'dano não descrito'):d.dano;
 function danosLista(i){const out=[];(i.elementos||[]).forEach(e=>(e.danos||[]).forEach(d=>out.push({e,d})));return out}
@@ -713,48 +629,7 @@ function textoNC(i,o){
 }
 
 /* ---------- Laudo ---------- */
-function tabLaudo(v,i,o,save){
-  const L=i.laudo||(i.laudo={});const na=notaAuto(i),nf=notaFinal(i);
-  const ncs=textoNC(i,o);
-  v.innerHTML=`<div class="card"><h2>Nota final da OAE</h2>
-   <div class="row" style="align-items:center"><div>Automática (menor nota dos elementos estruturais): ${notaBadge(na)}</div></div>
-   <span class="small muted" style="font-weight:600;display:block;margin-top:10px">NOTA FINAL ADOTADA</span><div class="chips" id="nfc" style="margin:4px 0">${['',1,2,3,4,5].map(n=>`<button class="chip ${n?'c'+n:'cx'} ${String(L.notaFinal||'')===String(n)?'on':''}" data-n="${n}">${n||'Auto'}</button>`).join('')}</div>
-   ${L.notaFinal&&+L.notaFinal!==+na?'<div class="warnbox">A nota adotada difere da automática. Justifique no campo abaixo.</div>':''}
-   ${nf&&nf<=2?'<div class="warnbox"><b>Laudo especializado obrigatório</b> (nota ≤ 2 – IPR 709/2026, item 2.2.2).</div>':''}</div>
-  <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">5. Laudo especializado</h2><div style="flex:0 0 auto"><button class="btn sm" id="bSug">Gerar texto sugerido</button></div></div>
-   <p class="small muted">O texto sugerido é montado a partir dos danos e notas lançados. Revise e complemente antes de emitir o relatório.</p>
-   <label class="f"><span>Data do laudo</span><input type="date" data-k="data" value="${esc(L.data||i.data)}"></label>
-   <label class="f"><span>Problemas principais observados</span><textarea data-k="problemas">${esc(L.problemas||'')}</textarea></label>
-   <label class="f"><span>Riscos da não intervenção</span><textarea data-k="riscos">${esc(L.riscos||'')}</textarea></label>
-   <label class="f"><span>Recomendações</span><textarea data-k="recomendacoes">${esc(L.recomendacoes||'')}</textarea></label>
-   <label class="f"><span>Nota final – justificativa</span><textarea data-k="justificativa">${esc(L.justificativa||'')}</textarea></label>
-   <label class="f"><span>Necessidade de inspeção especial / complementar</span><textarea data-k="complementar" style="min-height:60px" placeholder="Ex.: batimetria, inspeção subaquática, ensaios de carbonatação…">${esc(L.complementar||'')}</textarea></label></div>
-  <div class="card"><h2>Não conformidades</h2>${ncs.length?ncs.map((t,k)=>`<p class="small" style="background:#f6f8fa;padding:8px;border-radius:8px">${k+1}. ${esc(t)}</p>`).join('')+`<button class="btn sm" id="bCopyNC">Copiar textos</button>`:'<p class="muted small">Nenhum dano marcado para gerar não conformidade. Marque a opção no dano, dentro do elemento.</p>'}
-   <div class="check"><input type="checkbox" id="incNC" ${L.incluirNC!==false?'checked':''}><label for="incNC">Incluir não conformidades no relatório</label></div></div>`;
-  v.querySelectorAll('#nfc .chip').forEach(c=>c.onclick=async()=>{L.notaFinal=c.dataset.n;await save();render()});
-  v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{L[el.dataset.k]=el.value;save()});
-  $('#incNC').onchange=ev=>{L.incluirNC=ev.target.checked;save()};
-  $('#bSug').onclick=async()=>{const t=textoLaudo(i,o);if((L.problemas||L.recomendacoes)&&!confirm('Substituir os textos atuais pelos sugeridos?'))return;Object.assign(L,t);if(!L.data)L.data=i.data;await save();render()};
-  const bc=$('#bCopyNC');if(bc)bc.onclick=()=>{navigator.clipboard.writeText(ncs.join('\n\n')).then(()=>toast('Copiado'))};
-}
-
 /* ---------- Relatório individual ---------- */
-async function tabRel(v,i,o,save){
-  const fs=await DB.byIdx('fotos','insp',i.id);const els=i.elementos||[];
-  const pend=[];if(!els.length)pend.push('Nenhum elemento cadastrado.');const sn=els.filter(e=>!e.nota).length;if(sn)pend.push(sn+' elemento(s) sem nota técnica.');
-  if(fs.length<6)pend.push('Menos de 6 fotos (item 5.1).');const nf=notaFinal(i);if(nf&&nf<=2&&!(i.laudo&&i.laudo.problemas))pend.push('Laudo especializado obrigatório não preenchido (nota ≤ 2).');
-  if(!i.obs)pend.push('Observação geral (item 1) em branco.');if(!o.lat)pend.push('OAE sem coordenadas geográficas.');if(!CFG.resp)pend.push('Responsável técnico não definido em Configurações.');
-  v.innerHTML=`<div class="card"><h2>Relatório da inspeção</h2>
-   ${pend.length?`<div class="warnbox"><b>Pendências:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Ficha completa. Pronta para emissão.</div>'}
-   <div class="check"><input type="checkbox" id="rA" ${i.tipo.includes('Cadastral')?'checked':''}><label for="rA">Incluir ficha cadastral (Anexo A)</label></div>
-   <div class="check"><input type="checkbox" id="rF" checked><label for="rF">Incluir relatório fotográfico</label></div>
-   <div class="btns" style="margin-top:8px"><button class="btn pri" id="bPrint">🖨️ Gerar PDF (imprimir)</button><button class="btn" id="bHtml">⬇️ Baixar relatório (HTML)</button><button class="btn" id="bCsvI">⬇️ Planilha de danos (CSV)</button></div>
-   <p class="small muted">No celular: “Gerar PDF” abre a impressão; escolha <b>Salvar como PDF</b>. O arquivo HTML abre em qualquer navegador e pode ser impresso no computador.</p></div>`;
-  const opts=()=>({cad:$('#rA').checked,fotos:$('#rF').checked});
-  $('#bPrint').onclick=async()=>{await imprimir(await relInsp(i,o,opts(),true))};
-  $('#bHtml').onclick=async()=>{download(nomeArq(o,i)+'.html',docHTML(await relInsp(i,o,opts(),true)),'text/html')};
-  $('#bCsvI').onclick=()=>download(nomeArq(o,i)+'_danos.csv',csvOut(linhasDanos([{i,o}])),'text/csv');
-}
 const nomeArq=(o,i)=>`OAE_${(o.rodovia||'').replace(/\W/g,'')}_km${String(o.km||'').replace(/\W/g,'_')}_${i.data}`;
 function linhasDanos(arr){const rows=[['Rodovia','km','Código SGE','OAE','Data','Tipo','Tramo','Região','Família','Elemento','Nota técnica','Dano','Quant.','Localização','Extensão','EC','Dimensões','Intervenção sugerida','Insuficiência estrutural','Causa provável']];
   arr.forEach(({i,o})=>(i.elementos||[]).forEach(e=>{const ds=(e.danos||[]).length?e.danos:[null];ds.forEach(d=>{const info=d?danoInfo(e.familia,d.dano):null;rows.push([o.rodovia,o.km,o.codigoSGE,o.nome,fmtD(i.data),i.tipo,e.tramo,e.regiao,e.familia,e.codigo,e.nota,d?nomeD(d):'',d?d.quant:'',d?d.loc:'',d?d.ext:'',d&&d.ec?d.ec+' - '+EC[d.ec]:'',d?d.dim:'',info?info[1]:'',e.insuf||'',e.causa||''])})}));return rows}
@@ -763,37 +638,6 @@ const H_LOGOS=()=>`<div class="hdr">${CFG.logoE?`<img src="${CFG.logoE}">`:'<spa
 const F_TXT=()=>`<div class="ftr">${esc(CFG.empresa)}${CFG.contrato?' · Contrato '+esc(CFG.contrato):''}${CFG.endereco?' · '+esc(CFG.endereco):''}</div>`;
 const wrap=body=>`<div class="rp"><table class="wrap"><thead><tr><td>${H_LOGOS()}</td></tr></thead><tfoot><tr><td>${F_TXT()}</td></tr></tfoot><tbody><tr><td>${body}</td></tr></tbody></table></div>`;
 const ntCls=n=>n?`nt${n}`:'';
-async function relInsp(i,o,opts,standalone,secNum){
-  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);const els=i.elementos||[];const L=i.laudo||{};const nf=notaFinal(i);
-  const tramos=[...new Set(els.map(e=>+e.tramo||1))].sort((a,b)=>a-b);const sp=secNum?secNum+'.':'';
-  const kv=(pairs,cols=3)=>{let h='<table class="t">';for(let k=0;k<pairs.length;k+=cols){h+='<tr>'+pairs.slice(k,k+cols).map(([a,b])=>`<td class="k">${a}</td><td>${esc(b??'')}</td>`).join('')+'</tr>'}return h+'</table>'};
-  let h='';
-  if(standalone)h+=`<h1>FICHA DE INSPEÇÃO ${esc(i.tipo.toUpperCase())} DE OAE<br><span style="font-size:12px;font-weight:400">${esc(o.nome||'')} – ${esc(o.rodovia||'')}/TO km ${esc(o.km||'')}</span></h1>`;
-  else h+=`<h2 class="pb">${sp} ${esc(o.nome||'')} – ${esc(o.rodovia||'')} km ${esc(o.km||'')}</h2>`;
-  h+=`<h3>Identificação e localização</h3>`+kv([['Código da estrutura (SGE)',o.codigoSGE||'S/N'],['Nome',o.nome],['Data da inspeção',fmtD(i.data)],['Rodovia',o.rodovia],['Local na via (km)',o.km],['UF',o.uf||'TO'],['Código SNV',o.snv],['Versão SNV',o.versaoSNV],['Cidade próxima',o.cidade],['Latitude',o.lat?latS(o.lat):''],['Longitude',o.lon?lonS(o.lon):''],['Altitude (m)',o.altitude],['Comprimento (m)',o.comprimento],['Largura (m)',o.largura],['Tipo de estrutura',o.material],['Tipo de inspeção',i.tipo],['Inspetor',i.inspetor],['CREA',i.crea],['Tempo',i.clima],['Nível d\'água',i.nivelAgua],['Temperatura (°C)',i.temperatura]]);
-  if(opts.cad){
-    h+=`<h3 class="avoid">Anexo A – Ficha de inspeção cadastral (dados complementares)</h3>`+kv([['Trem-tipo',o.tremTipo],['Ano de construção',o.anoConstrucao],['Sistema construtivo',o.sistema],['Superintendência/UL',o.superintendencia],['Administração DNIT?',o.adminDNIT],['Projetista',o.projetista],['Construtor',o.construtor],['Atendimento ao SNV',o.atendSNV],['Tipo de região',o.regiao],['Tipo de traçado',o.tracado],['Rampa máxima (°)',o.rampa],['Raio da curva (m)',o.raio],['Nº de faixas',o.nFaixas],['Largura da faixa (m)',o.largFaixa],['Acostamento D/E (m)',[o.acostD,o.acostE].filter(Boolean).join(' / ')],['Calçada D/E (m)',[o.calcD,o.calcE].filter(Boolean).join(' / ')],['Gabarito H/V (m)',[o.gabH,o.gabV].filter(Boolean).join(' / ')],['Pista antes/depois (m)',[o.pistaAntes,o.pistaDepois].filter(Boolean).join(' / ')],['Nº de tramos',o.nTramos||tramos.length],['Período de inspeção (anos)',o.periodo],['Melhor época',[o.epocaIni,o.epocaFim].filter(Boolean).join(' a ')],['Equipamento necessário',o.equip||i.equipamentos]]);
-    h+=kv([['Aspectos especiais',o.aspectos],['Deficiências funcionais',o.deficiencias],['Rota alternativa',[o.rotaExiste,o.rotaDesc,o.rotaAcresc?('acréscimo de '+o.rotaAcresc+' km'):''].filter(Boolean).join(' – ')],['Projeto de substituição',[o.projSubst,o.custoSubst?'R$ '+o.custoSubst:'',o.seiSubst?'SEI '+o.seiSubst:''].filter(Boolean).join(' – ')]],1);
-    h+=`<h3>Elementos componentes por tramo</h3><table class="t"><tr><th>Tramo</th><th>Família de elementos</th><th>Elemento individual</th><th>Região</th></tr>${els.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(e.regiao)}</td></tr>`).join('')}</table>`;
-  }
-  h+=`<h3 class="avoid">Anexo B – 1. Dados básicos</h3><table class="t"><tr><td class="k">Data da inspeção</td><td>${fmtD(i.data)}</td><td class="k">Equipe</td><td>${esc(i.equipe)}</td></tr><tr><td class="k">Equipamentos</td><td colspan="3">${esc(i.equipamentos)}</td></tr>${i.limitacoes?`<tr><td class="k">Limitações</td><td colspan="3">${esc(i.limitacoes)}</td></tr>`:''}<tr><td class="k">Observação</td><td colspan="3" class="just">${esc(i.obs||'')}</td></tr></table>`;
-  h+=`<h3>2. Nota técnica</h3><table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família de elementos</th><th class="c">Elemento</th><th class="c">Nota técnica</th>${i.prevId?'<th class="c">Anterior</th>':''}</tr>${els.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td class="c ${ntCls(e.nota)}"><b>${e.nota?e.nota+' – '+NOTAS[e.nota]:''}</b></td>${i.prevId?`<td class="c">${esc(e.notaAnt||'')}</td>`:''}</tr>`).join('')}</table>`;
-  const dls=danosLista(i);
-  h+=`<h3>3. Danos aos elementos</h3>${dls.length?`<table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família</th><th class="c">Elem.</th><th>Dano</th><th class="c">Quant.</th><th>Localização</th><th class="c">Extensão relativa</th><th class="c">Estado de condição</th></tr>${dls.map(({e,d})=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(nomeD(d))}${d.dim?`<br><i>${esc(d.dim)}</i>`:''}</td><td class="c">${esc(d.quant)}</td><td>${esc(d.loc)}</td><td class="c">${esc(d.ext)}</td><td class="c">${d.ec?d.ec+' – '+EC[d.ec]:''}</td></tr>`).join('')}</table>`:'<p>Não foram registrados danos nos elementos inspecionados.</p>'}`;
-  const ins=els.filter(e=>e.insuf||e.causa);
-  h+=`<h3>4. Insuficiências estruturais</h3>${ins.length?`<table class="t"><tr><th class="c">Tramo</th><th>Região</th><th>Família</th><th class="c">Elem.</th><th>Insuficiência estrutural</th><th>Causa provável</th></tr>${ins.map(e=>`<tr><td class="c">${e.tramo}</td><td>${esc(e.regiao)}</td><td>${esc(e.familia)}</td><td class="c">${esc(e.codigo)}</td><td>${esc(e.insuf)}</td><td>${esc(e.causa)}</td></tr>`).join('')}</table>`:'<p>Não foram identificadas insuficiências estruturais.</p>'}`;
-  h+=`<h3 class="avoid">5. Laudo especializado</h3><table class="t"><tr><td class="k">Data do laudo</td><td>${fmtD(L.data||i.data)}</td><td class="k">Nota final da OAE</td><td class="c ${ntCls(nf)}"><b>${nf?nf+' – '+NOTAS[nf]:'–'}</b></td></tr>
-   ${L.problemas?`<tr><td class="k">Problemas principais</td><td colspan="3" class="just">${esc(L.problemas)}</td></tr>`:''}${L.riscos?`<tr><td class="k">Riscos da não intervenção</td><td colspan="3" class="just">${esc(L.riscos)}</td></tr>`:''}${L.recomendacoes?`<tr><td class="k">Recomendações</td><td colspan="3" class="just">${esc(L.recomendacoes)}</td></tr>`:''}${L.complementar?`<tr><td class="k">Inspeções/ensaios complementares</td><td colspan="3" class="just">${esc(L.complementar)}</td></tr>`:''}${L.justificativa?`<tr><td class="k">Nota final</td><td colspan="3" class="just">${esc(L.justificativa)}</td></tr>`:''}</table>`;
-  const ncs=L.incluirNC!==false?textoNC(i,o):[];
-  if(ncs.length)h+=`<h3>6. Não conformidades</h3><table class="t">${ncs.map((t,k)=>`<tr><td class="c" style="width:22px">${k+1}</td><td class="just">${esc(t)}</td></tr>`).join('')}</table>`;
-  if(standalone)h+=assinatura(i);
-  if(opts.fotos&&fs.length){
-    const elById=Object.fromEntries(els.map(e=>[e.id,e]));
-    h+=`<h3 class="pb">Relatório fotográfico – ${esc(o.nome||'')}</h3><table class="t"><tr><td class="k">Empresa</td><td>${esc(CFG.empresa)}</td><td class="k">Segmento</td><td>${esc((o.nome||'').toUpperCase())}</td></tr><tr><td class="k">Contrato</td><td>${esc(CFG.contrato)}</td><td class="k">Rodovia</td><td>${esc(o.rodovia||'')} km ${esc(o.km||'')}</td></tr></table>
-    <div class="photogrid">${fs.map(f=>`<div class="pcell"><div class="pc"><b>Lat.:</b><span>${f.lat!=null&&f.lat!==''?latS(f.lat):'–'}</span><span>${esc(o.rodovia||'')} km ${esc(o.km||'')}</span><b>Long.:</b><span>${f.lon!=null&&f.lon!==''?lonS(f.lon):'–'}</span><span>${new Date(f.ts).toLocaleDateString('pt-BR')}</span></div><img src="${f.data}"><div class="pl">FOTO ${f.n} – ${esc(f.legenda||'')}${elById[f.elementoId]?` [${esc(elById[f.elementoId].codigo)} / T${elById[f.elementoId].tramo}]`:''}</div></div>`).join('')}</div>`;
-  }
-  return standalone?wrap(h):h;
-}
 function assinatura(i){const nome=(i&&i.inspetor)||CFG.resp;const crea=(i&&i.crea)||CFG.crea;return `<div class="sign avoid"><p>${esc(CFG.cidade||'')}, ${new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'})}.</p><br><br><div class="ln"><b>${esc(nome||'Responsável técnico')}</b><br>${esc(CFG.cargo||'')}${crea?' – CREA '+esc(crea):''}<br>${esc(CFG.empresa)}</div></div>`}
 function docHTML(body){const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de inspeção de OAE</title><style>${css}\nbody{background:#fff}#print{display:block}@media screen{.rp{max-width:200mm;margin:10px auto;padding:10px;box-shadow:0 0 6px #aaa}}</style></head><body><div id="print">${body}</div></body></html>`}
 async function imprimir(html){const p=$('#print');p.innerHTML=html;const imgs=[...p.querySelectorAll('img')];await Promise.all(imgs.map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r})));setTimeout(()=>{window.print();},150)}
@@ -831,50 +675,564 @@ async function vResumo(v){
 }
 function linhasResumo(arr){const rows=[['Código SGE','Identificação da OAE','Rodovia','km','Data','Tipo','Nota anterior/SGE','Nota sugerida','Patologias','Intervenção necessária']];
   arr.forEach(({i,o})=>{const gs=agrupaDanos(i);rows.push([o.codigoSGE||'S/N',o.nome,o.rodovia,o.km,fmtD(i.data),i.tipo,o.notaSGE||'',notaFinal(i),gs.map(g=>`${g.dano} – ${g.fam} (${g.els.join(', ')})`).join(' | '),[...new Set(gs.map(g=>g.info&&g.info[1]).filter(Boolean))].join(' | ')])});return rows}
+/* ================= CONFIGURAÇÕES ================= */
+function imgToData(f,max){return new Promise(res=>{const u=URL.createObjectURL(f);const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/png'))};im.src=u})}
+async function backup(){const d={app:'vistoria-oae',v:2,em:new Date().toISOString(),cfg:{...CFG,iaKey:''},oaes:await DB.all('oaes'),insps:await DB.all('insps'),fotos:await DB.all('fotos')};download(`backup_vistoria_OAE_${today()}.json`,JSON.stringify(d),'application/json');toast('Backup gerado')}
+async function restore(){const f=await pickFile('.json,application/json');if(!f)return;try{const d=JSON.parse(await f.text());if(d.app!=='vistoria-oae')throw new Error('Arquivo não é backup deste app');
+  if(!confirm(`Restaurar ${d.oaes.length} OAEs, ${d.insps.length} inspeções e ${d.fotos.length} fotos? Registros com o mesmo identificador serão substituídos.`))return;
+  for(const o of d.oaes)await DB.put('oaes',o);for(const i of d.insps)await DB.put('insps',i);for(const x of d.fotos)await DB.put('fotos',x);if(d.cfg){delete d.cfg.iaKey}if(d.cfg&&confirm('Restaurar também as configurações (empresa, logos, responsável)?')){CFG={...CFG,...d.cfg};await saveCfg()}toast('Backup restaurado');go('home')}catch(e){alert('Falha ao restaurar: '+e.message)}}
+
+
+/* ================= v2: IA (Anthropic API) ================= */
+const IA={
+  ativo:()=>!!(CFG.iaKey&&CFG.iaOn!==false),
+  async call(content,system,maxTokens=3000){
+    if(!CFG.iaKey)throw new Error('Configure a chave da API em ⋮ → Configurações → Assistente de IA.');
+    if(!navigator.onLine)throw new Error('Sem internet. A IA precisa de conexão; use o texto sugerido offline.');
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':CFG.iaKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:CFG.iaModel||'claude-sonnet-5-5',max_tokens:maxTokens,system,messages:[{role:'user',content}]})});
+    let j;try{j=await r.json()}catch(e){throw new Error('Resposta inválida da API (HTTP '+r.status+')')}
+    if(!r.ok)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+    const txt=(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+    const m=txt.match(/\{[\s\S]*\}/);if(!m)throw new Error('A IA não retornou dados no formato esperado.');
+    return JSON.parse(m[0]);
+  },
+  img:d=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:d.split(',')[1]}})
+};
+function reduzImg(d,max=1024){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.8))};im.onerror=()=>res(d);im.src=d})}
+const SYS_IA=`Você é engenheiro civil especialista em inspeção de pontes e viadutos rodoviários do DNIT. Aplica a norma DNIT 010/2024-PRO (Inspeções em pontes e viadutos – Procedimento) e o Manual de Inspeção de Pontes (Publicação IPR 709, 3ª ed., 2026).
+Critérios de nota técnica por elemento (Anexo C): 5 Excelente – não há danos nem insuficiência estrutural; 4 Boa – há alguns danos, sem sinais de insuficiência estrutural, apenas manutenção; 3 Regular – danos gerando alguma insuficiência estrutural, sem comprometimento da estabilidade, recuperação pode ser postergada com observação sistemática; 2 Ruim – danos gerando significativa insuficiência estrutural, sem risco tangível de colapso, recuperação a curto prazo, inspeções intermediárias recomendáveis; 1 Crítica – grave insuficiência estrutural, risco tangível de colapso, recuperação sem tardar, podendo exigir restrição de carga, interdição, escoramento e instrumentação.
+Estado de condição do dano (Anexo D): EC 4 Bom – dano irrisório ou não encontrado; EC 3 Razoável – não afeta o desempenho e/ou já há medidas para impedir avanço; EC 2 Ruim – não afeta o desempenho, mas afeta a vida útil, sem necessidade de avaliação estrutural; EC 1 Severo – requer avaliação estrutural do efeito na resistência ou funcionalidade.
+A nota final da OAE pode ser considerada a menor dentre as notas dos elementos com função estrutural. Nota técnica ≤ 2 exige laudo especializado.
+Regras de redação: português do Brasil, linguagem técnica formal, impessoal e institucional, no padrão de relatórios de inspeção do DNIT. Separe o que foi constatado do que é interpretação técnica. Não invente dados, dimensões, quantidades ou elementos que não estejam nas informações ou visíveis nas fotos. Quando a foto não permitir conclusão, diga isso e indique a verificação necessária em campo. Evite afirmações absolutas sem evidência. Registre limitações da inspeção visual (elementos submersos, enterrados ou sem acesso).
+Responda SOMENTE com um objeto JSON válido, sem texto fora dele.`;
+function catalogoIA(){return Object.entries(D_CAT).map(([k,v])=>`${k}: ${v.map(d=>d[0]).join(' | ')}`).join('\n')}
+function ctxOAE(o){return `OAE: ${o.nome||''}; rodovia ${o.rodovia||''} km ${o.km||''}; código SGE ${o.codigoSGE||'S/N'}; comprimento ${o.comprimento||'?'} m; largura ${o.largura||'?'} m; tipo de estrutura ${o.material||'não informado'}; nº de tramos ${o.nTramos||'?'}.`}
+
+async function iaFoto(i,o,f){
+  const els=(i.elementos||[]).map(e=>({id:e.id,codigo:e.codigo,familia:e.familia,tramo:e.tramo,categoria:famOf(e.familia).c}));
+  const img=await reduzImg(f.data,1280);
+  const prompt=`${ctxOAE(o)}
+Tipo de inspeção: ${i.tipo}. Legenda atual da foto: "${f.legenda||''}". Elemento já vinculado: ${f.elementoId||'nenhum'}.
+Elementos cadastrados nesta inspeção (escolha o mais provável para a foto, ou deixe vazio): ${JSON.stringify(els)}
+Catálogo de danos por categoria (use o nome EXATO; se nenhum servir use "Outro (descrever)" e preencha "outro"):
+${catalogoIA()}
+Analise a foto de inspeção visual e retorne:
+{"descricao":"constatação objetiva do que se vê, 1 a 3 frases","legenda":"legenda curta em CAIXA ALTA no padrão 'VISTA INFERIOR DA LAJE DO TRAMO 02 – ARMADURA EXPOSTA'","elementoId":"id do elemento ou ''","familia":"família provável","danos":[{"dano":"nome do catálogo","outro":"","loc":"localização no elemento","ext":"≤20%|20% a 50%|50% a 80%|>80%","ec":4,"motivo":"por que esse EC"}],"notaSugerida":4,"motivoNota":"justificativa curta pelo Anexo C","alertas":["situações que exigem atenção imediata, se houver"],"verificarEmCampo":["o que o inspetor deve confirmar no local"],"confianca":"alta|média|baixa"}
+Se não houver dano visível, retorne "danos":[]. Use "notaSugerida":null se a foto não permitir avaliar.`;
+  return IA.call([IA.img(img),{type:'text',text:prompt}],SYS_IA,2000);
+}
+async function iaLaudo(i,o){
+  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
+  const els=i.elementos||[];const elById=Object.fromEntries(els.map(e=>[e.id,e]));
+  const pior=f=>{const e=elById[f.elementoId];if(!e)return 9;const ecs=(e.danos||[]).map(d=>+d.ec||9);return Math.min(+e.nota||9,...ecs)};
+  const sel=fs.slice().sort((a,b)=>pior(a)-pior(b)).slice(0,10).sort((a,b)=>a.n-b.n);
+  const content=[];
+  for(const f of sel){content.push({type:'text',text:`FOTO ${f.n} – ${f.legenda||''}${elById[f.elementoId]?' ['+elById[f.elementoId].codigo+' / tramo '+elById[f.elementoId].tramo+']':''}`});content.push(IA.img(await reduzImg(f.data,800)))}
+  const dados={oae:ctxOAE(o),inspecao:{tipo:i.tipo,data:fmtD(i.data),nivelAgua:i.nivelAgua,clima:i.clima,limitacoes:i.limitacoes,observacaoAtual:i.obs},
+    roteiro:Object.entries(i.roteiro||{}).map(([k,v])=>{const st=STEPS.find(s=>s.id===k);if(!st||!st.checks)return null;const nc=(st.checks||[]).filter((c,ix)=>v.c&&v.c[ix]==='nc');return (nc.length||v.obs)?{item:st.ref+' '+st.t,problemas:nc,obs:v.obs||''}:null}).filter(Boolean),
+    notaAutomatica:notaAuto(i),
+    elementos:els.map(e=>({id:e.id,tramo:e.tramo,regiao:e.regiao,familia:e.familia,codigo:e.codigo,estrutural:!!famOf(e.familia).e,nota:e.nota,notaAnterior:e.notaAnt||undefined,danos:(e.danos||[]).map(d=>({dano:nomeD(d),quant:d.quant,loc:d.loc,ext:d.ext,ec:d.ec,dim:d.dim})),insuficiencia:e.insuf||undefined,causa:e.causa||undefined})).filter(e=>e.danos.length||(e.nota&&+e.nota<=3)||e.insuficiencia)};
+  content.push({type:'text',text:`Dados registrados em campo (fonte principal; as fotos acima ilustram os danos):
+${JSON.stringify(dados)}
+Total de elementos: ${els.length}; elementos sem danos não estão listados (considere-os em boa condição conforme suas notas).
+Redija os textos da ficha de inspeção (Anexo B) e do laudo especializado, no estilo de relatório técnico do DNIT, citando elementos pelo código e tramo. Retorne:
+{"observacao":"Observação geral do item 1 do Anexo B (1 parágrafo, condição geral e principais danos)","problemas":"Problemas principais observados (1 parágrafo)","riscos":"Riscos da não intervenção (1 parágrafo)","recomendacoes":"Recomendações (1 parágrafo, intervenções por elemento e acompanhamento)","complementar":"Inspeções ou ensaios complementares necessários, ou ''","notaFinal":3,"justificativa":"Nota final: 'Recomenda-se atribuir nota final N – Classe à OAE, considerando...'","insuficiencias":[{"elementoId":"id","insuf":"insuficiência estrutural do elemento","causa":"causa provável"}],"pontosAVerificar":["inconsistências entre notas, danos e fotos que o inspetor deve revisar"]}
+A nota final deve ser coerente com o Anexo C e com a menor nota dos elementos estruturais; se discordar da nota automática, explique.`});
+  return IA.call(content,SYS_IA,4000);
+}
+
+/* ================= v2: ROTEIRO DE CAMPO ================= */
+const FAMS=re=>FAM.filter(f=>re.test(f.f)).map(f=>f.f);
+const STEPS=[
+ {id:'plan',t:'Planejamento',ref:'Item 4.1',ic:'🗂️',guia:'Antes de ir a campo, confira o que a norma pede para o planejamento.',checks:['Revisar a inspeção anterior, projetos, fotos e histórico de reparos e acidentes','Verificar restrições de tráfego vigentes na OAE','Preferir época de estiagem (águas baixas) para ver a infraestrutura','Prever controle de tráfego e sinalizadores','Separar equipamentos: trena, trena laser, binóculo, lanterna, martelo, fissurômetro, drone se necessário','Dimensionar a equipe e verificar EPI e acesso seguro']},
+ {id:'dados',t:'Dados básicos',ref:'Anexo B – item 1',ic:'📋',form:'dados',guia:'Registre o tipo de inspeção, data, equipe e condições do dia. A temperatura é usada na leitura das juntas.'},
+ {id:'cad',t:'Identificação da OAE',ref:'Anexo A – itens 1 e 2',ic:'🌉',form:'cad',guia:'Confirme os dados de identificação e capture as coordenadas no meio da ponte.'},
+ {id:'fotosg',t:'Fotos gerais',ref:'Item 5.1',ic:'📷',form:'fotos',guia:'A norma exige no mínimo seis fotos: vista superior, vista inferior, vistas laterais e detalhes de apoios, articulações e juntas.'},
+ {id:'elem',t:'Elementos da OAE',ref:'Anexo A – item 3',ic:'🧱',form:'elem',guia:'Monte a lista de elementos por tramo. Use o modelo e ajuste ao que existe em campo.'},
+ {id:'geo',t:'Geometria e condições viárias',ref:'Item 5.1.1',ic:'📐',fams:[],checks:['Alinhamento da obra sem desvios aparentes','Sem deformações ou vibrações excessivas (observar a passagem de veículo pesado)','Tráfego flui livremente e em segurança','Existência de passeio para pedestres','Em curva: superlargura e superelevação adequadas','Viaduto ou rio navegável: gabaritos horizontal e vertical satisfatórios','Proteção junto aos pilares (para-choque de veículos ou embarcações)']},
+ {id:'acesso',t:'Acessos',ref:'Item 5.1.2',ic:'🛣️',fams:FAMS(/ATERRO|LAJE DE TRANSIÇÃO|DEFENSA/),checks:['Pavimento dos acessos sem assentamentos, degraus ou asperezas','Existência e estado da laje de transição','Juntas entre os acessos e a ponte','Saias de aterro sem erosão','Drenagem dos acessos funcionando','Continuidade das barreiras e defensas entre rodovia e ponte']},
+ {id:'curso',t:'Curso d\'água',ref:'Item 5.1.3',ic:'🌊',fams:FAMS(/CURSO/),checks:['Seção de vazão suficiente','Sem acúmulo de material flutuante (balseiros)','Sem sinais de velocidade excessiva da água ou erosão das margens','Sem suspeita de erosão no canal com desconfinamento de fundação (se houver, indicar topobatimetria)','Sem assoreamento ou retenção de material nos apoios (se houver, solicitar desobstrução)','Enrocamentos e proteções íntegros'],na:true},
+ {id:'encontro',t:'Encontros e fundações',ref:'Item 5.1.4',ic:'🧱',fams:FAMS(/CORTINA|^ENCONTRO|MURO DE ALA|BLOCO|ESTACAS/),checks:['Fundações diretas sem erosão ou descalçamento','Estacas: comprimento livre sem confinamento e estado na faixa de variação do nível d\'água','Paredes dos encontros sem trincas por assentamento, desalinhamento ou desaprumo','Concreto sem anomalias e armaduras sem corrosão','Drenos das paredes dos encontros existentes e funcionando']},
+ {id:'pilar',t:'Apoios intermediários',ref:'Item 5.1.5',ic:'🏛️',fams:FAMS(/^PILAR|TRAVESSA|CONTRAVENTAMENTO$/),checks:['Concreto sem degradação e armaduras sem corrosão','Topo dos pilares sem trincas ou quebra de cantos (ponto crítico)','Base dos pilares sem degradação do concreto ou das armaduras','Vigas de contraventamento e travessas em bom estado'],na:true},
+ {id:'apoio',t:'Aparelhos de apoio',ref:'Item 5.1.6',ic:'⚙️',fams:FAMS(/APARELHO/),checks:['Todos os aparelhos examinados: estado, funcionamento, posição e alinhamento','Sem vínculo imprevisto por falta de manutenção ou detritos','Metálicos: sem ferrugem, lubrificados, chumbadores em bom estado','Elastoméricos: sem achatamento, abaulamento excessivo ou distorção'],na:true},
+ {id:'super',t:'Superestrutura',ref:'Item 5.1.7',ic:'🌁',fams:FAMS(/^LAJE DE CONCRETO|^VIGA (LONG|CAIX|MET|DE MAD)|TRANSVERSINA|TABULEIRO/),checks:['Concreto sem fissuras, trincas, desplacamentos, desagregações, infiltrações ou eflorescências','Causas identificadas: drenagem, ausência de pingadeiras, trincas na laje','Cobrimento adequado, sem armaduras expostas ou corroídas','Caixão: acesso ao interior e drenos nos pontos baixos da laje inferior']},
+ {id:'pista',t:'Pista de rolamento',ref:'Item 5.1.8',ic:'🚗',fams:FAMS(/PAVIMENTO|DRENAGEM/),checks:['Tráfego fluente e seguro','Pista íntegra, sem desgaste ou trincas','Declividades e drenagem satisfatórias','Sem acúmulo de água na superfície','Pista não escorregadia']},
+ {id:'junta',t:'Juntas de dilatação',ref:'Item 5.1.9',ic:'↔️',fams:FAMS(/JUNTA/),checks:['Tipo da junta identificado','Junta íntegra e com vedação','Funcionando livremente, sem detritos','Abertura medida e temperatura ambiente registrada (anote abaixo)'],na:true,obsPh:'Ex.: J1 abertura 25 mm; J2 abertura 30 mm; temperatura 32 °C às 10h'},
+ {id:'barreira',t:'Barreiras e guarda-corpos',ref:'Item 5.1.10',ic:'🚧',fams:FAMS(/BARREIRA|GUARDA|PASSEIO/),checks:['Peças alinhadas','Concreto em bom estado e armaduras cobertas','Transição barreira-defensa íntegra e bem fixada']},
+ {id:'sinal',t:'Sinalização',ref:'Item 5.1.11',ic:'🪧',fams:FAMS(/SINALIZAÇÃO/),checks:['Placas de sinalização na entrada da ponte','Sinalização da pista']},
+ {id:'util',t:'Utilidades públicas',ref:'Item 5.1.12',ic:'🔌',fams:FAMS(/INSTALAÇÕES/),checks:['Dutos bem fixados','Sem vazamento de água ou gás','Dutos de eletricidade bem isolados'],na:true},
+ {id:'fim',t:'Revisão e laudo',ref:'Itens 5.3 e Anexo B – item 5',ic:'✅',form:'fim',guia:'Confira as pendências, gere os textos e emita a ficha.'}
+];
+function stepStatus(i,st,fotosN){
+  const r=(i.roteiro||{})[st.id]||{};
+  if(st.form==='dados')return i.tipo&&i.data&&i.inspetor?2:0;
+  if(st.form==='cad')return r.ok?2:0;
+  if(st.form==='fotos')return fotosN>=6?2:fotosN?1:0;
+  if(st.form==='elem')return (i.elementos||[]).length?2:0;
+  if(st.form==='fim')return 0;
+  if(r.na)return 2;
+  const ch=st.checks||[];const resp=ch.filter((c,k)=>r.c&&r.c[k]).length;
+  const els=(i.elementos||[]).filter(e=>(st.fams||[]).includes(e.familia));const ok=els.filter(e=>e.nota).length;
+  if(resp===ch.length&&ok===els.length)return 2;return (resp||ok)?1:0;
+}
+const ALERTA_CRIT='Condição crítica: a equipe deve notificar imediatamente o DNIT sobre a condição que possa exigir restrição de carga ou interrupção do tráfego e avaliar a solicitação de inspeção extraordinária (item 5.1 da DNIT 010/2024-PRO).';
+async function tabRoteiro(v,i,o,save){
+  i.roteiro=i.roteiro||{};const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
+  let k=Math.max(0,STEPS.findIndex(s=>s.id===(S.step||'plan')));const st=STEPS[k];const r=i.roteiro[st.id]=i.roteiro[st.id]||{c:{}};
+  const sts=STEPS.map(s=>stepStatus(i,s,fs.length));const pct=Math.round(100*sts.filter(x=>x===2).length/(STEPS.length-1));
+  let body='';
+  if(st.form==='dados')body=formDadosHTML(i);
+  else if(st.form==='cad'){body=`<table class="tbl">${[['Nome',o.nome],['Rodovia / km',`${o.rodovia||''} km ${o.km||''}`],['Código SGE',o.codigoSGE||'S/N'],['SNV',o.snv],['Comprimento × largura',`${o.comprimento||'?'} × ${o.largura||'?'} m`],['Tipo de estrutura',o.material],['Nº de tramos',o.nTramos],['Coordenadas',o.lat?latS(o.lat)+' '+lonS(o.lon):'<b style="color:var(--bad)">não capturadas</b>']].map(([a,b])=>`<tr><th>${a}</th><td>${b==null||b===''?'<span class=muted>–</span>':(String(b).startsWith('<b')?b:esc(b))}</td></tr>`).join('')}</table>
+    <div class="btns" style="margin-top:10px"><button class="btn" id="rGps">📍 Capturar coordenadas aqui</button><button class="btn" id="rEdCad">✏️ Editar cadastro completo</button></div>
+    ${i.tipo.includes('Cadastral')?'<div class="infobox" style="margin-top:10px">Inspeção cadastral: preencha também características funcionais, tramos, aspectos especiais, rotas alternativas e croquis (Anexo A).</div>':''}
+    <div class="check"><input type="checkbox" id="rCadOk" ${r.ok?'checked':''}><label for="rCadOk">Dados de identificação conferidos em campo</label></div>`}
+  else if(st.form==='fotos'){const req=[['VISTA GERAL','Vista geral da OAE'],['VISTA SUPERIOR / PISTA','Vista superior (pista)'],['VISTA INFERIOR','Vista inferior (tabuleiro)'],['VISTA LATERAL LD','Vista lateral direita'],['VISTA LATERAL LE','Vista lateral esquerda'],['APARELHOS DE APOIO','Detalhe dos apoios'],['JUNTA DE DILATAÇÃO','Detalhe das juntas'],['ENCONTRO 1','Encontro 1 / acesso'],['ENCONTRO 2','Encontro 2 / acesso']];
+    body=`<div class="list">${req.map(([lg,t])=>{const tem=fs.filter(f=>(f.legenda||'').startsWith(lg)).length;return `<div class="item" data-ph="${lg}"><span class="nota ${tem?'n5':'n0'}">${tem?'✓':'+'}</span><div class="grow"><div class="t">${t}</div><div class="s">${tem?tem+' foto(s)':'toque para fotografar'}</div></div><span>📷</span></div>`}).join('')}</div><p class="small muted">${fs.length} foto(s) no total.</p>`}
+  else if(st.form==='elem'){const els=i.elementos||[];const tr=[...new Set(els.map(e=>+e.tramo||1))];
+    body=els.length?`<p>${els.length} elementos em ${tr.length} tramo(s).</p><div class="btns"><button class="btn" id="rVerEl">Ver lista de elementos</button><button class="btn" id="rMod">Acrescentar pelo modelo</button></div>`:`<div class="btns"><button class="btn pri" id="rMod">Gerar elementos pelo modelo</button><button class="btn" id="rVerEl">Cadastrar manualmente</button></div>`}
+  else if(st.form==='fim'){const pend=pendencias(i,o,fs);
+    body=`${pend.length?`<div class="warnbox"><b>Pendências para a ficha ficar conforme a norma:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Sem pendências. A ficha está completa.</div>'}
+    <div class="row" style="align-items:center;margin-bottom:8px"><div>Nota automática da OAE: ${notaBadge(notaAuto(i))}</div><div>Nota adotada: ${notaBadge(notaFinal(i))}</div></div>
+    <div class="btns"><button class="btn acc" id="rIA">🤖 Gerar textos com IA</button><button class="btn" id="rOff">Texto sugerido (offline)</button><button class="btn" id="rLaudo">Abrir laudo</button><button class="btn pri" id="rFicha">📄 Ficha / PDF</button></div>
+    <p class="small muted">A IA lê os danos, notas, respostas do roteiro e até 10 fotos e redige observação, problemas, riscos, recomendações e nota final. Revise antes de emitir.</p>`}
+  else{
+    const els=(i.elementos||[]).filter(e=>(st.fams||[]).includes(e.familia)).sort((a,b)=>(+a.tramo||1)-(+b.tramo||1));
+    body=`${st.na?`<div class="check"><input type="checkbox" id="rNA" ${r.na?'checked':''}><label for="rNA">Não se aplica a esta OAE</label></div>`:''}
+    <div ${r.na?'class="hidden"':''}><span class="small muted" style="font-weight:600">O QUE VERIFICAR (${esc(st.ref)})</span>
+    ${(st.checks||[]).map((c,ix)=>`<div class="ckrow"><div class="ckt">${esc(c)}</div><div class="chips">${[['ok','OK','c4'],['nc','Problema','c2'],['na','N/A','cx']].map(([val,lb,cl])=>`<button class="chip sm2 ${cl} ${r.c[ix]===val?'on':''}" data-ck="${ix}" data-v="${val}">${lb}</button>`).join('')}</div></div>`).join('')}
+    ${(st.fams||[]).length?`<h3>Elementos deste item (${els.filter(e=>e.nota).length}/${els.length} com nota)</h3>
+    ${els.map(e=>`<div class="el" style="cursor:default"><span class="code">${esc(e.codigo)}</span><div class="grow" data-ed="${e.id}" style="cursor:pointer"><div class="t">T${e.tramo} · ${esc(e.familia)}</div><div class="s">${(e.danos||[]).length?'<b style="color:var(--warn)">'+e.danos.length+' dano(s)</b>: '+esc(e.danos.map(nomeD).join('; ')):'sem danos'}${e.notaAnt?' · ant.: '+e.notaAnt:''} · <u>detalhar</u></div></div>
+      <div class="chips" style="flex-wrap:nowrap">${[1,2,3,4,5].map(n=>`<button class="chip sm2 c${n} ${+e.nota===n?'on':''}" data-qn="${e.id}" data-n="${n}">${n}</button>`).join('')}</div></div>`).join('')||'<p class="muted small">Nenhum elemento deste grupo na lista.</p>'}
+    <div class="btns"><select id="rFam" style="flex:1 1 200px">${st.fams.map(f=>`<option>${f}</option>`).join('')}</select><button class="btn sm" id="rAddEl">+ Elemento</button></div>`:''}
+    <label class="f" style="margin-top:10px"><span>Anotações deste item</span><textarea id="rObs" style="min-height:60px" placeholder="${esc(st.obsPh||'Constatações, medições, observações')}">${esc(r.obs||'')}</textarea></label>
+    <button class="btn" id="rFoto">📷 Foto deste item</button></div>`;
+  }
+  v.innerHTML=`<div class="card" style="padding:10px 12px"><div class="row" style="align-items:center"><div style="flex:3 1 200px"><b>Roteiro de campo</b> <span class="small muted">· ${pct}% concluído</span></div></div>
+    <div class="prog"><div style="width:${pct}%"></div></div>
+    <div class="steps">${STEPS.map((s,ix)=>`<button class="stp ${ix===k?'on':''} st${sts[ix]}" data-s="${s.id}" title="${esc(s.t)}">${sts[ix]===2?'✓':s.ic}</button>`).join('')}</div></div>
+   <div class="card"><div class="small muted">Etapa ${k+1} de ${STEPS.length} · ${esc(st.ref)}</div><h2 style="font-size:18px;margin:2px 0 6px">${st.ic} ${esc(st.t)}</h2>${st.guia?`<p class="small" style="margin-top:0">${esc(st.guia)}</p>`:''}${body}</div>
+   <div class="navstep"><button class="btn" id="sPrev" ${k===0?'disabled':''}>← Anterior</button><button class="btn pri" id="sNext">${k===STEPS.length-1?'Ver ficha':'Próximo →'}</button></div>`;
+  const goStep=id=>{S.step=id;history.replaceState({...S},'');render()};
+  v.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>goStep(b.dataset.s));
+  $('#sPrev').onclick=()=>{if(k>0)goStep(STEPS[k-1].id)};
+  $('#sNext').onclick=()=>{if(k<STEPS.length-1)goStep(STEPS[k+1].id);else{S.tab='rel';history.replaceState({...S},'');render()}};
+  if(st.form==='dados')bindDados(v,i,o,save);
+  const q=s=>v.querySelector(s);
+  if(q('#rGps'))q('#rGps').onclick=async()=>{try{toast('Obtendo posição…');const c=await gps();o.lat=+c.latitude.toFixed(7);o.lon=+c.longitude.toFixed(7);if(c.altitude)o.altitude=c.altitude.toFixed(1);await DB.put('oaes',o);toast(`Coordenadas capturadas (±${Math.round(c.accuracy)} m)`);render()}catch(e){toast('GPS: '+e.message)}};
+  if(q('#rEdCad'))q('#rEdCad').onclick=()=>go('oae',{oaeId:o.id,editOAE:true});
+  if(q('#rCadOk'))q('#rCadOk').onchange=ev=>{r.ok=ev.target.checked;save();render()};
+  v.querySelectorAll('[data-ph]').forEach(it=>it.onclick=()=>capturarFoto(i,o,{legenda:it.dataset.ph},true));
+  if(q('#rMod'))q('#rMod').onclick=()=>modelo(i,o,save);
+  if(q('#rVerEl'))q('#rVerEl').onclick=()=>{S.tab='elementos';history.replaceState({...S},'');render()};
+  if(q('#rNA'))q('#rNA').onchange=ev=>{r.na=ev.target.checked;save();render()};
+  v.querySelectorAll('[data-ck]').forEach(b=>b.onclick=async()=>{const ix=b.dataset.ck;r.c[ix]=r.c[ix]===b.dataset.v?'':b.dataset.v;await save();
+    if(b.dataset.v==='nc'&&r.c[ix]==='nc'&&(st.fams||[]).length)toast('Registre o dano no elemento correspondente (toque em “detalhar”).',3200);render()});
+  v.querySelectorAll('[data-qn]').forEach(b=>b.onclick=async()=>{const e=i.elementos.find(x=>x.id===b.dataset.qn);e.nota=b.dataset.n;await save();if(+e.nota===1)alert(ALERTA_CRIT);
+    if(+e.nota<=3&&!(e.danos||[]).length){S._scroll=window.scrollY;editElemento(i,o,e,save);toast('Nota ≤ 3: registre o dano que justifica a nota.',3000)}else{S._scroll=window.scrollY;render()}});
+  v.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>{S._scroll=window.scrollY;editElemento(i,o,i.elementos.find(x=>x.id===b.dataset.ed),save)});
+  if(q('#rAddEl'))q('#rAddEl').onclick=()=>{const f=q('#rFam').value;const n=(i.elementos||[]).filter(e=>e.familia===f).length+1;editElemento(i,o,{id:uid(),tramo:1,familia:f,regiao:famOf(f).r,codigo:famOf(f).p+n,nota:'',danos:[]},save,true)};
+  if(q('#rObs'))q('#rObs').oninput=ev=>{r.obs=ev.target.value;save()};
+  if(q('#rFoto'))q('#rFoto').onclick=()=>capturarFoto(i,o,{legenda:st.t.toUpperCase()},true);
+  if(q('#rIA'))q('#rIA').onclick=()=>laudoIA(i,o,save);
+  if(q('#rOff'))q('#rOff').onclick=async()=>{const t=textoLaudo(i,o);i.laudo=i.laudo||{};if((i.laudo.problemas||i.obs)&&!confirm('Substituir os textos atuais?'))return;Object.assign(i.laudo,t);i.obs=textoObs(i,o);await save();toast('Textos sugeridos aplicados');S.tab='laudo';history.replaceState({...S},'');render()};
+  if(q('#rLaudo'))q('#rLaudo').onclick=()=>{S.tab='laudo';history.replaceState({...S},'');render()};
+  if(q('#rFicha'))q('#rFicha').onclick=()=>{S.tab='rel';history.replaceState({...S},'');render()};
+}
+function pendencias(i,o,fs){const p=[];const els=i.elementos||[];
+  if(!els.length)p.push('Nenhum elemento cadastrado.');const sn=els.filter(e=>!e.nota);if(sn.length)p.push(`${sn.length} elemento(s) sem nota técnica: ${sn.slice(0,6).map(e=>e.codigo).join(', ')}${sn.length>6?'…':''}.`);
+  const semD=els.filter(e=>e.nota&&+e.nota<=3&&!(e.danos||[]).length);if(semD.length)p.push(`${semD.length} elemento(s) com nota ≤ 3 sem dano registrado: ${semD.slice(0,6).map(e=>e.codigo).join(', ')}.`);
+  const semEC=danosLista(i).filter(x=>!x.d.ec);if(semEC.length)p.push(`${semEC.length} dano(s) sem estado de condição.`);
+  if(fs.length<6)p.push(`Registro fotográfico com ${fs.length} foto(s); mínimo de 6 (item 5.1).`);
+  const nf=notaFinal(i);const L=i.laudo||{};if(nf&&nf<=2&&!L.problemas)p.push('Nota ≤ 2: laudo especializado obrigatório não preenchido.');
+  if(L.notaFinal&&+L.notaFinal!==+notaAuto(i)&&!L.justificativa)p.push('Nota final diferente da automática sem justificativa.');
+  if(!i.obs)p.push('Observação geral (Anexo B – item 1) em branco.');if(!o.lat)p.push('OAE sem coordenadas geográficas.');if(!i.inspetor)p.push('Inspetor não informado.');
+  const nr=STEPS.filter(s=>s.checks&&!((i.roteiro||{})[s.id]||{}).na&&(s.checks.some((c,k)=>!(((i.roteiro||{})[s.id]||{}).c||{})[k]))).map(s=>s.ref.replace('Item ',''));if(nr.length)p.push('Itens do roteiro com verificações sem resposta: '+nr.join(', ')+'.');
+  if(i.tipo.includes('Cadastral')&&!(o.tramosDet||[]).length)p.push('Inspeção cadastral sem caracterização dos tramos (Anexo A – item 2).');
+  return p}
+function formDadosHTML(i){return `<div class="row"><label class="f"><span>Tipo de inspeção</span><select data-k="tipo">${TIPOS.map(t=>`<option ${t===i.tipo?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Data da inspeção</span><input type="date" data-k="data" value="${esc(i.data)}"></label></div>
+   <div class="row"><label class="f"><span>Inspetor (engenheiro responsável)</span><input type="text" data-k="inspetor" value="${esc(i.inspetor)}"></label><label class="f"><span>CREA</span><input type="text" data-k="crea" value="${esc(i.crea)}"></label></div>
+   <label class="f"><span>Equipe</span><input type="text" data-k="equipe" value="${esc(i.equipe)}" placeholder="Nomes e funções"></label>
+   <div class="row"><label class="f"><span>Condição do tempo</span><select data-k="clima">${['','Ensolarado','Nublado','Chuvoso','Após chuva'].map(t=>`<option ${t===i.clima?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Nível d'água</span><select data-k="nivelAgua">${['','Águas baixas (estiagem)','Normal','Águas altas (cheia)','Sem curso d\'água'].map(t=>`<option ${t===i.nivelAgua?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="f"><span>Temperatura ambiente (°C)</span><input type="text" inputmode="decimal" data-k="temperatura" value="${esc(i.temperatura)}"></label></div>
+   <label class="f"><span>Equipamentos utilizados</span><input type="text" data-k="equipamentos" value="${esc(i.equipamentos)}"></label>
+   <label class="f"><span>Limitações de acesso / elementos não inspecionados</span><textarea data-k="limitacoes" style="min-height:60px" placeholder="Ex.: fundações submersas não avaliadas; interior de caixão sem acesso">${esc(i.limitacoes||'')}</textarea></label>
+   <label class="f"><span>Observação geral (Anexo B – item 1)</span><textarea data-k="obs" placeholder="Pode ser gerada pela IA na etapa final">${esc(i.obs)}</textarea></label>`}
+function bindDados(v,i,o,save){v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{i[el.dataset.k]=el.value;save()})}
+
+/* ---------- Laudo com IA (pré-visualização) ---------- */
+async function laudoIA(i,o,save){
+  const sh=sheet('🤖 Assistente de laudo',`<div class="card"><div class="infobox">Analisando danos, notas, roteiro e fotos… isso pode levar até 1 minuto.</div><div class="spin"></div></div>`);
+  let r;try{r=await iaLaudo(i,o)}catch(e){sh.el.querySelector('.sb').innerHTML=`<div class="card"><div class="warnbox">${esc(e.message)}</div><p class="small">Sem IA, use “Texto sugerido (offline)”, que monta os textos a partir dos danos lançados.</p></div>`;return}
+  const L=i.laudo||(i.laudo={});const campos=[['observacao','Observação geral (Anexo B – item 1)'],['problemas','Problemas principais observados'],['riscos','Riscos da não intervenção'],['recomendacoes','Recomendações'],['complementar','Inspeções/ensaios complementares'],['justificativa','Nota final']];
+  const body=sh.el.querySelector('.sb');
+  body.innerHTML=`${(r.pontosAVerificar||[]).length?`<div class="warnbox"><b>Revise antes de emitir:</b><br>${r.pontosAVerificar.map(x=>'• '+esc(x)).join('<br>')}</div>`:''}
+   <div class="card"><div>Nota final sugerida pela IA: ${notaBadge(r.notaFinal)} · automática: ${notaBadge(notaAuto(i))}</div>
+   <div class="check"><input type="checkbox" id="aNota" ${r.notaFinal&&+r.notaFinal!==+notaAuto(i)?'':'checked'}><label for="aNota">Adotar a nota sugerida (${r.notaFinal||'–'})</label></div></div>
+   ${campos.map(([k,l])=>`<div class="card"><div class="check" style="padding-top:0"><input type="checkbox" data-ap="${k}" checked id="ap_${k}"><label for="ap_${k}"><b>${l}</b></label></div><textarea data-tx="${k}" style="min-height:110px">${esc(r[k]||'')}</textarea></div>`).join('')}
+   ${(r.insuficiencias||[]).length?`<div class="card"><div class="check" style="padding-top:0"><input type="checkbox" id="aIns" checked><label for="aIns"><b>Insuficiências estruturais por elemento (${r.insuficiencias.length})</b> – preenche só elementos com campo vazio</label></div>${r.insuficiencias.map(x=>{const e=(i.elementos||[]).find(y=>y.id===x.elementoId);return e?`<p class="small"><b>${esc(e.codigo)} T${e.tramo}:</b> ${esc(x.insuf)}<br><i>Causa: ${esc(x.causa)}</i></p>`:''}).join('')}</div>`:''}`;
+  const ft=document.createElement('div');ft.className='sf';ft.innerHTML='<button class="btn pri" style="flex:1" id="aOk">Aplicar selecionados</button>';sh.el.querySelector('.sheet').appendChild(ft);
+  ft.querySelector('#aOk').onclick=async()=>{
+    body.querySelectorAll('[data-ap]').forEach(c=>{if(!c.checked)return;const k=c.dataset.ap;const t=body.querySelector(`[data-tx="${k}"]`).value;if(k==='observacao')i.obs=t;else L[k]=t});
+    if(body.querySelector('#aNota')&&body.querySelector('#aNota').checked&&r.notaFinal)L.notaFinal=String(r.notaFinal);
+    const ai=body.querySelector('#aIns');if(ai&&ai.checked)(r.insuficiencias||[]).forEach(x=>{const e=(i.elementos||[]).find(y=>y.id===x.elementoId);if(e){if(!e.insuf)e.insuf=x.insuf;if(!e.causa)e.causa=x.causa}});
+    if(!L.data)L.data=i.data;L.ia=new Date().toISOString();await save();sh.close();toast('Textos aplicados – revise no Laudo');S.tab='laudo';history.replaceState({...S},'');render()};
+}
+
+/* ================= v2: FICHA NO MODELO DA NORMA (Anexos A e B) ================= */
+const cb=(on,t)=>`<span class="cb">${on?'X':''}</span>${t}`;
+const NORMA_HDR=sec=>`<div class="nh"><span>NORMA DNIT 010/2024 – PRO</span><span>${esc(sec||'')}</span></div>`;
+function pgWrap(body,{land=false,norm=false,foot='',sec=''}={}){
+  return `<div class="pgx ${land?'land':''}"><table class="wrap"><thead><tr><td>${CFG.fichaLogos!==false||!norm?H_LOGOS():''}${norm?NORMA_HDR(sec):''}</td></tr></thead><tfoot><tr><td>${foot?`<div class="nf">${foot}</div>`:''}${norm?'':F_TXT()}</td></tr></tfoot><tbody><tr><td>${body}</td></tr></tbody></table></div>`}
+const FOOT_A='<div class="ncont">_________________/Anexo A (continuação)</div><div class="nota1">NOTA 1: os códigos, os tipos de estruturas, sistemas construtivos, elementos, danos, aspectos especiais, deficiências funcionais, insuficiências estruturais e causas prováveis constam na documentação do Sistema de Gerenciamento de Estruturas - SGE/DNIT.</div>';
+const FOOT_B='<div class="ncont">_________________/Anexo B (continuação)</div><div class="nota1">NOTA 3: repetir esta página para cada tramo da estrutura.</div>';
+const vz=x=>esc(x==null?'':x);
+function padRows(n,cols,min){let h='';for(let k=n;k<min;k++)h+='<tr>'+'<td>&nbsp;</td>'.repeat(cols)+'</tr>';return h}
+function tramosDe(i,o){const els=i.elementos||[];const n=Math.max(+o.nTramos||0,...els.map(e=>+e.tramo||1),1);return Array.from({length:n},(_,k)=>k+1)}
+function svgLong(o,i){
+  const T=tramosDe(i,o);const det=o.tramosDet||[];const ext=T.map((t,k)=>parseFloat(String((det[k]||{}).ext||'').replace(',','.'))||1);const tot=ext.reduce((a,b)=>a+b,0);
+  const W=900,H=170,x0=60,x1=W-60,y=60;let x=x0;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:44mm" xmlns="http://www.w3.org/2000/svg" font-family="Arial" font-size="11">`;
+  s+=`<rect x="${x0-40}" y="${y}" width="40" height="80" fill="#ddd" stroke="#000"/><rect x="${x1}" y="${y}" width="40" height="80" fill="#ddd" stroke="#000"/>`;
+  s+=`<text x="${x0-20}" y="${y+100}" text-anchor="middle">E1</text><text x="${x1+20}" y="${y+100}" text-anchor="middle">E2</text>`;
+  const pil=(i.elementos||[]).filter(e=>/^PILAR/.test(e.familia));
+  T.forEach((t,k)=>{const w=(x1-x0)*ext[k]/tot;s+=`<rect x="${x}" y="${y}" width="${w}" height="12" fill="#bcd" stroke="#000"/><text x="${x+w/2}" y="${y-8}" text-anchor="middle" font-weight="bold">Tramo ${t}</text>${det[k]&&det[k].ext?`<text x="${x+w/2}" y="${y+30}" text-anchor="middle">${esc(det[k].ext)} m</text>`:''}`;
+    x+=w;if(k<T.length-1){const ps=pil.filter(e=>(+e.tramo||1)===t).map(e=>e.codigo.split(' ')[0]).join('/');s+=`<rect x="${x-5}" y="${y+12}" width="10" height="${H-y-40}" fill="#eee" stroke="#000"/><text x="${x}" y="${H-12}" text-anchor="middle">${esc(ps||'Apoio '+(k+1))}</text>`}});
+  s+=`<line x1="10" y1="${H-26}" x2="${W-10}" y2="${H-26}" stroke="#4a90c8" stroke-dasharray="6 4"/>`;
+  return s+`<text x="${W/2}" y="${H-2}" text-anchor="middle" fill="#555">Esquema gerado automaticamente – sem escala${o.comprimento?' · comprimento total '+esc(o.comprimento)+' m':''}</text></svg>`}
+function svgSecao(o,i){
+  const L=parseFloat(String(o.largura||'').replace(',','.'))||10;const nv=Math.max(1,(i.elementos||[]).filter(e=>/^VIGA (LONG|MET|DE MAD)/.test(e.familia)&&(+e.tramo||1)===1).length||2);
+  const W=420,H=150,m=30,sc=(W-2*m)/L;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:36mm" xmlns="http://www.w3.org/2000/svg" font-family="Arial" font-size="10">`;
+  s+=`<rect x="${m}" y="40" width="${W-2*m}" height="14" fill="#bcd" stroke="#000"/><rect x="${m}" y="18" width="14" height="22" fill="#ccc" stroke="#000"/><rect x="${W-m-14}" y="18" width="14" height="22" fill="#ccc" stroke="#000"/>`;
+  for(let k=0;k<nv;k++){const cx=m+(W-2*m)*(k+.5)/nv;s+=`<rect x="${cx-8}" y="54" width="16" height="50" fill="#ddd" stroke="#000"/><text x="${cx}" y="118" text-anchor="middle">V${k+1}</text>`}
+  s+=`<line x1="${m}" y1="132" x2="${W-m}" y2="132" stroke="#000"/><text x="${W/2}" y="145" text-anchor="middle">${esc(o.largura||'?')} m</text>`;
+  if(o.nFaixas)s+=`<text x="${W/2}" y="34" text-anchor="middle">${esc(o.nFaixas)} faixa(s)${o.largFaixa?' × '+esc(o.largFaixa)+' m':''}</text>`;
+  return s+'</svg>'}
+async function fichaHTML(i,o,opts={}){
+  const els=i.elementos||[];const T=tramosDe(i,o);const L=i.laudo||{};const nf=notaFinal(i);const det=o.tramosDet||[];
+  const tit=opts.titulo?`<div class="sectit">${esc(opts.titulo)}</div>`:'';let out='';
+  const cad=opts.cad;
+  if(cad){
+    // A.1 Identificação
+    out+=pgWrap(`${tit}<div class="atit">Anexo A (normativo) – Ficha de inspeção cadastral de pontes, viadutos ou passarelas</div><div class="ssec">1. Identificação</div>
+     <table class="f"><tr><td class="h" colspan="4">DADOS BÁSICOS</td><td class="h" colspan="2">Data da Inspeção: ${fmtD(i.data)}</td></tr>
+     <tr><td colspan="2">Código da Estrutura: ${vz(o.codigoSGE||'S/N')}</td><td colspan="4">Nome: ${vz(o.nome)}</td></tr>
+     <tr><td colspan="2">Comprimento (m): ${vz(o.comprimento)}</td><td>Largura (m): ${vz(o.largura)}</td><td colspan="2">Trem-Tipo: ${vz(o.tremTipo)}</td><td>Ano de Construção: ${vz(o.anoConstrucao)}</td></tr>
+     <tr><td class="h" colspan="6">LOCALIZAÇÃO</td></tr>
+     <tr><td colspan="2">UF: ${vz(o.uf||'TO')}</td><td colspan="2">Local na via (km): ${vz(o.km)}</td><td colspan="2">Cidade Próx.: ${vz(o.cidade)}</td></tr>
+     <tr><td colspan="2">Rodovia: BR-${vz(String(o.rodovia||'').replace(/^BR-?/i,''))}</td><td colspan="2">Código SNV: ${vz(o.snv)}</td><td colspan="2">Versão SNV: ${vz(o.versaoSNV)}</td></tr>
+     <tr><td class="h" colspan="6">COORDENADAS GEOGRÁFICAS</td></tr>
+     <tr><td colspan="2">Latitude: ${o.lat?latS(o.lat):''}</td><td colspan="2">Longitude: ${o.lon?lonS(o.lon):''}</td><td colspan="2">Altitude (m): ${vz(o.altitude)}</td></tr>
+     <tr><td class="h" colspan="6">RESPONSÁVEIS</td></tr>
+     <tr><td colspan="3" rowspan="2">Superintendência Regional: ${vz(o.superintendencia)}</td><td colspan="3">Projetista: ${vz(o.projetista)}</td></tr>
+     <tr><td colspan="3">Construtor: ${vz(o.construtor)}</td></tr>
+     <tr><td colspan="3">Administração DNIT? ${cb(o.adminDNIT!=='Não','Sim')} ${cb(o.adminDNIT==='Não','Não')}</td><td colspan="3">Administrador: ${vz(o.administrador)}<br><span class="small">(Em caso de Não ser administração DNIT)</span></td></tr>
+     <tr><td class="h" colspan="6">DOCUMENTOS</td></tr>
+     <tr><td colspan="6">Local. Projeto: ${vz(o.docProjeto)}</td></tr><tr><td colspan="6">Local. Doc. Construção: ${vz(o.docConstrucao)}</td></tr><tr><td colspan="6">Local. Doc. Diversos: ${vz(o.docDiversos)}</td></tr>
+     <tr><td class="h" colspan="6">INSPEÇÃO</td></tr>
+     <tr><td colspan="2">Período (anos): ${vz(o.periodo)}</td><td colspan="4">Equipamento Necessário: ${vz(o.equip||i.equipamentos)}</td></tr>
+     <tr><td colspan="2">Melhor Época Inicial (em meses): ${vz(o.epocaIni)}</td><td colspan="4">Melhor Época Final (em meses): ${vz(o.epocaFim)}</td></tr></table>`,{land:true,norm:true,foot:FOOT_A});
+    // A.2 Características funcionais
+    out+=pgWrap(`<div class="ssec">2. Características funcionais</div>
+     <table class="f"><tr><td class="h" colspan="6">CARACTERÍSTICAS</td></tr>
+     <tr><td colspan="3">Atendimento ao SNV: ${['Em serviço','Demolida','Inconclusa','Inservível'].map(x=>cb(o.atendSNV===x,x)).join(' ')}</td><td colspan="3">Tipo de Região: ${['Plana','Montanhosa','Ondulada'].map(x=>cb(o.regiao===x,x)).join(' ')}</td></tr>
+     <tr><td colspan="2">Tipo de Traçado: ${cb(o.tracado==='Curva','Curva')} ${cb(o.tracado==='Tangente','Tangente')}</td><td colspan="2">Rampa Máxima (°): ${vz(o.rampa)}</td><td colspan="2">Raio da Curva (m): ${vz(o.raio)}</td></tr>
+     <tr><td class="h" colspan="6">DIMENSÕES</td></tr>
+     <tr><td colspan="2">N° de Faixas: ${vz(o.nFaixas)}</td><td colspan="2">Acostamento Direito (m): ${vz(o.acostD)}</td><td colspan="2">Calçada Direita (m): ${vz(o.calcD)}</td></tr>
+     <tr><td colspan="2">Largura da Faixa (m): ${vz(o.largFaixa)}</td><td colspan="2">Acostamento Esquerdo (m): ${vz(o.acostE)}</td><td colspan="2">Calçada Esquerda (m): ${vz(o.calcE)}</td></tr>
+     <tr><td colspan="2">Gabarito Horizontal (m): ${vz(o.gabH)}</td><td colspan="4">Largura da Pista Antes da Estrutura (m): ${vz(o.pistaAntes)}</td></tr>
+     <tr><td colspan="2">Gabarito Vertical (m): ${vz(o.gabV)}</td><td colspan="4">Largura da Pista Depois da Estrutura (m): ${vz(o.pistaDepois)}</td></tr></table>
+     <table class="f" style="margin-top:6px"><tr><td class="h" colspan="5">CARACTERIZAÇÃO DOS TRAMOS</td><td class="h" colspan="2">Nº de Tramos: ${T.length}</td></tr>
+     <tr class="th"><td>Tramo</td><td>Tipo de Estrutura</td><td>Sistema Construtivo</td><td>Extensão (m)</td><td>Altura Mínima (m)</td><td>Altura Máxima (m)</td><td>Continuidade c/ Próximo Tramo</td></tr>
+     ${T.map((t,k)=>{const d=det[k]||{};return `<tr><td class="c">${t}</td><td>${vz(d.tipo||o.material)}</td><td>${vz(d.sistema||o.sistema)}</td><td class="c">${vz(d.ext)}</td><td class="c">${vz(d.altMin)}</td><td class="c">${vz(d.altMax)}</td><td class="c">${k<T.length-1?vz(d.cont):''}</td></tr>`}).join('')}${padRows(T.length,7,8)}</table>`,{land:true,norm:true,foot:FOOT_A});
+    // A.3 Elementos componentes (uma tabela por tramo)
+    out+=pgWrap(`<div class="ssec">3. Elementos componentes</div>${T.map(t=>{const et=els.filter(e=>(+e.tramo||1)===t);return `<table class="f avoid" style="margin-bottom:8px"><tr><td class="h" colspan="5">CARACTERIZAÇÃO DOS ELEMENTOS</td><td class="h" colspan="3">Nº do Tramo: ${t}</td></tr>
+     <tr class="th"><td>Família de Elementos</td><td>Detalhe</td><td>Elemento Individual</td><td>Comprimento (m)</td><td>Largura (m)</td><td>Altura (m)</td><td colspan="2">Espessura (cm)</td></tr>
+     ${et.map(e=>`<tr><td>${vz(e.familia)}</td><td>${vz(e.detalhe)}</td><td class="c">${vz(e.codigo)}</td><td class="c">${vz(e.comp)}</td><td class="c">${vz(e.larg)}</td><td class="c">${vz(e.alt)}</td><td class="c" colspan="2">${vz(e.esp)}</td></tr>`).join('')}${padRows(et.length,7,4).replace(/<td>&nbsp;<\/td><\/tr>/g,'<td colspan="2">&nbsp;</td></tr>')}</table>`}).join('')}`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo A (continuação)</div><div class="nota1">NOTA 2: repetir esta página para cada tramo da estrutura.</div>'});
+    // A.4 a A.7
+    const cods=t=>{const a=String(t||'').split(/\n|;/).map(s=>s.trim()).filter(Boolean);return a.length?a:['']};
+    out+=pgWrap(`<div class="ssec">4. Aspectos especiais</div><table class="f"><tr><td class="h">CÓDIGOS</td></tr>${cods(o.aspectos).map(x=>`<tr><td>${vz(x)}</td></tr>`).join('')}</table>
+     <div class="ssec">5. Deficiências funcionais</div><table class="f"><tr><td class="h">CÓDIGOS</td></tr>${cods(o.deficiencias).map(x=>`<tr><td>${vz(x)}</td></tr>`).join('')}</table>
+     <div class="ssec">6. Rotas alternativas</div><table class="f"><tr><td class="h" colspan="2">ROTAS ALTERNATIVAS</td><td class="h">${cb(o.rotaExiste==='Existe','Existe')} ${cb(o.rotaExiste==='Não existe','Não Existe')}</td></tr><tr><td colspan="2" style="height:40px">Descrição da Rota Alternativa: ${vz(o.rotaDesc)}</td><td>Acréscimo de Distância (km): ${vz(o.rotaAcresc)}</td></tr></table>
+     <div class="ssec">7. Substituição</div><table class="f"><tr><td class="h" colspan="2">PROJETO DE SUBSTITUIÇÃO</td><td class="h">${cb(o.projSubst==='Existe projeto','Existe Projeto')} ${cb(o.projSubst!=='Existe projeto','Não Existe Projeto')}</td></tr><tr><td colspan="2">Custo Estimado (R$): ${vz(o.custoSubst)}</td><td>Processo SEI: ${vz(o.seiSubst)}</td></tr><tr><td colspan="3" style="height:34px">Observações: ${vz(o.obsSubst)}</td></tr></table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo A (continuação)</div>'});
+    // A.8 Croquis
+    const im=(d,alt)=>d?`<img src="${d}" style="max-width:100%;max-height:44mm;display:block;margin:auto">`:alt;
+    out+=pgWrap(`<div class="ssec">8. Esquemas / croquis</div><table class="f"><tr><td class="h" colspan="2">ESQUEMA LONGITUDINAL</td></tr><tr><td colspan="2" style="height:46mm;text-align:center">${im(o.croquiLong,svgLong(o,i))}</td></tr>
+     <tr><td class="h" colspan="2">SEÇÃO TRANSVERSAL</td></tr><tr><td class="c" style="width:50%">Meio do Tramo</td><td class="c">Apoio</td></tr><tr><td style="height:38mm;text-align:center">${im(o.croquiMeio,svgSecao(o,i))}</td><td style="text-align:center">${im(o.croquiApoio,'')}</td></tr>
+     <tr><td class="h" colspan="2">DETALHES ADICIONAIS</td></tr><tr><td colspan="2" style="height:22mm;text-align:center">${im(o.croquiDet,'')}</td></tr></table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo A (continuação)</div>'});
+    // A.9 Observações
+    const obsA=o.observacoes||'';
+    out+=pgWrap(`<div class="ssec">9. Observações</div><table class="f"><tr><td class="h">OBSERVAÇÕES</td></tr><tr><td class="just" style="height:40mm;vertical-align:top">${vz(obsA)}</td></tr>${padRows(0,1,8)}</table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo B</div>'});
+  }
+  // ===== Anexo B =====
+  out+=pgWrap(`${cad?'':tit}<div class="atit">Anexo B (normativo) – Ficha de inspeção rotineira expedita de pontes, viadutos ou passarelas</div><div class="ssec">1. Dados básicos</div>
+    <table class="f"><tr><td>Data da inspeção: ${fmtD(i.data)}</td></tr><tr><td class="just" style="height:24mm;vertical-align:top">Observação: ${vz(i.obs)}${i.limitacoes?'<br><br>Limitações da inspeção: '+vz(i.limitacoes):''}</td></tr></table>
+    <div class="ssec">2. Nota técnica</div>
+    ${T.map(t=>{const et=els.filter(e=>(+e.tramo||1)===t);return `<table class="f avoid" style="margin-bottom:8px"><tr><td colspan="4">Nº do Tramo: ${t}</td></tr><tr class="th"><td>Região</td><td>Família de Elementos</td><td>Elemento Individual</td><td>Nota Técnica</td></tr>
+     ${et.map(e=>`<tr><td class="c">${vz(e.regiao)}</td><td>${vz(e.familia)}</td><td class="c">${vz(e.codigo)}</td><td class="c ${ntCls(e.nota)}"><b>${e.nota?e.nota+' - '+NOTAS[e.nota]:''}</b></td></tr>`).join('')}${padRows(et.length,4,3)}</table>`}).join('')}`,{land:true,norm:true,foot:FOOT_B,sec:''});
+  out+=pgWrap(`<div class="ssec">3. Danos aos Elementos</div>${T.map(t=>{const ds=danosLista(i).filter(x=>(+x.e.tramo||1)===t);const et=els.filter(e=>(+e.tramo||1)===t);
+     const rows=et.map(e=>{const dd=(e.danos||[]);if(!dd.length)return `<tr><td class="c">${vz(e.regiao)}</td><td>${vz(e.familia)}</td><td class="c">${vz(e.codigo)}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="c">4 - Bom</td></tr>`;
+       return dd.map(d=>`<tr><td class="c">${vz(e.regiao)}</td><td>${vz(e.familia)}</td><td class="c">${vz(e.codigo)}</td><td>${vz(nomeD(d))}${d.dim?'<br><i>'+vz(d.dim)+'</i>':''}</td><td class="c">${vz(d.quant)}</td><td>${vz(d.loc)}</td><td class="c">${vz(d.x)}</td><td class="c">${vz(d.y)}</td><td class="c">${vz(d.z)}</td><td class="c">${vz(d.ext)}</td><td class="c">${d.ec?d.ec+' - '+EC[d.ec]:''}</td></tr>`).join('')}).join('');
+     return `<table class="f" style="margin-bottom:8px"><tr><td colspan="11">Nº do Tramo: ${t}</td></tr><tr class="th"><td>Região</td><td>Família de Elementos</td><td>Elemento Individual</td><td>Dano</td><td>Quant.</td><td>Localização</td><td>Coord. X</td><td>Coord. Y</td><td>Coord. Z</td><td>Extensão Relativa</td><td>Estado de Condição</td></tr>${rows}${padRows(et.length,11,3)}</table>`}).join('')}`,{land:true,norm:true,foot:FOOT_B.replace('esta página','esta tabela')});
+  out+=pgWrap(`<div class="ssec">4. Insuficiências estruturais</div>${T.map(t=>{const et=els.filter(e=>(+e.tramo||1)===t);
+     return `<table class="f" style="margin-bottom:8px"><tr><td colspan="5">Nº do Tramo: ${t}</td></tr><tr class="th"><td>Região</td><td>Família de Elementos</td><td>Elemento Individual</td><td>Insuficiência Estrutural</td><td>Causa Provável</td></tr>${et.map(e=>`<tr><td class="c">${vz(e.regiao)}</td><td>${vz(e.familia)}</td><td class="c">${vz(e.codigo)}</td><td>${vz(e.insuf)}</td><td>${vz(e.causa)}</td></tr>`).join('')}${padRows(et.length,5,3)}</table>`}).join('')}`,{land:true,norm:true,foot:FOOT_B.replace('esta página','esta tabela')});
+  const par=(t,x)=>x?`<p class="just"><b>${t}:</b> ${vz(x)}</p>`:'';
+  const ncs=L.incluirNC!==false?textoNC(i,o):[];
+  out+=pgWrap(`<div class="ssec">5. Laudo Especializado</div><table class="f"><tr><td>Data do Laudo: ${fmtD(L.data||i.data)}</td></tr><tr><td style="height:78mm;vertical-align:top">Laudo:
+     ${par('Problemas principais observados',L.problemas)}${par('Riscos da não intervenção',L.riscos)}${par('Recomendações',L.recomendacoes)}${par('Inspeções e ensaios complementares',L.complementar)}${par('Nota final',L.justificativa||(nf?`Nota final ${nf} - ${NOTAS[nf]}.`:''))}
+     ${ncs.length?`<p><b>Não conformidades:</b></p>${ncs.map((t,k)=>`<p class="just">${k+1}. ${vz(t)}</p>`).join('')}`:''}</td></tr></table>${opts.assinatura!==false?assinatura(i):''}`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo C</div>'});
+  // Relatório fotográfico (retrato)
+  if(opts.fotos!==false){const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);const elById=Object.fromEntries(els.map(e=>[e.id,e]));
+    for(let k=0;k<fs.length;k+=6){const g=fs.slice(k,k+6);
+      out+=pgWrap(`<div class="atit" style="margin-top:0">RELATÓRIO FOTOGRÁFICO</div><table class="t"><tr><td class="k">EMPRESA:</td><td>${esc(CFG.empresa)}</td><td class="k">SEGMENTO:</td><td>${esc((o.nome||'').toUpperCase())}</td></tr><tr><td class="k">CONTRATO:</td><td>${esc(CFG.contrato)}</td><td class="k">PÁGINA:</td><td>${k/6+1}</td></tr><tr><td class="k">RODOVIA:</td><td>${esc(o.rodovia||'')}</td><td class="k">DATA:</td><td>${fmtD(i.data)}</td></tr></table>
+       <div class="photogrid">${g.map(f=>`<div class="pcell"><div class="pc"><b>Lat.:</b><span>${f.lat!=null&&f.lat!==''?latS(f.lat):'–'}</span><span>${esc(o.rodovia||'')} KM ${esc(o.km||'')}</span><b>Long.:</b><span>${f.lon!=null&&f.lon!==''?lonS(f.lon):'–'}</span><span>${new Date(f.ts).toLocaleDateString('pt-BR')}</span></div><img src="${f.data}"><div class="pl">FOTO: ${f.n} - ${esc(f.legenda||'')}${elById[f.elementoId]?` [${esc(elById[f.elementoId].codigo)} / T${elById[f.elementoId].tramo}]`:''}</div></div>`).join('')}</div>`,{})}}
+  return out;
+}
+
+/* ---------- Aba Ficha (relatório) ---------- */
+async function tabRel(v,i,o,save){
+  const fs=await DB.byIdx('fotos','insp',i.id);const pend=pendencias(i,o,fs);
+  v.innerHTML=`<div class="card"><h2>Ficha de inspeção – modelo DNIT 010/2024-PRO</h2>
+   ${pend.length?`<div class="warnbox"><b>Pendências:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Ficha completa. Pronta para emissão.</div>'}
+   <div class="check"><input type="checkbox" id="rA" ${i.tipo.includes('Cadastral')?'checked':''}><label for="rA">Incluir Anexo A – ficha de inspeção cadastral</label></div>
+   <div class="check"><input type="checkbox" id="rF" checked><label for="rF">Incluir relatório fotográfico</label></div>
+   <div class="check"><input type="checkbox" id="rL" ${CFG.fichaLogos!==false?'checked':''}><label for="rL">Logos no cabeçalho das fichas</label></div>
+   <div class="btns" style="margin-top:8px"><button class="btn pri" id="bPrint">🖨️ Gerar PDF</button><button class="btn" id="bHtml">⬇️ Baixar HTML</button><button class="btn" id="bCsvI">⬇️ Danos (CSV)</button></div>
+   <p class="small muted">Os Anexos A e B saem em folha A4 paisagem, como na norma; o relatório fotográfico em retrato. No celular, escolha <b>Salvar como PDF</b> na tela de impressão.</p></div>
+   <div class="btns"><button class="btn bad" id="bDelI">Excluir inspeção</button></div>`;
+  const opts=()=>({cad:$('#rA').checked,fotos:$('#rF').checked});
+  $('#rL').onchange=ev=>{CFG.fichaLogos=ev.target.checked;saveCfg()};
+  $('#bPrint').onclick=async()=>{toast('Montando a ficha…');await imprimir(`<div class="rp">${await fichaHTML(i,o,opts())}</div>`)};
+  $('#bHtml').onclick=async()=>{download(nomeArq(o,i)+'.html',docHTML(`<div class="rp">${await fichaHTML(i,o,opts())}</div>`),'text/html')};
+  $('#bCsvI').onclick=()=>download(nomeArq(o,i)+'_danos.csv',csvOut(linhasDanos([{i,o}])),'text/csv');
+  $('#bDelI').onclick=async()=>{if(!confirm('Excluir esta inspeção e suas fotos?'))return;await delInsp(i.id);history.back()};
+}
 async function relConsolidado(arr,R){
   const cont={1:0,2:0,3:0,4:0,5:0};let tipos={};arr.forEach(({i})=>{const n=notaFinal(i);if(n)cont[n]++;tipos[i.tipo]=(tipos[i.tipo]||0)+1});
   const datas=arr.map(x=>x.i.data).sort();const rods=[...new Set(arr.map(x=>x.o.rodovia).filter(Boolean))].join(', ');
-  let h=`<div class="cover"><div><div class="big">${esc(R.titulo||'')}</div><div style="font-size:13px;font-weight:700">${esc(rods)}</div>${CFG.contrato?`<div style="font-size:12px;margin-top:6px">CONTRATO ${esc(CFG.contrato)}</div>`:''}</div>
+  let out=pgWrap(`<div class="cover"><div><div class="big">${esc(R.titulo||'')}</div><div style="font-size:13px;font-weight:700">${esc(rods)}</div>${CFG.contrato?`<div style="font-size:12px;margin-top:6px">CONTRATO ${esc(CFG.contrato)}</div>`:''}</div>
    <div style="text-align:left;font-size:11px;white-space:pre-wrap">${esc(R.trechos||'')}</div>
    <div style="text-align:left;font-size:11px">FISCALIZAÇÃO: ${esc(CFG.fiscalizacao||'')}${CFG.ul?' – '+esc(CFG.ul):''}<br>ELABORAÇÃO: ${esc(CFG.empresa)}<br>${CFG.contrato?'CONTRATO: '+esc(CFG.contrato)+'<br>':''}${R.sei?'PROCESSO: '+esc(R.sei)+'<br>':''}PERÍODO DAS VISTORIAS: ${fmtD(datas[0])} a ${fmtD(datas[datas.length-1])}</div>
-   <div style="font-weight:700">${esc(R.mes||'')}</div></div>`;
-  h+=`<h2 class="pb">1. IDENTIFICAÇÃO DA DEMANDA</h2><p class="just">${esc(R.ident||`O presente relatório apresenta os resultados das inspeções realizadas nas Obras de Arte Especiais – OAEs das rodovias ${rods}, no âmbito do contrato ${CFG.contrato||''}, com o objetivo de avaliar as condições aparentes de conservação, funcionalidade, durabilidade e segurança das estruturas e subsidiar o DNIT quanto às ações de manutenção, recuperação e acompanhamento.`)}</p>`;
+   <div style="font-weight:700">${esc(R.mes||'')}</div></div>`);
+  let h=`<h2>1. IDENTIFICAÇÃO DA DEMANDA</h2><p class="just">${esc(R.ident||`O presente relatório apresenta os resultados das inspeções realizadas nas Obras de Arte Especiais – OAEs das rodovias ${rods}, no âmbito do contrato ${CFG.contrato||''}, com o objetivo de avaliar as condições aparentes de conservação, funcionalidade, durabilidade e segurança das estruturas e subsidiar o DNIT quanto às ações de manutenção, recuperação e acompanhamento.`)}</p>`;
   h+=`<h2>2. DOS FATOS</h2><p class="just">${esc(R.fatos||`No período de ${fmtD(datas[0])} a ${fmtD(datas[datas.length-1])} foram inspecionadas ${arr.length} OAEs (${Object.entries(tipos).map(([t,n])=>n+' '+lc(t)).join(', ')}). As avaliações ficaram restritas aos elementos aparentes e acessíveis no momento das vistorias, não tendo sido verificadas diretamente regiões submersas, enterradas ou encobertas.`)}</p>`;
   h+=`<h2>3. RELAÇÃO DAS OAEs INSPECIONADAS</h2><table class="t"><tr><th class="c">Item</th><th>Código SGE</th><th>Nome</th><th>Rodovia</th><th class="c">km</th><th>SNV</th><th class="c">Extensão (m)</th><th class="c">Largura (m)</th><th class="c">Nota SGE</th><th class="c">Nota sugerida</th><th class="c">Data</th><th>Tipo</th></tr>
    ${arr.map(({i,o},k)=>{const n=notaFinal(i);return `<tr><td class="c">${k+1}</td><td>${esc(o.codigoSGE||'S/N')}</td><td>${esc(o.nome)}</td><td>${esc(o.rodovia)}</td><td class="c">${esc(o.km)}</td><td>${esc(o.snv||'')}</td><td class="c">${esc(o.comprimento||'')}</td><td class="c">${esc(o.largura||'')}</td><td class="c">${esc(o.notaSGE||'S/N')}</td><td class="c ${ntCls(n)}"><b>${n||''}</b></td><td class="c">${fmtD(i.data)}</td><td>${esc(i.tipo)}</td></tr>`}).join('')}</table>`;
-  h+=`<h2>4. METODOLOGIA</h2><p class="just">As inspeções seguiram a norma DNIT 010/2024-PRO – Inspeções em pontes e viadutos – Procedimento e o Manual de Inspeção de Pontes (Publicação IPR 709, 3ª edição, 2026). Em campo, foi realizada avaliação visual e tátil sistemática dos elementos aparentes e acessíveis da superestrutura, mesoestrutura, infraestrutura, transições e entorno, com registro fotográfico georreferenciado e medições necessárias.</p>
-   <p class="just">A cada elemento foi atribuída nota técnica de 1 (crítica) a 5 (excelente), conforme o Anexo C da norma, e a cada dano registrado foi associado o estado de condição (EC 1 – severo a EC 4 – bom), considerando sua extensão relativa e severidade, conforme o Anexo D. A nota final proposta para cada OAE corresponde à menor nota dos elementos com função estrutural, salvo ajuste justificado pelo inspetor. Para as OAEs com nota técnica igual ou inferior a 2, foi elaborado laudo especializado.</p>
-   <p class="just">As avaliações têm caráter predominantemente visual e limitam-se aos elementos aparentes e acessíveis no momento da inspeção. Não foram realizados ensaios, avaliações do comportamento dinâmico nem verificações diretas de regiões submersas, enterradas ou encobertas, que, quando necessárias, são indicadas como investigações complementares.</p>`;
-  h+=`<h2>5. FICHAS DE INSPEÇÃO E RELATÓRIOS FOTOGRÁFICOS</h2>`;
-  for(let k=0;k<arr.length;k++){h+=await relInsp(arr[k].i,arr[k].o,{cad:R.cad||arr[k].i.tipo.includes('Cadastral'),fotos:R.fotos!==false},false,'5.'+(k+1))}
-  h+=`<h2 class="pb">6. RESUMO DAS PATOLOGIAS E INTERVENÇÕES</h2><table class="t"><tr><th>Código SGE</th><th>OAE</th><th>Rodovia / km</th><th class="c">Nota SGE</th><th class="c">Nota sugerida</th><th>Patologias</th><th>Intervenção necessária</th></tr>
+  h+=`<h2>4. METODOLOGIA</h2><p class="just">As inspeções seguiram a norma DNIT 010/2024-PRO – Inspeções em pontes e viadutos – Procedimento e o Manual de Inspeção de Pontes (Publicação IPR 709, 3ª edição, 2026), com registro nas fichas padronizadas dos Anexos A (inspeção cadastral) e B (inspeção rotineira). Em campo, foi realizada avaliação visual e tátil sistemática dos elementos aparentes e acessíveis, percorrendo os itens 5.1.1 a 5.1.12 da norma (geometria e condições viárias, acessos, cursos d'água, encontros e fundações, apoios intermediários, aparelhos de apoio, superestrutura, pista de rolamento, juntas, barreiras e guarda-corpos, sinalização e instalações de utilidade pública), com registro fotográfico georreferenciado.</p>
+   <p class="just">A cada elemento foi atribuída nota técnica de 1 (crítica) a 5 (excelente), conforme o Anexo C, e a cada dano foi associado o estado de condição (EC 1 – severo a EC 4 – bom), considerando extensão relativa e severidade, conforme o Anexo D. A nota final proposta corresponde à menor nota dos elementos com função estrutural, salvo ajuste justificado. Para as OAEs com nota técnica igual ou inferior a 2, foi elaborado laudo especializado.</p>
+   <p class="just">As avaliações têm caráter predominantemente visual e limitam-se aos elementos aparentes e acessíveis no momento da inspeção. Não foram realizados ensaios nem verificações diretas de regiões submersas, enterradas ou encobertas, que, quando necessárias, são indicadas como investigações complementares.</p>
+   <h2>5. FICHAS DE INSPEÇÃO E RELATÓRIOS FOTOGRÁFICOS</h2><p>As fichas a seguir seguem os modelos dos Anexos A e B da norma DNIT 010/2024-PRO.</p>`;
+  out+=pgWrap(h);
+  for(let k=0;k<arr.length;k++){const {i,o}=arr[k];out+=await fichaHTML(i,o,{cad:R.cad||i.tipo.includes('Cadastral'),fotos:R.fotos!==false,titulo:`5.${k+1} – ${o.nome||''} – ${o.rodovia||''} km ${o.km||''}`,assinatura:false})}
+  let h2=`<h2>6. RESUMO DAS PATOLOGIAS E INTERVENÇÕES</h2><table class="t"><tr><th>Código SGE</th><th>OAE</th><th>Rodovia / km</th><th class="c">Nota SGE</th><th class="c">Nota sugerida</th><th>Patologias</th><th>Intervenção necessária</th></tr>
    ${arr.map(({i,o})=>{const gs=agrupaDanos(i);const n=notaFinal(i);return `<tr><td>${esc(o.codigoSGE||'S/N')}</td><td>${esc(o.nome)}</td><td>${esc(o.rodovia)} km ${esc(o.km)}</td><td class="c">${esc(o.notaSGE||'S/N')}</td><td class="c ${ntCls(n)}"><b>${n||''}</b></td><td>${gs.map(g=>esc(`${g.dano} – ${lc(g.fam)} (${g.els.join(', ')})`)).join('<br>')||'Sem danos relevantes'}</td><td>${[...new Set(gs.map(g=>g.info&&g.info[1]).filter(Boolean))].map(esc).join('<br>')}</td></tr>`}).join('')}</table>`;
   const crit=arr.filter(({i})=>{const n=notaFinal(i);return n&&n<=2});
-  h+=`<h2>7. CONCLUSÃO</h2><p class="just">Das ${arr.length} OAEs inspecionadas, ${[1,2,3,4,5].filter(n=>cont[n]).map(n=>`${cont[n]} receberam nota ${n} (${lc(NOTAS[n])})`).join(', ')||'nenhuma recebeu nota'}.${crit.length?` Requerem atenção prioritária, por apresentarem nota igual ou inferior a 2: ${crit.map(({o})=>`${o.nome} (${o.rodovia} km ${o.km})`).join('; ')}.`:''}</p>
-   <p class="just">Recomenda-se programar as intervenções de acordo com a natureza, a intensidade e a influência dos danos sobre a segurança, a funcionalidade e a durabilidade das estruturas, priorizando elementos com perda de seção, armaduras expostas ou corroídas, trincas relevantes, processos erosivos e comprometimento de dispositivos de proteção. Nos casos em que a inspeção visual não permitiu diagnóstico conclusivo, recomenda-se avaliar a realização de inspeções complementares, conforme indicado nas respectivas fichas. Recomenda-se, ainda, a continuidade do acompanhamento periódico das OAEs, com comparação dos registros, para verificar a evolução dos danos e a efetividade das intervenções executadas.</p>`;
-  h+=`<h2>8. TERMO DE ENCERRAMENTO</h2><p class="just">O presente relatório, referente à inspeção de ${arr.length} Obras de Arte Especiais das rodovias ${esc(rods)}, elaborado por ${esc(CFG.empresa)}${CFG.contrato?' no âmbito do contrato '+esc(CFG.contrato):''}, encerra-se nesta página.</p>`+assinatura(null);
-  return wrap(h);
+  h2+=`<h2>7. CONCLUSÃO</h2><p class="just">Das ${arr.length} OAEs inspecionadas, ${[1,2,3,4,5].filter(n=>cont[n]).map(n=>`${cont[n]} receberam nota ${n} (${lc(NOTAS[n])})`).join(', ')||'nenhuma recebeu nota'}.${crit.length?` Requerem atenção prioritária, por apresentarem nota igual ou inferior a 2: ${crit.map(({o})=>`${o.nome} (${o.rodovia} km ${o.km})`).join('; ')}.`:''}</p>
+   <p class="just">Recomenda-se programar as intervenções de acordo com a natureza, a intensidade e a influência dos danos sobre a segurança, a funcionalidade e a durabilidade das estruturas, priorizando elementos com perda de seção, armaduras expostas ou corroídas, trincas relevantes, processos erosivos e comprometimento de dispositivos de proteção. Nos casos em que a inspeção visual não permitiu diagnóstico conclusivo, recomenda-se avaliar a realização de inspeções complementares, conforme indicado nas respectivas fichas, e a continuidade do acompanhamento periódico das OAEs.</p>
+   <h2>8. TERMO DE ENCERRAMENTO</h2><p class="just">O presente relatório, referente à inspeção de ${arr.length} Obras de Arte Especiais das rodovias ${esc(rods)}, elaborado por ${esc(CFG.empresa)}${CFG.contrato?' no âmbito do contrato '+esc(CFG.contrato):''}, encerra-se nesta página.</p>${assinatura(null)}`;
+  out+=pgWrap(h2);
+  return `<div class="rp">${out}</div>`;
 }
 
-/* ================= CONFIGURAÇÕES ================= */
+/* ---------- Editor de elemento (v2) ---------- */
+function editElemento(i,o,e,save,isNew){
+  const prevMat=JSON.stringify(e);
+  const draw=()=>{const fm=famOf(e.familia);const dl=danosDe(e.familia).map(d=>d[0]);const crit=+e.nota===1||(e.danos||[]).some(d=>+d.ec===1);
+   const sugN=(()=>{const ecs=(e.danos||[]).map(d=>+d.ec).filter(Boolean);if(!ecs.length)return null;const m=Math.min(...ecs);return m===1?2:m===2?3:m===3?4:4})();
+   return `${crit?`<div class="warnbox"><b>⚠️ ${ALERTA_CRIT}</b></div>`:''}<div class="card">
+    <div class="row"><label class="f" style="flex:3 1 220px"><span>Família de elementos</span><select id="x_f">${REGIOES.map(r=>`<optgroup label="${r}">${FAM.filter(f=>f.r===r).map(f=>`<option ${f.f===e.familia?'selected':''}>${f.f}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    <label class="f" style="flex:1 1 90px"><span>Código</span><input type="text" id="x_c" value="${esc(e.codigo)}" placeholder="${fm.p}1"></label><label class="f" style="flex:1 1 70px"><span>Tramo</span><input type="number" id="x_t" value="${esc(e.tramo)}" min="1"></label></div>
+    <div class="small muted" style="margin:-4px 0 8px">Região: <b>${esc(fm.r)}</b> · ${fm.e?'função estrutural (entra no cálculo da nota final)':'sem função estrutural'}</div>
+    ${e.notaAnt||e.danosAnt?`<div class="infobox small">Inspeção anterior: nota <b>${esc(e.notaAnt||'–')}</b>${e.danosAnt?` · danos: ${esc(e.danosAnt)}`:''}. Avalie a evolução.</div>`:''}
+    <span class="small muted" style="font-weight:600">NOTA TÉCNICA (Anexo C)</span><div class="chips" id="x_n" style="margin:4px 0 4px">${[1,2,3,4,5].map(n=>`<button class="chip c${n} ${+e.nota===n?'on':''}" data-n="${n}">${n}</button>`).join('')}</div>
+    <div class="small muted" style="min-height:34px">${e.nota?`<b>${NOTAS[e.nota]}</b> – ${NOTA_ACAO[e.nota]}`:'Toque para atribuir a nota.'}${sugN&&!e.nota?`<br>Pelos estados de condição registrados, uma nota de partida seria <b>${sugN}</b>; confirme pelo Anexo C.`:''}</div>
+   </div>
+   <div class="card"><div class="row" style="align-items:center"><h2 style="margin:0">Danos (Anexo B – item 3)</h2><div style="flex:0 0 auto"><button class="btn sm pri" id="x_ad">+ Dano</button></div></div><div id="x_ds" style="margin-top:10px">
+    ${(e.danos||[]).map((d,k)=>`<div class="dano" data-k="${k}">
+     <label class="f"><span>Dano</span><select data-f="dano">${dl.concat([OUTRO]).map(x=>`<option ${x===d.dano?'selected':''}>${x}</option>`).join('')}</select></label>
+     ${d.dano===OUTRO?`<label class="f"><span>Descrição do dano</span><input type="text" data-f="outro" value="${esc(d.outro)}"></label>`:''}
+     <div class="row"><label class="f" style="flex:1 1 70px"><span>Quant.</span><input type="text" inputmode="numeric" data-f="quant" value="${esc(d.quant)}"></label>
+     <label class="f" style="flex:3 1 160px"><span>Localização</span><input type="text" list="locs" data-f="loc" value="${esc(d.loc)}"></label></div>
+     <div class="row"><label class="f"><span>Extensão relativa</span><select data-f="ext">${['',...EXT].map(x=>`<option ${x===d.ext?'selected':''}>${x}</option>`).join('')}</select></label>
+     <label class="f"><span>Dimensões (opcional)</span><input type="text" data-f="dim" value="${esc(d.dim)}" placeholder="ex.: 0,40×0,20 m; abertura 0,3 mm"></label></div>
+     <details ${d.x||d.y||d.z?'open':''}><summary class="small muted">Coordenadas X/Y/Z do dano no elemento (opcional)</summary><div class="row"><label class="f"><span>Coord. X (m)</span><input type="text" data-f="x" value="${esc(d.x)}"></label><label class="f"><span>Coord. Y (m)</span><input type="text" data-f="y" value="${esc(d.y)}"></label><label class="f"><span>Coord. Z (m)</span><input type="text" data-f="z" value="${esc(d.z)}"></label></div></details>
+     <span class="small muted" style="font-weight:600">ESTADO DE CONDIÇÃO (Anexo D)</span><div class="chips" style="margin:4px 0 6px">${[4,3,2,1].map(n=>`<button class="chip ${'c'+(n===4?5:n===3?3:n===2?2:1)} ${+d.ec===n?'on':''}" data-ec="${n}">EC ${n}</button>`).join('')}</div>
+     <div class="small muted">${d.ec?`<b>${EC[d.ec]}:</b> ${EC_DESC[d.ec]}`:''}</div>
+     <div class="check"><input type="checkbox" data-f="nc" ${d.nc?'checked':''} id="nc${k}"><label for="nc${k}">Gerar não conformidade para este dano</label></div>
+     <div class="btns" style="justify-content:flex-end"><button class="btn sm" data-foto="${k}">📷 Foto do dano</button><button class="btn sm bad" data-del="${k}">Remover</button></div>
+    </div>`).join('')||'<p class="muted small">Nenhum dano registrado. Se não houver danos, basta atribuir a nota.</p>'}
+   </div></div>
+   <div class="card"><h2>Fotos do elemento</h2><div class="photos" id="x_ph"><span class="small muted">carregando…</span></div></div>
+   <div class="card"><h2>Insuficiência estrutural (Anexo B – item 4)</h2>
+    <label class="f"><span>Insuficiência estrutural</span><textarea id="x_i" style="min-height:70px">${esc(e.insuf||'')}</textarea></label>
+    <label class="f"><span>Causa provável</span><textarea id="x_ca" style="min-height:60px">${esc(e.causa||'')}</textarea></label>
+    <button class="btn sm" id="x_sug">Sugerir texto a partir dos danos</button></div>
+   <div class="card"><details><summary><b>Dimensões do elemento (Anexo A – item 3)</b></summary><div style="margin-top:8px"><label class="f"><span>Detalhe</span><input type="text" id="x_dt" value="${esc(e.detalhe||'')}"></label>
+    <div class="row"><label class="f"><span>Comprimento (m)</span><input type="text" inputmode="decimal" id="x_cp" value="${esc(e.comp||'')}"></label><label class="f"><span>Largura (m)</span><input type="text" inputmode="decimal" id="x_lg" value="${esc(e.larg||'')}"></label><label class="f"><span>Altura (m)</span><input type="text" inputmode="decimal" id="x_al" value="${esc(e.alt||'')}"></label><label class="f"><span>Espessura (cm)</span><input type="text" inputmode="decimal" id="x_es" value="${esc(e.esp||'')}"></label></div></div></details>
+    <label class="f" style="margin-top:10px"><span>Observação do elemento</span><input type="text" id="x_o" value="${esc(e.obs||'')}"></label></div>
+   <datalist id="locs">${LOCAIS.map(l=>`<option value="${l}">`).join('')}</datalist>`};
+  const sh=sheet(isNew?'Novo elemento':`${e.codigo||''} · ${e.familia}`,draw(),`<button class="btn bad" id="x_rm">${isNew?'Cancelar':'Excluir'}</button><button class="btn" id="x_ft">📷 Foto</button><button class="btn pri" style="flex:1" id="x_ok">Salvar</button>`);
+  const el=sh.el,body=el.querySelector('.sb');
+  const fotosEl=async()=>{const box=body.querySelector('#x_ph');if(!box)return;const fs=(await DB.byIdx('fotos','insp',i.id)).filter(f=>f.elementoId===e.id).sort((a,b)=>a.n-b.n);
+    box.innerHTML=fs.length?fs.map(f=>`<div class="ph" data-fid="${f.id}"><img src="${f.data}"><div class="cap"><b>FOTO ${f.n}</b> ${esc(f.legenda||'')}</div></div>`).join(''):'<span class="small muted">Nenhuma foto vinculada. Use 📷 para fotografar este elemento.</span>';
+    box.querySelectorAll('[data-fid]').forEach(c=>c.onclick=async()=>{const all=(await DB.byIdx('fotos','insp',i.id));editFoto(i,all.find(f=>f.id===c.dataset.fid),all,o)})};
+  const bind=()=>{
+   const q=s=>body.querySelector(s);
+   q('#x_f').onchange=ev=>{e.familia=ev.target.value;e.regiao=famOf(e.familia).r;if(!e.codigo)e.codigo=famOf(e.familia).p+'1';redraw()};
+   q('#x_c').oninput=ev=>e.codigo=ev.target.value;q('#x_t').oninput=ev=>e.tramo=+ev.target.value||1;
+   q('#x_i').oninput=ev=>e.insuf=ev.target.value;q('#x_ca').oninput=ev=>e.causa=ev.target.value;q('#x_o').oninput=ev=>e.obs=ev.target.value;
+   [['#x_dt','detalhe'],['#x_cp','comp'],['#x_lg','larg'],['#x_al','alt'],['#x_es','esp']].forEach(([s,k])=>q(s).oninput=ev=>e[k]=ev.target.value);
+   body.querySelectorAll('#x_n .chip').forEach(c=>c.onclick=()=>{e.nota=c.dataset.n;if(c.dataset.n==='1')alert(ALERTA_CRIT);redraw()});
+   q('#x_ad').onclick=()=>{(e.danos=e.danos||[]).push({dano:danosDe(e.familia)[0][0],quant:'1',loc:'',ext:'≤20%',ec:'3'});redraw();body.scrollTop=body.scrollHeight};
+   body.querySelectorAll('.dano').forEach(dv=>{const d=e.danos[+dv.dataset.k];
+    dv.querySelectorAll('[data-f]').forEach(inp=>{const f=inp.dataset.f;const h=()=>{d[f]=inp.type==='checkbox'?inp.checked:inp.value;if(f==='dano')redraw()};inp.oninput=h;inp.onchange=h});
+    dv.querySelectorAll('[data-ec]').forEach(c=>c.onclick=()=>{d.ec=c.dataset.ec;if(c.dataset.ec==='1'){d.nc=true;alert(ALERTA_CRIT)}redraw()});
+    dv.querySelector('[data-del]').onclick=()=>{e.danos.splice(+dv.dataset.k,1);redraw()};
+    dv.querySelector('[data-foto]').onclick=()=>fotoElemento(i,o,e,save,d)});
+   q('#x_sug').onclick=()=>{const ds=(e.danos||[]);if(!ds.length)return toast('Registre ao menos um dano');
+     e.insuf=ds.map(d=>{const nm=nomeD(d);return `${nm}${d.loc?' na '+d.loc.toLowerCase():''}${d.ext?' (extensão '+d.ext+')':''}`}).join('; ')+'.';
+     e.causa=[...new Set(ds.map(d=>(danoInfo(e.familia,d.dano)||[])[2]).filter(Boolean))].join('; ')+'.';redraw()};
+   fotosEl();
+  };
+  const redraw=()=>{const st=body.scrollTop;body.innerHTML=draw();bind();body.scrollTop=st};
+  bind();
+  el.querySelector('#x_ok').onclick=async()=>{if(!e.codigo)e.codigo=famOf(e.familia).p+'1';if(!i.elementos.find(x=>x.id===e.id))i.elementos.push(e);await save();sh.close();render()};
+  el.querySelector('#x_ft').onclick=()=>fotoElemento(i,o,e,save);
+  el.querySelector('#x_rm').onclick=async()=>{if(isNew&&!i.elementos.find(x=>x.id===e.id)){sh.close();return}if(!confirm('Excluir o elemento '+e.codigo+'?'))return;i.elementos=i.elementos.filter(x=>x.id!==e.id);await save();sh.close();render()};
+  el.querySelector('[data-x]').onclick=async()=>{if(JSON.stringify(e)!==prevMat){if(!i.elementos.find(x=>x.id===e.id)){if(isNew&&!confirm('Salvar o novo elemento?')){sh.close();return}i.elementos.push(e)}await save()}sh.close();render()};
+}
+
+/* ---------- Foto com análise por IA ---------- */
+async function tabFotos(v,i,o,save){
+  const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
+  const elById=Object.fromEntries((i.elementos||[]).map(e=>[e.id,e]));
+  v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">Registro fotográfico</h2><div class="small muted">${fs.length} foto(s). Mínimo: 6 (item 5.1).</div></div>
+   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bCam">📷 Câmera</button><button class="btn" id="bGal">🖼️ Galeria</button></div></div>
+   ${fs.length<6?`<div class="warnbox" style="margin:10px 0 0">Faltam ${6-fs.length} foto(s) para o mínimo do item 5.1 da norma.</div>`:''}
+   <div class="chips" style="margin-top:10px">${['VISTA GERAL','VISTA SUPERIOR / PISTA','VISTA INFERIOR','VISTA LATERAL LD','VISTA LATERAL LE','ENCONTRO 1','ENCONTRO 2','APARELHOS DE APOIO','JUNTA DE DILATAÇÃO','ACESSO / ATERRO'].map(t=>`<button class="chip" data-q="${t}" style="font-weight:600;font-size:12.5px">${t}</button>`).join('')}</div>
+   ${IA.ativo()?`<div class="small muted" style="margin-top:8px">🤖 Toque numa foto e use “Analisar com IA” para receber sugestão de elemento, danos, estado de condição e nota.</div>`:''}</div>
+   <div class="photos">${fs.map(f=>{const e=elById[f.elementoId];return `<div class="ph" data-f="${f.id}"><img src="${f.data}" loading="lazy" alt=""><div class="cap"><b>FOTO ${f.n}</b> ${esc(f.legenda||'(sem legenda)')}${e?`<br><span class="muted">${esc(e.codigo)} · T${e.tramo}</span>`:''}${f.ia?' · 🤖':''}</div></div>`}).join('')}</div>`;
+  $('#bCam').onclick=()=>capturarFoto(i,o,{legenda:''},true);$('#bGal').onclick=()=>capturarFoto(i,o,{legenda:''},false);
+  v.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>capturarFoto(i,o,{legenda:b.dataset.q},true));
+  v.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>editFoto(i,fs.find(f=>f.id===c.dataset.f),fs,o));
+}
+function editFoto(i,f,fs,o){
+  const els=i.elementos||[];
+  const iaBox=r=>{if(!r)return '';const e=els.find(x=>x.id===r.elementoId);return `<div class="card iabox"><b>🤖 Sugestão da IA</b> <span class="pill">confiança ${esc(r.confianca||'?')}</span>
+    <p class="small">${esc(r.descricao||'')}</p>
+    ${(r.alertas||[]).length?`<div class="warnbox small">${r.alertas.map(esc).join('<br>')}</div>`:''}
+    <div class="small"><b>Legenda:</b> ${esc(r.legenda||'')}</div>
+    <div class="small"><b>Elemento:</b> ${e?esc(e.codigo+' · T'+e.tramo+' · '+e.familia):esc(r.familia||'não identificado')}</div>
+    ${(r.danos||[]).map((d,k)=>`<div class="check"><input type="checkbox" checked data-dk="${k}" id="dk${k}"><label for="dk${k}" class="small"><b>${esc(d.dano===OUTRO?d.outro:d.dano)}</b> · ${esc(d.loc||'')} · ${esc(d.ext||'')} · EC ${esc(d.ec)}${d.motivo?' – <i>'+esc(d.motivo)+'</i>':''}</label></div>`).join('')||'<p class="small">Nenhum dano identificado.</p>'}
+    ${r.notaSugerida?`<div class="small">Nota sugerida: ${notaBadge(r.notaSugerida)} ${esc(r.motivoNota||'')}</div>`:''}
+    ${(r.verificarEmCampo||[]).length?`<div class="small muted" style="margin-top:6px"><b>Confirmar em campo:</b> ${r.verificarEmCampo.map(esc).join('; ')}</div>`:''}
+    <div class="btns" style="margin-top:8px"><button class="btn sm pri" id="iaAp">Aplicar ao elemento</button></div></div>`};
+  sheet('Foto '+f.n,`<div class="card"><img src="${f.data}" style="width:100%;border-radius:8px">
+   ${CFG.iaKey?`<button class="btn acc block" id="iaGo" style="margin-top:10px">🤖 Analisar foto com IA</button>`:`<p class="small muted">Para análise automática da foto, configure o Assistente de IA em ⋮ → Configurações.</p>`}
+   <div id="iaRes">${iaBox(f.ia)}</div>
+   <label class="f" style="margin-top:10px"><span>Legenda</span><textarea id="fl" style="min-height:60px">${esc(f.legenda)}</textarea></label>
+   <div class="row"><label class="f" style="flex:3 1 200px"><span>Elemento vinculado</span><select id="fe"><option value="">(nenhum)</option>${els.map(e=>`<option value="${e.id}" ${e.id===f.elementoId?'selected':''}>T${e.tramo} · ${esc(e.codigo)} · ${esc(e.familia)}</option>`).join('')}</select></label>
+   <label class="f" style="flex:1 1 80px"><span>Nº</span><input type="number" id="fn" value="${f.n}"></label></div>
+   <div class="small muted">${new Date(f.ts).toLocaleString('pt-BR')} · ${f.lat!=null&&f.lat!==''?latS(f.lat)+' '+lonS(f.lon):'sem coordenadas'} ${f.gpsFoto?'(GPS no momento da foto)':'(coordenadas da OAE)'}</div></div>`,
+   `<button class="btn bad" id="fd">Excluir</button><button class="btn pri" style="flex:1" id="fs">Salvar</button>`,(el,close)=>{
+   const bindIA=()=>{const ap=el.querySelector('#iaAp');if(!ap)return;ap.onclick=async()=>{const r=f.ia;let e=els.find(x=>x.id===(el.querySelector('#fe').value||r.elementoId));
+      if(!e){if(!r.familia||!FAM.find(x=>x.f===r.familia))return toast('Escolha o elemento vinculado antes de aplicar');e={id:uid(),tramo:1,familia:r.familia,regiao:famOf(r.familia).r,codigo:famOf(r.familia).p+'?',nota:'',danos:[]};i.elementos.push(e)}
+      const sel=[...el.querySelectorAll('[data-dk]')].filter(c=>c.checked).map(c=>r.danos[+c.dataset.dk]);
+      e.danos=e.danos||[];sel.forEach(d=>e.danos.push({dano:danoInfo(e.familia,d.dano)||d.dano===OUTRO?d.dano:OUTRO,outro:d.dano===OUTRO?d.outro:(danoInfo(e.familia,d.dano)?'':d.dano),quant:'1',loc:d.loc||'',ext:EXT.includes(d.ext)?d.ext:'',ec:String(d.ec||''),fotoId:f.id,ia:true}));
+      if(!e.nota&&r.notaSugerida)e.nota=String(r.notaSugerida);
+      f.elementoId=e.id;if(!f.legenda||confirm('Substituir a legenda pela sugerida pela IA?'))f.legenda=(r.legenda||f.legenda||'').toUpperCase();
+      i.alterado=Date.now();await DB.put('insps',i);await DB.put('fotos',f);close();toast(`Aplicado a ${e.codigo}: ${sel.length} dano(s). Revise no elemento.`,3200);render()}};
+   bindIA();
+   const go=el.querySelector('#iaGo');if(go)go.onclick=async()=>{go.disabled=true;go.textContent='🤖 Analisando…';try{f.ia=await iaFoto(i,o,f);await DB.put('fotos',f);el.querySelector('#iaRes').innerHTML=iaBox(f.ia);if(f.ia.elementoId&&els.find(x=>x.id===f.ia.elementoId))el.querySelector('#fe').value=f.ia.elementoId;bindIA()}catch(e){el.querySelector('#iaRes').innerHTML=`<div class="warnbox" style="margin-top:8px">${esc(e.message)}</div>`}go.disabled=false;go.textContent='🤖 Analisar novamente'};
+   el.querySelector('#fs').onclick=async()=>{f.legenda=el.querySelector('#fl').value.toUpperCase();f.elementoId=el.querySelector('#fe').value;const nn=+el.querySelector('#fn').value;
+     if(nn&&nn!==f.n){const other=fs.find(x=>x.n===nn);if(other){other.n=f.n;await DB.put('fotos',other)}f.n=nn}await DB.put('fotos',f);close();render()};
+   el.querySelector('#fd').onclick=async()=>{if(!confirm('Excluir a foto '+f.n+'?'))return;await DB.del('fotos',f.id);const rest=fs.filter(x=>x.id!==f.id).sort((a,b)=>a.n-b.n);for(let k=0;k<rest.length;k++){if(rest[k].n!==k+1){rest[k].n=k+1;await DB.put('fotos',rest[k])}}close();render()}});
+}
+
+/* ---------- Laudo (v2) ---------- */
+function tabLaudo(v,i,o,save){
+  const L=i.laudo||(i.laudo={});const na=notaAuto(i),nf=notaFinal(i);const ncs=textoNC(i,o);
+  v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">Assistente de redação</h2><div class="small muted">${L.ia?'Últimos textos de IA: '+new Date(L.ia).toLocaleString('pt-BR'):'Gera os textos a partir dos danos, notas, roteiro e fotos.'}</div></div>
+   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bIA">🤖 Gerar com IA</button><button class="btn" id="bSug">Texto offline</button></div></div></div>
+  <div class="card"><h2>Nota final da OAE</h2>
+   <div>Automática (menor nota dos elementos estruturais): ${notaBadge(na)}</div>
+   <span class="small muted" style="font-weight:600;display:block;margin-top:10px">NOTA FINAL ADOTADA</span><div class="chips" id="nfc" style="margin:4px 0">${['',1,2,3,4,5].map(n=>`<button class="chip ${n?'c'+n:'cx'} ${String(L.notaFinal||'')===String(n)?'on':''}" data-n="${n}">${n||'Auto'}</button>`).join('')}</div>
+   ${L.notaFinal&&+L.notaFinal!==+na?'<div class="warnbox">A nota adotada difere da automática. Justifique no campo “Nota final”.</div>':''}
+   ${nf&&nf<=2?'<div class="warnbox"><b>Laudo especializado obrigatório</b> (nota ≤ 2 – IPR 709/2026, item 2.2.2).</div>':''}</div>
+  <div class="card"><h2>Observação geral (Anexo B – item 1)</h2><textarea data-o="obs">${esc(i.obs||'')}</textarea></div>
+  <div class="card"><h2>5. Laudo especializado</h2>
+   <label class="f"><span>Data do laudo</span><input type="date" data-k="data" value="${esc(L.data||i.data)}"></label>
+   <label class="f"><span>Problemas principais observados</span><textarea data-k="problemas">${esc(L.problemas||'')}</textarea></label>
+   <label class="f"><span>Riscos da não intervenção</span><textarea data-k="riscos">${esc(L.riscos||'')}</textarea></label>
+   <label class="f"><span>Recomendações</span><textarea data-k="recomendacoes">${esc(L.recomendacoes||'')}</textarea></label>
+   <label class="f"><span>Inspeções / ensaios complementares</span><textarea data-k="complementar" style="min-height:60px">${esc(L.complementar||'')}</textarea></label>
+   <label class="f"><span>Nota final (justificativa)</span><textarea data-k="justificativa">${esc(L.justificativa||'')}</textarea></label></div>
+  <div class="card"><h2>Não conformidades</h2>${ncs.length?ncs.map((t,k)=>`<p class="small" style="background:#f6f8fa;padding:8px;border-radius:8px">${k+1}. ${esc(t)}</p>`).join('')+`<button class="btn sm" id="bCopyNC">Copiar textos</button>`:'<p class="muted small">Nenhum dano marcado para gerar não conformidade (opção dentro do dano).</p>'}
+   <div class="check"><input type="checkbox" id="incNC" ${L.incluirNC!==false?'checked':''}><label for="incNC">Incluir não conformidades no laudo</label></div></div>`;
+  v.querySelectorAll('#nfc .chip').forEach(c=>c.onclick=async()=>{L.notaFinal=c.dataset.n;await save();render()});
+  v.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{L[el.dataset.k]=el.value;save()});
+  v.querySelector('[data-o]').oninput=ev=>{i.obs=ev.target.value;save()};
+  $('#incNC').onchange=ev=>{L.incluirNC=ev.target.checked;save()};
+  $('#bIA').onclick=()=>laudoIA(i,o,save);
+  $('#bSug').onclick=async()=>{const t=textoLaudo(i,o);if((L.problemas||L.recomendacoes)&&!confirm('Substituir os textos atuais pelos sugeridos?'))return;Object.assign(L,t);if(!L.data)L.data=i.data;if(!i.obs)i.obs=textoObs(i,o);await save();render()};
+  const bc=$('#bCopyNC');if(bc)bc.onclick=()=>{navigator.clipboard.writeText(ncs.join('\n\n')).then(()=>toast('Copiado'))};
+}
+
+/* ---------- Inspeção (v2: abas) ---------- */
+async function vInsp(v){
+  const i=await DB.get('insps',S.inspId);if(!i){go('home');return}
+  const o=await DB.get('oaes',i.oaeId);
+  setTitle(o.nome||'OAE',`${i.tipo} · ${fmtD(i.data)} · ${o.rodovia||''} km ${o.km||''}`);
+  if(S.tab==='dados')S.tab='roteiro';
+  const tabs=[['roteiro','🧭','Roteiro'],['elementos','🧱','Elementos'],['fotos','📷','Fotos'],['laudo','📝','Laudo'],['rel','📄','Ficha']];
+  const tb=$('#tabs');tb.classList.remove('hidden');tb.innerHTML=tabs.map(([k,ic,t])=>`<button data-t="${k}" class="${S.tab===k?'on':''}"><b>${ic}</b>${t}</button>`).join('');
+  tb.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;history.replaceState({...S},'');render()});
+  const save=async()=>{i.alterado=Date.now();await DB.put('insps',i)};
+  if(S.tab==='roteiro')await tabRoteiro(v,i,o,save);
+  else if(S.tab==='elementos')tabElementos(v,i,o,save);
+  else if(S.tab==='fotos')await tabFotos(v,i,o,save);
+  else if(S.tab==='laudo')tabLaudo(v,i,o,save);
+  else if(S.tab==='rel')await tabRel(v,i,o,save);
+}
+
+/* ---------- Cadastro: tramos e croquis ---------- */
+function extraOAE(box,o,edit){
+  const T=Math.max(+o.nTramos||0,(o.tramosDet||[]).length,1);o.tramosDet=o.tramosDet||[];
+  box.innerHTML=`<h3>Caracterização dos tramos (Anexo A – item 2)</h3>${edit?`<div class="small muted">Defina o nº de tramos acima. Extensões e alturas em metros.</div>`:''}
+   <div style="overflow-x:auto"><table class="tbl"><tr><th>Tramo</th><th>Tipo de estrutura</th><th>Sistema construtivo</th><th>Extensão</th><th>Alt. mín.</th><th>Alt. máx.</th><th>Contínuo c/ próximo</th></tr>
+   ${Array.from({length:T},(_,k)=>{const d=o.tramosDet[k]||{};return `<tr><td>${k+1}</td>${['tipo','sistema','ext','altMin','altMax','cont'].map(f=>`<td>${edit?`<input type="text" data-tr="${k}" data-tf="${f}" value="${esc(d[f]||'')}" style="min-width:${f==='tipo'||f==='sistema'?'120':'60'}px;padding:6px;min-height:34px" ${f==='cont'?'list="simnao"':''}>`:esc(d[f]||'')}</td>`).join('')}</tr>`}).join('')}</table></div>
+   <datalist id="simnao"><option value="Sim"><option value="Não"></datalist>
+   <h3>Esquemas / croquis (Anexo A – item 8)</h3><div class="small muted">Sem imagem, a ficha usa um esquema gerado automaticamente a partir dos tramos e pilares.</div>
+   <div class="photos" style="margin-top:6px">${[['croquiLong','Esquema longitudinal'],['croquiMeio','Seção transversal – meio do tramo'],['croquiApoio','Seção transversal – apoio'],['croquiDet','Detalhes adicionais']].map(([k,t])=>`<div class="ph"><div style="aspect-ratio:4/3;background:#eef2f6;display:grid;place-items:center">${o[k]?`<img src="${o[k]}" style="object-fit:contain">`:'<span class="small muted">sem imagem</span>'}</div><div class="cap"><b>${t}</b><div class="btns" style="margin-top:4px"><button class="btn sm" data-cq="${k}">${o[k]?'Trocar':'Anexar'}</button>${o[k]?`<button class="btn sm bad" data-cqr="${k}">×</button>`:''}</div></div></div>`).join('')}</div>`;
+  box.querySelectorAll('[data-tr]').forEach(inp=>inp.oninput=async()=>{const k=+inp.dataset.tr;o.tramosDet[k]=o.tramosDet[k]||{};o.tramosDet[k][inp.dataset.tf]=inp.value;await DB.put('oaes',o)});
+  box.querySelectorAll('[data-cq]').forEach(b=>b.onclick=async()=>{const f=await pickFile('image/*');if(!f)return;o[b.dataset.cq]=await imgToData(f,1600).then(d=>d);await DB.put('oaes',o);render()});
+  box.querySelectorAll('[data-cqr]').forEach(b=>b.onclick=async()=>{o[b.dataset.cqr]='';await DB.put('oaes',o);render()});
+}
+
+/* ---------- Configurações (v2) ---------- */
 async function vCfg(v){
   setTitle('Configurações','Dados que aparecem nos relatórios');
   const F=[['empresa','Empresa / consórcio'],['contrato','Contrato'],['fiscalizacao','Órgão / superintendência (cabeçalho)'],['ul','Unidade local / fiscalização'],['resp','Responsável técnico'],['crea','CREA'],['cargo','Cargo'],['cidade','Cidade (assinatura)'],['endereco','Endereço (rodapé)']];
-  v.innerHTML=`<div class="card"><h2>Identificação</h2>${F.map(([k,l])=>`<label class="f"><span>${l}</span><input type="text" data-k="${k}" value="${esc(CFG[k]||'')}"></label>`).join('')}</div>
+  v.innerHTML=`<div class="card"><h2>🤖 Assistente de IA</h2>
+   <p class="small">A IA analisa as fotos (sugere elemento, danos, estado de condição e nota) e redige observação, problemas principais, riscos, recomendações e nota final. Usa a API da Anthropic (Claude) e precisa de internet no momento do uso; o restante do app funciona offline.</p>
+   <label class="f"><span>Chave da API Anthropic</span><input type="password" id="iaKey" value="${esc(CFG.iaKey||'')}" placeholder="sk-ant-…" autocomplete="off"></label>
+   <label class="f"><span>Modelo</span><select id="iaModel">${[['claude-sonnet-5-5','Claude Sonnet 5.5 (recomendado)'],['claude-opus-5-5','Claude Opus 5.5 (mais detalhado, mais caro)'],['claude-haiku-5-5','Claude Haiku 5.5 (mais rápido e barato)']].map(([k,t])=>`<option value="${k}" ${(CFG.iaModel||'claude-sonnet-5-5')===k?'selected':''}>${t}</option>`).join('')}</select></label>
+   <div class="check"><input type="checkbox" id="iaOn" ${CFG.iaOn!==false?'checked':''}><label for="iaOn">Ativar assistente de IA</label></div>
+   <div class="btns"><button class="btn sm" id="iaTest">Testar conexão</button></div>
+   <p class="small muted">A chave fica salva somente neste aparelho, não vai para o GitHub. Cada análise gera custo na sua conta da Anthropic (console.anthropic.com). As fotos e dados enviados são processados pela Anthropic. Os textos da IA são sugestões: o engenheiro responsável deve revisá-los.</p></div>
+  <div class="card"><h2>Identificação</h2>${F.map(([k,l])=>`<label class="f"><span>${l}</span><input type="text" data-k="${k}" value="${esc(CFG[k]||'')}"></label>`).join('')}</div>
   <div class="card"><h2>Logos do cabeçalho</h2><div class="row">${[['logoE','Logo à esquerda (DNIT)'],['logoD','Logo à direita (empresa)']].map(([k,l])=>`<div><div class="small muted" style="font-weight:600">${l}</div><div style="height:60px;display:flex;align-items:center">${CFG[k]?`<img src="${CFG[k]}" style="max-height:56px;max-width:180px">`:'<span class="muted small">sem logo</span>'}</div><div class="btns"><button class="btn sm" data-l="${k}">Escolher imagem</button>${CFG[k]?`<button class="btn sm bad" data-r="${k}">Remover</button>`:''}</div></div>`).join('')}</div></div>
-  <div class="card"><h2>Dados deste aparelho</h2><p class="small muted">Os dados ficam salvos somente neste aparelho (funciona sem internet). Faça backup com frequência e restaure no computador para gerar relatórios grandes.</p><div class="btns"><button class="btn" id="bB">💾 Exportar backup</button><button class="btn" id="bR">♻️ Restaurar backup</button><button class="btn bad" id="bZ">Apagar tudo</button></div><p class="small muted" id="usage"></p></div>`;
-  v.querySelectorAll('[data-k]').forEach(i=>i.oninput=debounce(()=>{CFG[i.dataset.k]=i.value;saveCfg()},300));
+  <div class="card"><h2>Dados deste aparelho</h2><p class="small muted">Os dados ficam salvos somente neste aparelho. Faça backup com frequência.</p><div class="btns"><button class="btn" id="bB">💾 Exportar backup</button><button class="btn" id="bR">♻️ Restaurar backup</button><button class="btn bad" id="bZ">Apagar tudo</button></div><p class="small muted" id="usage"></p></div>`;
+  v.querySelectorAll('[data-k]').forEach(i=>i.oninput=()=>{CFG[i.dataset.k]=i.value;saveCfg()});
+  $('#iaKey').oninput=ev=>{CFG.iaKey=ev.target.value.trim();saveCfg()};$('#iaModel').onchange=ev=>{CFG.iaModel=ev.target.value;saveCfg()};$('#iaOn').onchange=ev=>{CFG.iaOn=ev.target.checked;saveCfg()};
+  $('#iaTest').onclick=async()=>{try{toast('Testando…');const r=await IA.call([{type:'text',text:'Responda {"ok":true}'}],'Responda apenas JSON.',50);toast(r.ok?'Conexão com a IA funcionando ✓':'Resposta inesperada')}catch(e){alert('Falha: '+e.message)}};
   v.querySelectorAll('[data-l]').forEach(b=>b.onclick=async()=>{const f=await pickFile('image/*');if(!f)return;CFG[b.dataset.l]=await imgToData(f,500);await saveCfg();render()});
   v.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{CFG[b.dataset.r]='';await saveCfg();render()});
   $('#bB').onclick=backup;$('#bR').onclick=restore;
   $('#bZ').onclick=async()=>{if(!confirm('Apagar TODAS as OAEs, inspeções e fotos deste aparelho? Esta ação não pode ser desfeita.'))return;for(const s of ['oaes','insps','fotos'])await DB.clear(s);toast('Dados apagados');go('home')};
   if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(e=>{$('#usage').textContent=`Espaço usado: ${(e.usage/1048576).toFixed(1)} MB de ${(e.quota/1048576).toFixed(0)} MB disponíveis.`});
 }
-function imgToData(f,max){return new Promise(res=>{const u=URL.createObjectURL(f);const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/png'))};im.src=u})}
-async function backup(){const d={app:'vistoria-oae',v:1,em:new Date().toISOString(),cfg:CFG,oaes:await DB.all('oaes'),insps:await DB.all('insps'),fotos:await DB.all('fotos')};download(`backup_vistoria_OAE_${today()}.json`,JSON.stringify(d),'application/json');toast('Backup gerado')}
-async function restore(){const f=await pickFile('.json,application/json');if(!f)return;try{const d=JSON.parse(await f.text());if(d.app!=='vistoria-oae')throw new Error('Arquivo não é backup deste app');
-  if(!confirm(`Restaurar ${d.oaes.length} OAEs, ${d.insps.length} inspeções e ${d.fotos.length} fotos? Registros com o mesmo identificador serão substituídos.`))return;
-  for(const o of d.oaes)await DB.put('oaes',o);for(const i of d.insps)await DB.put('insps',i);for(const x of d.fotos)await DB.put('fotos',x);if(d.cfg&&confirm('Restaurar também as configurações (empresa, logos, responsável)?')){CFG={...CFG,...d.cfg};await saveCfg()}toast('Backup restaurado');go('home')}catch(e){alert('Falha ao restaurar: '+e.message)}}
 
 /* ================= INÍCIO ================= */
 (async()=>{
