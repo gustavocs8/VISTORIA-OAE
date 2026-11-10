@@ -163,6 +163,7 @@ details summary{cursor:pointer;padding:4px 0}
 .rp .nf{margin-top:6px}.rp .ncont{text-align:center;font-size:9px}.rp .nota1{font-size:8.3px;margin-top:4px}
 .rp .small{font-size:8px}
 .rp .land .photogrid .pcell img{height:55mm}
+.stepm{padding:10px 0;border-bottom:1px dashed var(--line)}
 </style>
 </head>
 <body>
@@ -709,38 +710,67 @@ Responda SOMENTE com um objeto JSON válido, sem texto fora dele.`;
 function catalogoIA(){return Object.entries(D_CAT).map(([k,v])=>`${k}: ${v.map(d=>d[0]).join(' | ')}`).join('\n')}
 function ctxOAE(o){return `OAE: ${o.nome||''}; rodovia ${o.rodovia||''} km ${o.km||''}; código SGE ${o.codigoSGE||'S/N'}; comprimento ${o.comprimento||'?'} m; largura ${o.largura||'?'} m; tipo de estrutura ${o.material||'não informado'}; nº de tramos ${o.nTramos||'?'}.`}
 
-async function iaFoto(i,o,f){
+function promptFoto(i,o,f,manual){
   const els=(i.elementos||[]).map(e=>({id:e.id,codigo:e.codigo,familia:e.familia,tramo:e.tramo,categoria:famOf(e.familia).c}));
-  const img=await reduzImg(f.data,1280);
-  const prompt=`${ctxOAE(o)}
-Tipo de inspeção: ${i.tipo}. Legenda atual da foto: "${f.legenda||''}". Elemento já vinculado: ${f.elementoId||'nenhum'}.
+  return `${ctxOAE(o)}
+Tipo de inspeção: ${i.tipo}. Legenda atual da foto${manual?' anexada':''}: "${f.legenda||''}". Elemento já vinculado: ${f.elementoId||'nenhum'}.
 Elementos cadastrados nesta inspeção (escolha o mais provável para a foto, ou deixe vazio): ${JSON.stringify(els)}
 Catálogo de danos por categoria (use o nome EXATO; se nenhum servir use "Outro (descrever)" e preencha "outro"):
 ${catalogoIA()}
-Analise a foto de inspeção visual e retorne:
+Analise a foto de inspeção visual${manual?' anexada':''} e retorne:
 {"descricao":"constatação objetiva do que se vê, 1 a 3 frases","legenda":"legenda curta em CAIXA ALTA no padrão 'VISTA INFERIOR DA LAJE DO TRAMO 02 – ARMADURA EXPOSTA'","elementoId":"id do elemento ou ''","familia":"família provável","danos":[{"dano":"nome do catálogo","outro":"","loc":"localização no elemento","ext":"≤20%|20% a 50%|50% a 80%|>80%","ec":4,"motivo":"por que esse EC"}],"notaSugerida":4,"motivoNota":"justificativa curta pelo Anexo C","alertas":["situações que exigem atenção imediata, se houver"],"verificarEmCampo":["o que o inspetor deve confirmar no local"],"confianca":"alta|média|baixa"}
 Se não houver dano visível, retorne "danos":[]. Use "notaSugerida":null se a foto não permitir avaliar.`;
-  return IA.call([IA.img(img),{type:'text',text:prompt}],SYS_IA,2000);
 }
-async function iaLaudo(i,o){
+async function iaFoto(i,o,f){
+  const img=await reduzImg(f.data,1280);
+  return IA.call([IA.img(img),{type:'text',text:promptFoto(i,o,f,false)}],SYS_IA,2000);
+}
+async function promptLaudo(i,o,manual){
   const fs=(await DB.byIdx('fotos','insp',i.id)).sort((a,b)=>a.n-b.n);
   const els=i.elementos||[];const elById=Object.fromEntries(els.map(e=>[e.id,e]));
   const pior=f=>{const e=elById[f.elementoId];if(!e)return 9;const ecs=(e.danos||[]).map(d=>+d.ec||9);return Math.min(+e.nota||9,...ecs)};
   const sel=fs.slice().sort((a,b)=>pior(a)-pior(b)).slice(0,10).sort((a,b)=>a.n-b.n);
-  const content=[];
-  for(const f of sel){content.push({type:'text',text:`FOTO ${f.n} – ${f.legenda||''}${elById[f.elementoId]?' ['+elById[f.elementoId].codigo+' / tramo '+elById[f.elementoId].tramo+']':''}`});content.push(IA.img(await reduzImg(f.data,800)))}
+  const rot=f=>`FOTO ${f.n} – ${f.legenda||''}${elById[f.elementoId]?' ['+elById[f.elementoId].codigo+' / tramo '+elById[f.elementoId].tramo+']':''}`;
   const dados={oae:ctxOAE(o),inspecao:{tipo:i.tipo,data:fmtD(i.data),nivelAgua:i.nivelAgua,clima:i.clima,limitacoes:i.limitacoes,observacaoAtual:i.obs},
     roteiro:Object.entries(i.roteiro||{}).map(([k,v])=>{const st=STEPS.find(s=>s.id===k);if(!st||!st.checks)return null;const nc=(st.checks||[]).filter((c,ix)=>v.c&&v.c[ix]==='nc');return (nc.length||v.obs)?{item:st.ref+' '+st.t,problemas:nc,obs:v.obs||''}:null}).filter(Boolean),
     notaAutomatica:notaAuto(i),
     elementos:els.map(e=>({id:e.id,tramo:e.tramo,regiao:e.regiao,familia:e.familia,codigo:e.codigo,estrutural:!!famOf(e.familia).e,nota:e.nota,notaAnterior:e.notaAnt||undefined,danos:(e.danos||[]).map(d=>({dano:nomeD(d),quant:d.quant,loc:d.loc,ext:d.ext,ec:d.ec,dim:d.dim})),insuficiencia:e.insuf||undefined,causa:e.causa||undefined})).filter(e=>e.danos.length||(e.nota&&+e.nota<=3)||e.insuficiencia)};
-  content.push({type:'text',text:`Dados registrados em campo (fonte principal; as fotos acima ilustram os danos):
+  const texto=`${manual?'Fotos anexadas (na ordem): '+sel.map(rot).join('; ')+'\n\n':''}Dados registrados em campo (fonte principal; as fotos ilustram os danos):
 ${JSON.stringify(dados)}
 Total de elementos: ${els.length}; elementos sem danos não estão listados (considere-os em boa condição conforme suas notas).
 Redija os textos da ficha de inspeção (Anexo B) e do laudo especializado, no estilo de relatório técnico do DNIT, citando elementos pelo código e tramo. Retorne:
 {"observacao":"Observação geral do item 1 do Anexo B (1 parágrafo, condição geral e principais danos)","problemas":"Problemas principais observados (1 parágrafo)","riscos":"Riscos da não intervenção (1 parágrafo)","recomendacoes":"Recomendações (1 parágrafo, intervenções por elemento e acompanhamento)","complementar":"Inspeções ou ensaios complementares necessários, ou ''","notaFinal":3,"justificativa":"Nota final: 'Recomenda-se atribuir nota final N – Classe à OAE, considerando...'","insuficiencias":[{"elementoId":"id","insuf":"insuficiência estrutural do elemento","causa":"causa provável"}],"pontosAVerificar":["inconsistências entre notas, danos e fotos que o inspetor deve revisar"]}
-A nota final deve ser coerente com o Anexo C e com a menor nota dos elementos estruturais; se discordar da nota automática, explique.`});
+A nota final deve ser coerente com o Anexo C e com a menor nota dos elementos estruturais; se discordar da nota automática, explique.`;
+  return {texto,fotos:sel,rot};
+}
+async function iaLaudo(i,o){
+  const {texto,fotos,rot}=await promptLaudo(i,o,false);const content=[];
+  for(const f of fotos){content.push({type:'text',text:rot(f)});content.push(IA.img(await reduzImg(f.data,800)))}
+  content.push({type:'text',text:texto});
   return IA.call(content,SYS_IA,4000);
 }
+/* ---------- Modo sem API: enviar ao app do Claude e colar a resposta ---------- */
+const MANUAL_FIM='\n\nIMPORTANTE: responda somente com o objeto JSON pedido, dentro de um bloco ```json, sem texto antes ou depois, para que eu possa colar a resposta no app de vistoria.';
+function lerJSON(txt){const t=String(txt||'');const b=t.match(/```(?:json)?\s*([\s\S]*?)```/);const src=b?b[1]:t;const a=src.indexOf('{'),z=src.lastIndexOf('}');if(a<0||z<a)throw new Error('Não encontrei o JSON na resposta. Copie a resposta inteira do Claude.');return JSON.parse(src.slice(a,z+1))}
+async function paraArquivos(fotos){const out=[];for(const f of fotos){const d=await reduzImg(f.data,1280);const b=await (await fetch(d)).blob();out.push(new File([b],`foto_${String(f.n).padStart(2,'0')}.jpg`,{type:'image/jpeg'}))}return out}
+async function claudeManual({titulo,texto,fotos,onResposta}){
+  const full=`${SYS_IA.replace('Responda SOMENTE com um objeto JSON válido, sem texto fora dele.','')}\n\n${texto}${MANUAL_FIM}`;
+  const files=await paraArquivos(fotos);
+  const podeArq=!!(navigator.canShare&&files.length&&navigator.canShare({files}));
+  sheet(titulo,`<div class="card">
+   <div class="stepm"><b>1.</b> Copie o pedido já montado com os dados da inspeção e as regras da norma.<div class="btns" style="margin-top:6px"><button class="btn pri" id="mCopy">📋 Copiar pedido</button></div></div>
+   ${files.length?`<div class="stepm"><b>2.</b> ${podeArq?`Envie ${files.length===1?'a foto':'as '+files.length+' fotos'} para o app do Claude (escolha “Claude” na tela de compartilhamento).`:`Baixe ${files.length===1?'a foto':'as '+files.length+' fotos'} para anexar no Claude.`}<div class="btns" style="margin-top:6px"><button class="btn pri" id="mShare">${podeArq?'📤 Compartilhar fotos':'⬇️ Baixar fotos'}</button></div></div>`:''}
+   <div class="stepm"><b>${files.length?3:2}.</b> No Claude, cole o pedido na conversa${files.length?' (com as fotos anexadas)':''} e envie. ${podeArq?'':'<a href="https://claude.ai/new" target="_blank" rel="noopener">Abrir o Claude</a>'}</div>
+   <div class="stepm"><b>${files.length?4:3}.</b> Copie a resposta do Claude e cole aqui:<textarea id="mResp" style="min-height:120px;margin-top:6px" placeholder="Cole aqui a resposta do Claude"></textarea>
+   <div class="btns" style="margin-top:6px"><button class="btn" id="mPaste">📥 Colar da área de transferência</button><button class="btn acc" id="mLer">Ler resposta</button></div></div>
+   <p class="small muted">Não usa a API nem gera custo extra: usa a sua conta do Claude. O pedido e as fotos ficam na sua conversa no Claude.</p></div>`,null,(el,close)=>{
+   const q=s=>el.querySelector(s);
+   q('#mCopy').onclick=async()=>{try{await navigator.clipboard.writeText(full);toast('Pedido copiado ✓')}catch(e){const ta=document.createElement('textarea');ta.value=full;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Pedido copiado ✓')}};
+   const sh=q('#mShare');if(sh)sh.onclick=async()=>{if(podeArq){try{await navigator.share({files,title:'Fotos da vistoria'})}catch(e){if(e.name!=='AbortError')toast('Compartilhamento: '+e.message)}}else files.forEach((f,k)=>setTimeout(()=>download(f.name,f),k*400))};
+   q('#mPaste').onclick=async()=>{try{q('#mResp').value=await navigator.clipboard.readText()}catch(e){toast('Cole manualmente no campo (segure e toque em Colar)')}};
+   q('#mLer').onclick=async()=>{let r;try{r=lerJSON(q('#mResp').value)}catch(e){alert(e.message);return}close();await onResposta(r)}});
+}
+async function laudoClaude(i,o,save){const {texto,fotos}=await promptLaudo(i,o,true);claudeManual({titulo:'📤 Laudo pelo app do Claude',texto,fotos,onResposta:r=>previewLaudo(i,o,save,r)})}
 
 /* ================= v2: ROTEIRO DE CAMPO ================= */
 const FAMS=re=>FAM.filter(f=>re.test(f.f)).map(f=>f.f);
@@ -794,8 +824,8 @@ async function tabRoteiro(v,i,o,save){
   else if(st.form==='fim'){const pend=pendencias(i,o,fs);
     body=`${pend.length?`<div class="warnbox"><b>Pendências para a ficha ficar conforme a norma:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Sem pendências. A ficha está completa.</div>'}
     <div class="row" style="align-items:center;margin-bottom:8px"><div>Nota automática da OAE: ${notaBadge(notaAuto(i))}</div><div>Nota adotada: ${notaBadge(notaFinal(i))}</div></div>
-    <div class="btns"><button class="btn acc" id="rIA">🤖 Gerar textos com IA</button><button class="btn" id="rOff">Texto sugerido (offline)</button><button class="btn" id="rLaudo">Abrir laudo</button><button class="btn pri" id="rFicha">📄 Ficha / PDF</button></div>
-    <p class="small muted">A IA lê os danos, notas, respostas do roteiro e até 10 fotos e redige observação, problemas, riscos, recomendações e nota final. Revise antes de emitir.</p>`}
+    <div class="btns"><button class="btn acc" id="rIA">🤖 Gerar textos com IA</button><button class="btn" id="rMan">📤 Pelo app do Claude</button><button class="btn" id="rOff">Texto sugerido (offline)</button><button class="btn" id="rLaudo">Abrir laudo</button><button class="btn pri" id="rFicha">📄 Ficha / PDF</button></div>
+    <p class="small muted">O Claude lê os danos, notas, respostas do roteiro e até 10 fotos e redige observação, problemas, riscos, recomendações e nota final. “Gerar com IA” usa a chave da API; “Pelo app do Claude” usa a sua conta do Claude, copiando e colando. Revise antes de emitir.</p>`}
   else{
     const els=(i.elementos||[]).filter(e=>(st.fams||[]).includes(e.familia)).sort((a,b)=>(+a.tramo||1)-(+b.tramo||1));
     body=`${st.na?`<div class="check"><input type="checkbox" id="rNA" ${r.na?'checked':''}><label for="rNA">Não se aplica a esta OAE</label></div>`:''}
@@ -835,6 +865,7 @@ async function tabRoteiro(v,i,o,save){
   if(q('#rObs'))q('#rObs').oninput=ev=>{r.obs=ev.target.value;save()};
   if(q('#rFoto'))q('#rFoto').onclick=()=>capturarFoto(i,o,{legenda:st.t.toUpperCase()},true);
   if(q('#rIA'))q('#rIA').onclick=()=>laudoIA(i,o,save);
+  if(q('#rMan'))q('#rMan').onclick=()=>laudoClaude(i,o,save);
   if(q('#rOff'))q('#rOff').onclick=async()=>{const t=textoLaudo(i,o);i.laudo=i.laudo||{};if((i.laudo.problemas||i.obs)&&!confirm('Substituir os textos atuais?'))return;Object.assign(i.laudo,t);i.obs=textoObs(i,o);await save();toast('Textos sugeridos aplicados');S.tab='laudo';history.replaceState({...S},'');render()};
   if(q('#rLaudo'))q('#rLaudo').onclick=()=>{S.tab='laudo';history.replaceState({...S},'');render()};
   if(q('#rFicha'))q('#rFicha').onclick=()=>{S.tab='rel';history.replaceState({...S},'');render()};
@@ -864,8 +895,13 @@ function bindDados(v,i,o,save){v.querySelectorAll('[data-k]').forEach(el=>el.oni
 
 /* ---------- Laudo com IA (pré-visualização) ---------- */
 async function laudoIA(i,o,save){
+  if(!IA.ativo())return laudoClaude(i,o,save);
   const sh=sheet('🤖 Assistente de laudo',`<div class="card"><div class="infobox">Analisando danos, notas, roteiro e fotos… isso pode levar até 1 minuto.</div><div class="spin"></div></div>`);
-  let r;try{r=await iaLaudo(i,o)}catch(e){sh.el.querySelector('.sb').innerHTML=`<div class="card"><div class="warnbox">${esc(e.message)}</div><p class="small">Sem IA, use “Texto sugerido (offline)”, que monta os textos a partir dos danos lançados.</p></div>`;return}
+  let r;try{r=await iaLaudo(i,o)}catch(e){sh.el.querySelector('.sb').innerHTML=`<div class="card"><div class="warnbox">${esc(e.message)}</div><p class="small">Sem API, use “Pelo app do Claude” ou “Texto offline”.</p><button class="btn" id="eMan">📤 Fazer pelo app do Claude</button></div>`;sh.el.querySelector('#eMan').onclick=()=>{sh.close();laudoClaude(i,o,save)};return}
+  previewLaudo(i,o,save,r,sh);
+}
+function previewLaudo(i,o,save,r,sh){
+  sh=sh||sheet('Textos sugeridos pelo Claude','');
   const L=i.laudo||(i.laudo={});const campos=[['observacao','Observação geral (Anexo B – item 1)'],['problemas','Problemas principais observados'],['riscos','Riscos da não intervenção'],['recomendacoes','Recomendações'],['complementar','Inspeções/ensaios complementares'],['justificativa','Nota final']];
   const body=sh.el.querySelector('.sb');
   body.innerHTML=`${(r.pontosAVerificar||[]).length?`<div class="warnbox"><b>Revise antes de emitir:</b><br>${r.pontosAVerificar.map(x=>'• '+esc(x)).join('<br>')}</div>`:''}
@@ -891,24 +927,47 @@ const FOOT_B='<div class="ncont">_________________/Anexo B (continuação)</div>
 const vz=x=>esc(x==null?'':x);
 function padRows(n,cols,min){let h='';for(let k=n;k<min;k++)h+='<tr>'+'<td>&nbsp;</td>'.repeat(cols)+'</tr>';return h}
 function tramosDe(i,o){const els=i.elementos||[];const n=Math.max(+o.nTramos||0,...els.map(e=>+e.tramo||1),1);return Array.from({length:n},(_,k)=>k+1)}
+const NCOR={1:'#e57373',2:'#ffb74d',3:'#fff176',4:'#a5d6a7',5:'#66bb6a'};
+const minNota=arr=>{const n=arr.map(e=>+e.nota).filter(Boolean);return n.length?Math.min(...n):0};
 function svgLong(o,i){
-  const T=tramosDe(i,o);const det=o.tramosDet||[];const ext=T.map((t,k)=>parseFloat(String((det[k]||{}).ext||'').replace(',','.'))||1);const tot=ext.reduce((a,b)=>a+b,0);
-  const W=900,H=170,x0=60,x1=W-60,y=60;let x=x0;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:44mm" xmlns="http://www.w3.org/2000/svg" font-family="Arial" font-size="11">`;
-  s+=`<rect x="${x0-40}" y="${y}" width="40" height="80" fill="#ddd" stroke="#000"/><rect x="${x1}" y="${y}" width="40" height="80" fill="#ddd" stroke="#000"/>`;
-  s+=`<text x="${x0-20}" y="${y+100}" text-anchor="middle">E1</text><text x="${x1+20}" y="${y+100}" text-anchor="middle">E2</text>`;
-  const pil=(i.elementos||[]).filter(e=>/^PILAR/.test(e.familia));
-  T.forEach((t,k)=>{const w=(x1-x0)*ext[k]/tot;s+=`<rect x="${x}" y="${y}" width="${w}" height="12" fill="#bcd" stroke="#000"/><text x="${x+w/2}" y="${y-8}" text-anchor="middle" font-weight="bold">Tramo ${t}</text>${det[k]&&det[k].ext?`<text x="${x+w/2}" y="${y+30}" text-anchor="middle">${esc(det[k].ext)} m</text>`:''}`;
-    x+=w;if(k<T.length-1){const ps=pil.filter(e=>(+e.tramo||1)===t).map(e=>e.codigo.split(' ')[0]).join('/');s+=`<rect x="${x-5}" y="${y+12}" width="10" height="${H-y-40}" fill="#eee" stroke="#000"/><text x="${x}" y="${H-12}" text-anchor="middle">${esc(ps||'Apoio '+(k+1))}</text>`}});
-  s+=`<line x1="10" y1="${H-26}" x2="${W-10}" y2="${H-26}" stroke="#4a90c8" stroke-dasharray="6 4"/>`;
-  return s+`<text x="${W/2}" y="${H-2}" text-anchor="middle" fill="#555">Esquema gerado automaticamente – sem escala${o.comprimento?' · comprimento total '+esc(o.comprimento)+' m':''}</text></svg>`}
-function svgSecao(o,i){
-  const L=parseFloat(String(o.largura||'').replace(',','.'))||10;const nv=Math.max(1,(i.elementos||[]).filter(e=>/^VIGA (LONG|MET|DE MAD)/.test(e.familia)&&(+e.tramo||1)===1).length||2);
-  const W=420,H=150,m=30,sc=(W-2*m)/L;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:36mm" xmlns="http://www.w3.org/2000/svg" font-family="Arial" font-size="10">`;
-  s+=`<rect x="${m}" y="40" width="${W-2*m}" height="14" fill="#bcd" stroke="#000"/><rect x="${m}" y="18" width="14" height="22" fill="#ccc" stroke="#000"/><rect x="${W-m-14}" y="18" width="14" height="22" fill="#ccc" stroke="#000"/>`;
-  for(let k=0;k<nv;k++){const cx=m+(W-2*m)*(k+.5)/nv;s+=`<rect x="${cx-8}" y="54" width="16" height="50" fill="#ddd" stroke="#000"/><text x="${cx}" y="118" text-anchor="middle">V${k+1}</text>`}
-  s+=`<line x1="${m}" y1="132" x2="${W-m}" y2="132" stroke="#000"/><text x="${W/2}" y="145" text-anchor="middle">${esc(o.largura||'?')} m</text>`;
-  if(o.nFaixas)s+=`<text x="${W/2}" y="34" text-anchor="middle">${esc(o.nFaixas)} faixa(s)${o.largFaixa?' × '+esc(o.largFaixa)+' m':''}</text>`;
+  const T=tramosDe(i,o);const det=o.tramosDet||[];const els=i.elementos||[];const ext=T.map((t,k)=>parseFloat(String((det[k]||{}).ext||'').replace(',','.'))||1);const tot=ext.reduce((a,b)=>a+b,0);
+  const W=1000,H=240,x0=70,x1=W-70,y=70;let x=x0;let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Arial" font-size="13"><rect width="${W}" height="${H}" fill="#fff"/>`;
+  const enc=(xx,cod)=>{const ee=els.filter(e=>/CORTINA|^ENCONTRO/.test(e.familia)&&String(e.codigo).startsWith(cod));const n=minNota(ee);return `<rect x="${xx}" y="${y}" width="44" height="95" fill="${NCOR[n]||'#ddd'}" stroke="#000"/>`};
+  s+=enc(x0-44,'C1')+enc(x1,'C2');
+  s+=`<text x="${x0-22}" y="${y+112}" text-anchor="middle">E1</text><text x="${x1+22}" y="${y+112}" text-anchor="middle">E2</text>`;
+  s+=`<polygon points="${x0-44},${y} ${x0-44},${y+95} 5,${y+95} 5,${y}" fill="#efe6d4" stroke="#999"/><polygon points="${x1+44},${y} ${x1+44},${y+95} ${W-5},${y+95} ${W-5},${y}" fill="#efe6d4" stroke="#999"/>`;
+  const pil=els.filter(e=>/^PILAR/.test(e.familia));
+  T.forEach((t,k)=>{const w=(x1-x0)*ext[k]/tot;const sup=els.filter(e=>(+e.tramo||1)===t&&e.regiao==='Superestrutura'&&famOf(e.familia).e);const n=minNota(sup);
+    const nd=els.filter(e=>(+e.tramo||1)===t).reduce((a,e)=>a+(e.danos||[]).length,0);
+    s+=`<rect x="${x}" y="${y}" width="${w}" height="18" fill="${NCOR[n]||'#cfd8dc'}" stroke="#000"/><text x="${x+w/2}" y="${y-24}" text-anchor="middle" font-weight="bold">TRAMO ${t}</text>`;
+    s+=`<text x="${x+w/2}" y="${y-8}" text-anchor="middle" font-size="12">${det[k]&&det[k].ext?esc(det[k].ext)+' m':''}${n?' · nota '+n:''}</text>`;
+    if(nd)s+=`<text x="${x+w/2}" y="${y+36}" text-anchor="middle" fill="#b71c1c" font-size="12">${nd} dano(s)</text>`;
+    x+=w;if(k<T.length-1){const pp=pil.filter(e=>(+e.tramo||1)===t);const np=minNota(pp);const ps=pp.map(e=>String(e.codigo).split(' ')[0]).join('/');
+      s+=`<rect x="${x-7}" y="${y+18}" width="14" height="${H-y-78}" fill="${NCOR[np]||'#eee'}" stroke="#000"/><rect x="${x-20}" y="${H-60}" width="40" height="12" fill="#ccc" stroke="#000"/><text x="${x}" y="${H-36}" text-anchor="middle">${esc(ps||'Apoio '+(k+1))}</text>`}});
+  s+=`<line x1="5" y1="${H-62}" x2="${W-5}" y2="${H-62}" stroke="#4a90c8" stroke-width="2" stroke-dasharray="8 5"/>`;
+  s+=`<g font-size="11">${[5,4,3,2,1].map((n,k)=>`<rect x="${10+k*92}" y="${H-18}" width="12" height="12" fill="${NCOR[n]}" stroke="#000"/><text x="${26+k*92}" y="${H-8}">Nota ${n}</text>`).join('')}<text x="${W-10}" y="${H-8}" text-anchor="end" fill="#555">Esquema sem escala, gerado pelo app${o.comprimento?' · comprimento total '+esc(o.comprimento)+' m':''}</text></g>`;
   return s+'</svg>'}
+function svgSecao(o,i,apoio){
+  const els=i.elementos||[];const L=parseFloat(String(o.largura||'').replace(',','.'))||10;const vs=els.filter(e=>/^VIGA (LONG|MET|DE MAD)/.test(e.familia)&&(+e.tramo||1)===1);const nv=Math.max(1,vs.length||2);
+  const W=480,H=230,m=30;let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Arial" font-size="12"><rect width="${W}" height="${H}" fill="#fff"/>`;
+  const laje=minNota(els.filter(e=>/^LAJE DE CONCRETO|TABULEIRO/.test(e.familia)&&(+e.tramo||1)===1));
+  s+=`<rect x="${m}" y="50" width="${W-2*m}" height="16" fill="${NCOR[laje]||'#cfd8dc'}" stroke="#000"/><rect x="${m}" y="24" width="16" height="26" fill="#ccc" stroke="#000"/><rect x="${W-m-16}" y="24" width="16" height="26" fill="#ccc" stroke="#000"/>`;
+  for(let k=0;k<nv;k++){const cx=m+(W-2*m)*(k+.5)/nv;const n=vs[k]?+vs[k].nota:0;s+=`<rect x="${cx-10}" y="66" width="20" height="55" fill="${NCOR[n]||'#ddd'}" stroke="#000"/>${apoio?'':`<text x="${cx}" y="136" text-anchor="middle">${esc(vs[k]?String(vs[k].codigo).split(' ')[0]:'V'+(k+1))}</text>`}`}
+  if(apoio){const pp=els.filter(e=>/^PILAR/.test(e.familia)&&(+e.tramo||1)===1);const np=Math.max(pp.length,2);
+    s+=`<rect x="${m+20}" y="121" width="${W-2*m-40}" height="14" fill="${NCOR[minNota(els.filter(e=>/TRAVESSA|CONTRAVENTAMENTO$/.test(e.familia)&&(+e.tramo||1)===1))]||'#e0e0e0'}" stroke="#000"/>`;
+    for(let k=0;k<np;k++){const cx=m+40+(W-2*m-80)*(np===1?.5:k/(np-1));const n=pp[k]?+pp[k].nota:0;s+=`<rect x="${cx-9}" y="135" width="18" height="60" fill="${NCOR[n]||'#eee'}" stroke="#000"/><text x="${cx}" y="210" text-anchor="middle">${esc(pp[k]?String(pp[k].codigo).split(' ')[0]:'P'+(k+1))}</text>`}}
+  s+=`<line x1="${m}" y1="${H-8}" x2="${W-m}" y2="${H-8}" stroke="#000"/><text x="${W/2}" y="${H-12}" text-anchor="middle">${esc(o.largura||'?')} m</text>`;
+  if(o.nFaixas)s+=`<text x="${W/2}" y="44" text-anchor="middle">${esc(o.nFaixas)} faixa(s)${o.largFaixa?' × '+esc(o.largFaixa)+' m':''}</text>`;
+  return s+'</svg>'}
+function svgPng(svg){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=2;const c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);try{res(c.toDataURL('image/png'))}catch(e){res('')}};im.onerror=()=>res('');im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)})}
+async function croquiPg(i,o,num,foot){
+  const pic=async(d,svgFn,h)=>{const src=d||(svgFn?await svgPng(svgFn()):'');return src?`<img src="${src}" style="max-width:100%;max-height:${h}mm;display:block;margin:auto">`:''};
+  const dl=danosLista(i);
+  const lista=dl.length?`<table class="f" style="margin-top:4px"><tr class="th"><td>Tramo</td><td>Elemento</td><td>Dano</td><td>Localização</td><td>Extensão</td><td>EC</td></tr>${dl.map(({e,d})=>`<tr><td class="c">${e.tramo}</td><td>${vz(e.codigo)} – ${vz(e.familia)}</td><td>${vz(nomeD(d))}</td><td>${vz(d.loc)}</td><td class="c">${vz(d.ext)}</td><td class="c">${vz(d.ec)}</td></tr>`).join('')}</table>`:'';
+  return pgWrap(`<div class="ssec">${num} Esquemas / croquis</div><table class="f"><tr><td class="h" colspan="2">ESQUEMA LONGITUDINAL</td></tr><tr><td colspan="2" style="height:48mm;text-align:center">${await pic(o.croquiLong,()=>svgLong(o,i),46)}</td></tr>
+     <tr><td class="h" colspan="2">SEÇÃO TRANSVERSAL</td></tr><tr><td class="c" style="width:50%">Meio do Tramo</td><td class="c">Apoio</td></tr><tr><td style="height:40mm;text-align:center">${await pic(o.croquiMeio,()=>svgSecao(o,i,false),38)}</td><td style="text-align:center">${await pic(o.croquiApoio,tramosDe(i,o).length>1?()=>svgSecao(o,i,true):null,38)}</td></tr>
+     <tr><td class="h" colspan="2">DETALHES ADICIONAIS</td></tr><tr><td colspan="2" style="text-align:center;${o.croquiDet?'height:22mm':''}">${await pic(o.croquiDet,null,22)}${o.croquiDet?'':'<div class="small" style="text-align:left">Cores dos elementos conforme a nota técnica atribuída. Danos registrados por elemento:</div>'+lista}</td></tr></table>`,{land:true,norm:true,foot});
+}
 async function fichaHTML(i,o,opts={}){
   const els=i.elementos||[];const T=tramosDe(i,o);const L=i.laudo||{};const nf=notaFinal(i);const det=o.tramosDet||[];
   const tit=opts.titulo?`<div class="sectit">${esc(opts.titulo)}</div>`:'';let out='';
@@ -957,10 +1016,7 @@ async function fichaHTML(i,o,opts={}){
      <div class="ssec">6. Rotas alternativas</div><table class="f"><tr><td class="h" colspan="2">ROTAS ALTERNATIVAS</td><td class="h">${cb(o.rotaExiste==='Existe','Existe')} ${cb(o.rotaExiste==='Não existe','Não Existe')}</td></tr><tr><td colspan="2" style="height:40px">Descrição da Rota Alternativa: ${vz(o.rotaDesc)}</td><td>Acréscimo de Distância (km): ${vz(o.rotaAcresc)}</td></tr></table>
      <div class="ssec">7. Substituição</div><table class="f"><tr><td class="h" colspan="2">PROJETO DE SUBSTITUIÇÃO</td><td class="h">${cb(o.projSubst==='Existe projeto','Existe Projeto')} ${cb(o.projSubst!=='Existe projeto','Não Existe Projeto')}</td></tr><tr><td colspan="2">Custo Estimado (R$): ${vz(o.custoSubst)}</td><td>Processo SEI: ${vz(o.seiSubst)}</td></tr><tr><td colspan="3" style="height:34px">Observações: ${vz(o.obsSubst)}</td></tr></table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo A (continuação)</div>'});
     // A.8 Croquis
-    const im=(d,alt)=>d?`<img src="${d}" style="max-width:100%;max-height:44mm;display:block;margin:auto">`:alt;
-    out+=pgWrap(`<div class="ssec">8. Esquemas / croquis</div><table class="f"><tr><td class="h" colspan="2">ESQUEMA LONGITUDINAL</td></tr><tr><td colspan="2" style="height:46mm;text-align:center">${im(o.croquiLong,svgLong(o,i))}</td></tr>
-     <tr><td class="h" colspan="2">SEÇÃO TRANSVERSAL</td></tr><tr><td class="c" style="width:50%">Meio do Tramo</td><td class="c">Apoio</td></tr><tr><td style="height:38mm;text-align:center">${im(o.croquiMeio,svgSecao(o,i))}</td><td style="text-align:center">${im(o.croquiApoio,'')}</td></tr>
-     <tr><td class="h" colspan="2">DETALHES ADICIONAIS</td></tr><tr><td colspan="2" style="height:22mm;text-align:center">${im(o.croquiDet,'')}</td></tr></table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo A (continuação)</div>'});
+    out+=await croquiPg(i,o,'8.','<div class="ncont">_________________/Anexo A (continuação)</div>');
     // A.9 Observações
     const obsA=o.observacoes||'';
     out+=pgWrap(`<div class="ssec">9. Observações</div><table class="f"><tr><td class="h">OBSERVAÇÕES</td></tr><tr><td class="just" style="height:40mm;vertical-align:top">${vz(obsA)}</td></tr>${padRows(0,1,8)}</table>`,{land:true,norm:true,foot:'<div class="ncont">_________________/Anexo B</div>'});
@@ -977,6 +1033,7 @@ async function fichaHTML(i,o,opts={}){
      return `<table class="f" style="margin-bottom:8px"><tr><td colspan="11">Nº do Tramo: ${t}</td></tr><tr class="th"><td>Região</td><td>Família de Elementos</td><td>Elemento Individual</td><td>Dano</td><td>Quant.</td><td>Localização</td><td>Coord. X</td><td>Coord. Y</td><td>Coord. Z</td><td>Extensão Relativa</td><td>Estado de Condição</td></tr>${rows}${padRows(et.length,11,3)}</table>`}).join('')}`,{land:true,norm:true,foot:FOOT_B.replace('esta página','esta tabela')});
   out+=pgWrap(`<div class="ssec">4. Insuficiências estruturais</div>${T.map(t=>{const et=els.filter(e=>(+e.tramo||1)===t);
      return `<table class="f" style="margin-bottom:8px"><tr><td colspan="5">Nº do Tramo: ${t}</td></tr><tr class="th"><td>Região</td><td>Família de Elementos</td><td>Elemento Individual</td><td>Insuficiência Estrutural</td><td>Causa Provável</td></tr>${et.map(e=>`<tr><td class="c">${vz(e.regiao)}</td><td>${vz(e.familia)}</td><td class="c">${vz(e.codigo)}</td><td>${vz(e.insuf)}</td><td>${vz(e.causa)}</td></tr>`).join('')}${padRows(et.length,5,3)}</table>`}).join('')}`,{land:true,norm:true,foot:FOOT_B.replace('esta página','esta tabela')});
+  if(!cad&&opts.croqui!==false)out+=await croquiPg(i,o,'','<div class="nota1">Croquis com a identificação, localização e extensão dos danos (Manual IPR 709/2026, item 2.2.2).</div>');
   const par=(t,x)=>x?`<p class="just"><b>${t}:</b> ${vz(x)}</p>`:'';
   const ncs=L.incluirNC!==false?textoNC(i,o):[];
   out+=pgWrap(`<div class="ssec">5. Laudo Especializado</div><table class="f"><tr><td>Data do Laudo: ${fmtD(L.data||i.data)}</td></tr><tr><td style="height:78mm;vertical-align:top">Laudo:
@@ -996,12 +1053,13 @@ async function tabRel(v,i,o,save){
   v.innerHTML=`<div class="card"><h2>Ficha de inspeção – modelo DNIT 010/2024-PRO</h2>
    ${pend.length?`<div class="warnbox"><b>Pendências:</b><br>${pend.map(p=>'• '+esc(p)).join('<br>')}</div>`:'<div class="infobox">Ficha completa. Pronta para emissão.</div>'}
    <div class="check"><input type="checkbox" id="rA" ${i.tipo.includes('Cadastral')?'checked':''}><label for="rA">Incluir Anexo A – ficha de inspeção cadastral</label></div>
+   <div class="check"><input type="checkbox" id="rC" checked><label for="rC">Incluir esquemas / croquis (longitudinal e seção transversal)</label></div>
    <div class="check"><input type="checkbox" id="rF" checked><label for="rF">Incluir relatório fotográfico</label></div>
    <div class="check"><input type="checkbox" id="rL" ${CFG.fichaLogos!==false?'checked':''}><label for="rL">Logos no cabeçalho das fichas</label></div>
    <div class="btns" style="margin-top:8px"><button class="btn pri" id="bPrint">🖨️ Gerar PDF</button><button class="btn" id="bHtml">⬇️ Baixar HTML</button><button class="btn" id="bCsvI">⬇️ Danos (CSV)</button></div>
    <p class="small muted">Os Anexos A e B saem em folha A4 paisagem, como na norma; o relatório fotográfico em retrato. No celular, escolha <b>Salvar como PDF</b> na tela de impressão.</p></div>
    <div class="btns"><button class="btn bad" id="bDelI">Excluir inspeção</button></div>`;
-  const opts=()=>({cad:$('#rA').checked,fotos:$('#rF').checked});
+  const opts=()=>({cad:$('#rA').checked,fotos:$('#rF').checked,croqui:$('#rC').checked});
   $('#rL').onchange=ev=>{CFG.fichaLogos=ev.target.checked;saveCfg()};
   $('#bPrint').onclick=async()=>{toast('Montando a ficha…');await imprimir(`<div class="rp">${await fichaHTML(i,o,opts())}</div>`)};
   $('#bHtml').onclick=async()=>{download(nomeArq(o,i)+'.html',docHTML(`<div class="rp">${await fichaHTML(i,o,opts())}</div>`),'text/html')};
@@ -1111,7 +1169,7 @@ async function tabFotos(v,i,o,save){
    <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bCam">📷 Câmera</button><button class="btn" id="bGal">🖼️ Galeria</button></div></div>
    ${fs.length<6?`<div class="warnbox" style="margin:10px 0 0">Faltam ${6-fs.length} foto(s) para o mínimo do item 5.1 da norma.</div>`:''}
    <div class="chips" style="margin-top:10px">${['VISTA GERAL','VISTA SUPERIOR / PISTA','VISTA INFERIOR','VISTA LATERAL LD','VISTA LATERAL LE','ENCONTRO 1','ENCONTRO 2','APARELHOS DE APOIO','JUNTA DE DILATAÇÃO','ACESSO / ATERRO'].map(t=>`<button class="chip" data-q="${t}" style="font-weight:600;font-size:12.5px">${t}</button>`).join('')}</div>
-   ${IA.ativo()?`<div class="small muted" style="margin-top:8px">🤖 Toque numa foto e use “Analisar com IA” para receber sugestão de elemento, danos, estado de condição e nota.</div>`:''}</div>
+   ${1?`<div class="small muted" style="margin-top:8px">🤖 Toque numa foto e use “Analisar” para receber do Claude sugestão de elemento, danos, estado de condição e nota.</div>`:''}</div>
    <div class="photos">${fs.map(f=>{const e=elById[f.elementoId];return `<div class="ph" data-f="${f.id}"><img src="${f.data}" loading="lazy" alt=""><div class="cap"><b>FOTO ${f.n}</b> ${esc(f.legenda||'(sem legenda)')}${e?`<br><span class="muted">${esc(e.codigo)} · T${e.tramo}</span>`:''}${f.ia?' · 🤖':''}</div></div>`}).join('')}</div>`;
   $('#bCam').onclick=()=>capturarFoto(i,o,{legenda:''},true);$('#bGal').onclick=()=>capturarFoto(i,o,{legenda:''},false);
   v.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>capturarFoto(i,o,{legenda:b.dataset.q},true));
@@ -1129,7 +1187,7 @@ function editFoto(i,f,fs,o){
     ${(r.verificarEmCampo||[]).length?`<div class="small muted" style="margin-top:6px"><b>Confirmar em campo:</b> ${r.verificarEmCampo.map(esc).join('; ')}</div>`:''}
     <div class="btns" style="margin-top:8px"><button class="btn sm pri" id="iaAp">Aplicar ao elemento</button></div></div>`};
   sheet('Foto '+f.n,`<div class="card"><img src="${f.data}" style="width:100%;border-radius:8px">
-   ${CFG.iaKey?`<button class="btn acc block" id="iaGo" style="margin-top:10px">🤖 Analisar foto com IA</button>`:`<p class="small muted">Para análise automática da foto, configure o Assistente de IA em ⋮ → Configurações.</p>`}
+   ${CFG.iaKey?`<button class="btn acc block" id="iaGo" style="margin-top:10px">🤖 Analisar foto com IA</button>`:''}<button class="btn block" id="iaMan" style="margin-top:8px">📤 Analisar no app do Claude</button>
    <div id="iaRes">${iaBox(f.ia)}</div>
    <label class="f" style="margin-top:10px"><span>Legenda</span><textarea id="fl" style="min-height:60px">${esc(f.legenda)}</textarea></label>
    <div class="row"><label class="f" style="flex:3 1 200px"><span>Elemento vinculado</span><select id="fe"><option value="">(nenhum)</option>${els.map(e=>`<option value="${e.id}" ${e.id===f.elementoId?'selected':''}>T${e.tramo} · ${esc(e.codigo)} · ${esc(e.familia)}</option>`).join('')}</select></label>
@@ -1144,6 +1202,7 @@ function editFoto(i,f,fs,o){
       f.elementoId=e.id;if(!f.legenda||confirm('Substituir a legenda pela sugerida pela IA?'))f.legenda=(r.legenda||f.legenda||'').toUpperCase();
       i.alterado=Date.now();await DB.put('insps',i);await DB.put('fotos',f);close();toast(`Aplicado a ${e.codigo}: ${sel.length} dano(s). Revise no elemento.`,3200);render()}};
    bindIA();
+   el.querySelector('#iaMan').onclick=()=>claudeManual({titulo:'📤 Analisar foto no Claude',texto:promptFoto(i,o,f,true),fotos:[f],onResposta:async r=>{f.ia=r;await DB.put('fotos',f);el.querySelector('#iaRes').innerHTML=iaBox(r);if(r.elementoId&&els.find(x=>x.id===r.elementoId))el.querySelector('#fe').value=r.elementoId;bindIA();toast('Sugestão carregada – confira e aplique')}});
    const go=el.querySelector('#iaGo');if(go)go.onclick=async()=>{go.disabled=true;go.textContent='🤖 Analisando…';try{f.ia=await iaFoto(i,o,f);await DB.put('fotos',f);el.querySelector('#iaRes').innerHTML=iaBox(f.ia);if(f.ia.elementoId&&els.find(x=>x.id===f.ia.elementoId))el.querySelector('#fe').value=f.ia.elementoId;bindIA()}catch(e){el.querySelector('#iaRes').innerHTML=`<div class="warnbox" style="margin-top:8px">${esc(e.message)}</div>`}go.disabled=false;go.textContent='🤖 Analisar novamente'};
    el.querySelector('#fs').onclick=async()=>{f.legenda=el.querySelector('#fl').value.toUpperCase();f.elementoId=el.querySelector('#fe').value;const nn=+el.querySelector('#fn').value;
      if(nn&&nn!==f.n){const other=fs.find(x=>x.n===nn);if(other){other.n=f.n;await DB.put('fotos',other)}f.n=nn}await DB.put('fotos',f);close();render()};
@@ -1154,7 +1213,7 @@ function editFoto(i,f,fs,o){
 function tabLaudo(v,i,o,save){
   const L=i.laudo||(i.laudo={});const na=notaAuto(i),nf=notaFinal(i);const ncs=textoNC(i,o);
   v.innerHTML=`<div class="card"><div class="row" style="align-items:center"><div style="flex:2 1 200px"><h2 style="margin:0">Assistente de redação</h2><div class="small muted">${L.ia?'Últimos textos de IA: '+new Date(L.ia).toLocaleString('pt-BR'):'Gera os textos a partir dos danos, notas, roteiro e fotos.'}</div></div>
-   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bIA">🤖 Gerar com IA</button><button class="btn" id="bSug">Texto offline</button></div></div></div>
+   <div class="btns" style="flex:1 1 220px;justify-content:flex-end"><button class="btn acc" id="bIA">🤖 Gerar com IA</button><button class="btn" id="bMan">📤 Pelo app do Claude</button><button class="btn" id="bSug">Texto offline</button></div></div></div>
   <div class="card"><h2>Nota final da OAE</h2>
    <div>Automática (menor nota dos elementos estruturais): ${notaBadge(na)}</div>
    <span class="small muted" style="font-weight:600;display:block;margin-top:10px">NOTA FINAL ADOTADA</span><div class="chips" id="nfc" style="margin:4px 0">${['',1,2,3,4,5].map(n=>`<button class="chip ${n?'c'+n:'cx'} ${String(L.notaFinal||'')===String(n)?'on':''}" data-n="${n}">${n||'Auto'}</button>`).join('')}</div>
@@ -1175,6 +1234,7 @@ function tabLaudo(v,i,o,save){
   v.querySelector('[data-o]').oninput=ev=>{i.obs=ev.target.value;save()};
   $('#incNC').onchange=ev=>{L.incluirNC=ev.target.checked;save()};
   $('#bIA').onclick=()=>laudoIA(i,o,save);
+  $('#bMan').onclick=()=>laudoClaude(i,o,save);
   $('#bSug').onclick=async()=>{const t=textoLaudo(i,o);if((L.problemas||L.recomendacoes)&&!confirm('Substituir os textos atuais pelos sugeridos?'))return;Object.assign(L,t);if(!L.data)L.data=i.data;if(!i.obs)i.obs=textoObs(i,o);await save();render()};
   const bc=$('#bCopyNC');if(bc)bc.onclick=()=>{navigator.clipboard.writeText(ncs.join('\n\n')).then(()=>toast('Copiado'))};
 }
@@ -1215,7 +1275,7 @@ async function vCfg(v){
   setTitle('Configurações','Dados que aparecem nos relatórios');
   const F=[['empresa','Empresa / consórcio'],['contrato','Contrato'],['fiscalizacao','Órgão / superintendência (cabeçalho)'],['ul','Unidade local / fiscalização'],['resp','Responsável técnico'],['crea','CREA'],['cargo','Cargo'],['cidade','Cidade (assinatura)'],['endereco','Endereço (rodapé)']];
   v.innerHTML=`<div class="card"><h2>🤖 Assistente de IA</h2>
-   <p class="small">A IA analisa as fotos (sugere elemento, danos, estado de condição e nota) e redige observação, problemas principais, riscos, recomendações e nota final. Usa a API da Anthropic (Claude) e precisa de internet no momento do uso; o restante do app funciona offline.</p>
+   <div class="infobox small">Há duas formas de usar o Claude: <b>(1) pela API</b>, automática, com chave e cobrança por uso na Anthropic; ou <b>(2) pelo app do Claude</b>, sem chave e sem custo extra: o app monta o pedido, você envia ao Claude com as fotos e cola a resposta de volta. A forma (2) já funciona sem configurar nada.</div><p class="small">A IA analisa as fotos (sugere elemento, danos, estado de condição e nota) e redige observação, problemas principais, riscos, recomendações e nota final. Usa a API da Anthropic (Claude) e precisa de internet no momento do uso; o restante do app funciona offline.</p>
    <label class="f"><span>Chave da API Anthropic</span><input type="password" id="iaKey" value="${esc(CFG.iaKey||'')}" placeholder="sk-ant-…" autocomplete="off"></label>
    <label class="f"><span>Modelo</span><select id="iaModel">${[['claude-sonnet-5-5','Claude Sonnet 5.5 (recomendado)'],['claude-opus-5-5','Claude Opus 5.5 (mais detalhado, mais caro)'],['claude-haiku-5-5','Claude Haiku 5.5 (mais rápido e barato)']].map(([k,t])=>`<option value="${k}" ${(CFG.iaModel||'claude-sonnet-5-5')===k?'selected':''}>${t}</option>`).join('')}</select></label>
    <div class="check"><input type="checkbox" id="iaOn" ${CFG.iaOn!==false?'checked':''}><label for="iaOn">Ativar assistente de IA</label></div>
